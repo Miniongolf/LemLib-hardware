@@ -1,6 +1,5 @@
 #pragma once
 
-#include "units/Angle.hpp"
 #include "units/Vector3D.hpp"
 
 namespace lemlib {
