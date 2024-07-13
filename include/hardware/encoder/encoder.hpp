@@ -53,7 +53,8 @@ class Encoder {
         /**
          * @brief Set the absolute angle of the encoder
          *
-         * This function sets the absolute angle of the encoder. This function is non-blocking.
+         * This function sets the absolute angle of the encoder. The absolute angle is the bounded angle of the encoder,
+         * and may persist between power cycles if the hardware supports it. This function is non-blocking.
          *
          * @param angle
          */
@@ -61,15 +62,16 @@ class Encoder {
         /**
          * @brief Set the relative angle of the encoder
          *
-         * This function sets the relative angle of the encoder. This function is non-blocking.
+         * This function sets the relative angle of the encoder. The relative angle is the number of rotations the
+         * encoder has measured since the last reset. This function is non-blocking.
          *
          * @param angle
          */
         virtual void setRelativeAngle(Angle angle) = 0;
         /**
-         * @brief Set the encoder to reversed
+         * @brief Set the encoder to be reversed
          *
-         * This function sets the encoder to reversed. This function is non-blocking.
+         * This function sets the encoder to be reversed. This function is non-blocking.
          *
          * @param reversed
          */
