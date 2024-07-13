@@ -1,55 +1,66 @@
 #pragma once
 
 #include "units/Angle.hpp"
+#include "hardware/expected.hpp"
 
 namespace lemlib {
+
+/**
+ * @brief enum class for encoder errors
+ *
+ */
+enum class EncoderError { CALIBRATING, NOT_CALIBRATED, NOT_CONNECTED, UNKNOWN };
+
+/**
+ * @brief abstract class for encoders
+ *
+ * An encoder is a device that measures the angle of a rotating object. This class is abstract, and must be implemented
+ * by a subclass.
+ */
 class Encoder {
     public:
         /**
-         * @brief reset the encoder
+         * @brief calibrates the encoder
          *
-         * This function resets the encoder. This function is non-blocking.
+         * This calibrates resets the encoder. This function is non-blocking.
          */
-        virtual void calibrate() = 0;
+        virtual rd::expected<void, EncoderError> calibrate() = 0;
         /**
          * @brief check if the encoder is calibrated
          *
-         * @return true the encoder is calibrated
-         * @return false the encoder is not calibrated
+         * @return rd::expected<bool, EncoderError>
          */
-        virtual bool isCalibrated() = 0;
+        virtual rd::expected<bool, EncoderError> isCalibrated() = 0;
         /**
          * @brief check if the encoder is calibrating
          *
-         * @return true the encoder is calibrating
-         * @return false the encoder is not calibrating
+         * @return rd::expected<bool, EncoderError>
          */
-        virtual bool isCalibrating() = 0;
+        virtual rd::expected<bool, EncoderError> isCalibrating() = 0;
         /**
          * @brief whether the encoder is connected
          *
-         * @return true the encoder is connect
-         * @return false the encoder is not connected
+         * @return rd::expected<bool, EncoderError>
          */
-        virtual bool isConnected() = 0;
+        virtual rd::expected<bool, EncoderError> isConnected() = 0;
         /**
          * @brief Get the absolute angle measured by the encoder
          *
          * The absolute angle measured by the encoder is the physical angle of the encoder. As such, it is bounded
          * between 0 and 360 degrees.
          *
-         * @return Angle
+         * @return rd::expected<Angle, EncoderError>
          */
-        virtual Angle getAbsoluteAngle() = 0;
+        virtual rd::expected<Angle, EncoderError> getAbsoluteAngle() = 0;
         /**
          * @brief Get the relative angle measured by the encoder
          *
          * The relative angle measured by the encoder is the angle of the encoder relative to the last time the encoder
          * was reset. As such, it is unbounded.
          *
-         * @return Angle
+         * @return rd::expected<Angle, EncoderError>
          */
-        virtual Angle getRelativeAngle() = 0;
+        virtual rd::expected<Angle, EncoderError> getRelativeAngle() = 0;
         /**
          * @brief Set the absolute angle of the encoder
          *
@@ -57,8 +68,9 @@ class Encoder {
          * and may persist between power cycles if the hardware supports it. This function is non-blocking.
          *
          * @param angle
+         * @return rd::expected<void, EncoderError>
          */
-        virtual void setAbsoluteAngle(Angle angle) = 0;
+        virtual rd::expected<void, EncoderError> setAbsoluteAngle(Angle angle) = 0;
         /**
          * @brief Set the relative angle of the encoder
          *
@@ -66,23 +78,24 @@ class Encoder {
          * encoder has measured since the last reset. This function is non-blocking.
          *
          * @param angle
+         * @return rd::expected<void, EncoderError>
          */
-        virtual void setRelativeAngle(Angle angle) = 0;
+        virtual rd::expected<void, EncoderError> setRelativeAngle(Angle angle) = 0;
         /**
          * @brief Set the encoder to be reversed
          *
          * This function sets the encoder to be reversed. This function is non-blocking.
          *
          * @param reversed
+         * @return rd::expected<void, EncoderError>
          */
-        virtual void setReversed(bool reversed) = 0;
+        virtual rd::expected<void, EncoderError> setReversed(bool reversed) = 0;
         /**
          * @brief Check if the encoder is reversed
          *
-         * @return true the encoder is reversed
-         * @return false the encoder is not reversed
+         * @return rd::expected<bool, EncoderError>
          */
-        virtual bool isReversed() = 0;
+        virtual rd::expected<bool, EncoderError> isReversed() = 0;
         virtual ~Encoder() = default;
 };
 } // namespace lemlib
