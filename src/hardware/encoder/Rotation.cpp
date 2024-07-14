@@ -9,14 +9,11 @@ Rotation::Rotation(pros::Rotation rotation)
     : rotation(rotation) {}
 
 tl::expected<void, EncoderError> Rotation::calibrate() {
-    // calibrate the rotation sensor
-    if (rotation.reset() == PROS_ERR) { // check if errors occurred
-        // check if the sensor is not connected
-        if (errno == ENXIO || errno == ENODEV) return tl::unexpected(EncoderError::NOT_CONNECTED);
-        // else return an unknown error
-        else return tl::unexpected(EncoderError::UNKNOWN);
-    }
-    return {}; // return nothing if no errors occurred
+    const auto result = isConnected(); // check if the sensor is connected
+    // handle the result
+    if (!result.has_value()) return tl::unexpected<EncoderError>(result.error());
+    else if (result.value() == false) return tl::unexpected<EncoderError>(EncoderError::NOT_CONNECTED);
+    return {}; // return void if there are no errors
 }
 
 tl::expected<bool, EncoderError> Rotation::isCalibrated() {
@@ -69,10 +66,21 @@ tl::expected<Angle, EncoderError> Rotation::getRelativeAngle() {
     return from_sDeg(pos * 0.01);
 }
 
-tl::expected<void, EncoderError> Rotation::setAbsoluteAngle(Angle angle) {
+tl::expected<void, EncoderError> Rotation::setAbsoluteAngle(Angle) {
     // the V5 Rotation sensor does not support setting the absolute angle
-    // so we just set the relative angle instead
-    return setRelativeAngle(angle);
+    // directly, as it can only set the current absolute angle to 0
+    // so we do just that
+    // TODO: follow up with PROS to ensure the reset bug is fixed (https://github.com/purduesigbots/pros/issues/688)
+    const auto result = rotation.reset();
+    // check for errors
+    if (result == PROS_ERR) {
+        // check if the sensor is not connected
+        if (errno == ENXIO || errno == ENODEV) return tl::unexpected(EncoderError::NOT_CONNECTED);
+        // else return an unknown error
+        else return tl::unexpected(EncoderError::UNKNOWN);
+    }
+    // return void if there are no errors
+    return {};
 }
 
 tl::expected<void, EncoderError> Rotation::setRelativeAngle(Angle angle) {

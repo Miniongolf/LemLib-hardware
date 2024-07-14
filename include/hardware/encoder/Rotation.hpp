@@ -70,8 +70,8 @@ class Rotation : public Encoder {
         /**
          * @brief Set the absolute angle of the encoder
          *
-         * The V5 Rotation sensor only supports setting the absolute angle to 0, so this function ignores the given
-         * angle and sets the absolute angle to 0. This function is non-blocking.
+         * The V5 Rotation sensor only supports setting the absolute angle to 0, so this function does that and ignores
+         * the input angle
          *
          * @param angle
          * @return tl::expected<void, EncoderError>
