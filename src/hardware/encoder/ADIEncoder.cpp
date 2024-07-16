@@ -1,96 +1,108 @@
 #include "hardware/encoder/ADIEncoder.hpp"
+#include <cmath>
+#include <limits.h>
 
 namespace lemlib {
 ADIEncoder::ADIEncoder(char topPort, char bottomPort, bool reversed)
-    : encoder(topPort, bottomPort, reversed) {}
+    : m_encoder(topPort, bottomPort, reversed),
+      m_reversed(reversed) {}
 
 ADIEncoder::ADIEncoder(pros::adi::ext_adi_port_tuple_t port, bool reversed)
-    : encoder(port, reversed) {}
+    : m_encoder(port, reversed),
+      m_reversed(reversed) {}
 
-ADIEncoder::ADIEncoder(pros::adi::Encoder ADIEncoder)
-    : encoder(ADIEncoder) {}
+ADIEncoder::ADIEncoder(pros::adi::Encoder encoder, bool reversed)
+    : m_encoder(encoder.get_port(), reversed), // the only way to set an encoder to be reversed is to create a new one
+      m_reversed(reversed) {}
 
-tl::expected<void, EncoderError> ADIEncoder::calibrate() {
-    // since the ADI Encoder does not need to be calibrated, we just check if it is connected
-    // and we can get the value from it without any errors
-    auto result = encoder.get_value();
-    if (result == PROS_ERR) {
-        if (errno == ENODEV) return tl::unexpected(EncoderError::UNKNOWN);
+int ADIEncoder::calibrate() {
+    // the ADIEncoder does not need to be calibrated, so we just check for errors and return 0 if there are none
+    if (m_encoder.get_value() == INT_MAX) {
+        errno = ENODEV;
+        return INT_MAX;
     }
-    // return void if there are no errors
-    return {};
+    // return 0 on success
+    return 0;
 }
 
-tl::expected<bool, EncoderError> ADIEncoder::isCalibrated() {
-    // since the ADI Encoder does not need to be calibrated, we just check if it is connected
-    // and we can get the value from it without any errors
-    auto result = encoder.get_value();
-    if (result == PROS_ERR) {
-        if (errno == ENODEV) return tl::unexpected(EncoderError::UNKNOWN);
+int ADIEncoder::isCalibrated() {
+    // the ADIEncoder does not need to be calibrated, so we just check for errors and return 1 if there are none
+    if (m_encoder.get_value() == INT_MAX) {
+        errno = ENODEV;
+        return INT_MAX;
     }
-    // return true if there are no errors
-    return true;
+    // return 1 to indicate that the encoder is "calibrated"
+    return 1;
 }
 
-tl::expected<bool, EncoderError> ADIEncoder::isCalibrating() {
-    // since the ADI Encoder does not need to be calibrated, we just check if it is connected
-    // and we can get the value from it without any errors
-    auto result = encoder.get_value();
-    if (result == PROS_ERR) {
-        if (errno == ENODEV) return tl::unexpected(EncoderError::UNKNOWN);
+int ADIEncoder::isCalibrating() {
+    // the ADIEncoder does not need to be calibrated, so we just check for errors and return 0 if there are none
+    if (m_encoder.get_value() == INT_MAX) {
+        errno = ENODEV;
+        return INT_MAX;
     }
-    // return false if there are no errors
-    return false;
+    // return 0 to indicate that the encoder is not calibrating
+    return 0;
 }
 
-tl::expected<bool, EncoderError> ADIEncoder::isConnected() {
-    // since the ADI Encoder does not need to be calibrated, we just check if it is connected
-    // and we can get the value from it without any errors
-    auto result = encoder.get_value();
-    if (result == PROS_ERR) {
-        if (errno == ENODEV) return tl::unexpected(EncoderError::UNKNOWN);
+int ADIEncoder::isConnected() {
+    // it's not possible to check if the ADIEncoder is connected, so we just return 1 to indicate that it is
+    // we do run a simple test however to check if the ports are valid
+    if (m_encoder.get_value() == INT_MAX) {
+        errno = ENODEV;
+        return INT_MAX;
     }
-    return true;
+    // return 1 to indicate that the encoder is "connected"
+    return 1;
 }
 
-tl::expected<Angle, EncoderError> ADIEncoder::getAbsoluteAngle() {
-    // get the value from the encoder
-    auto result = encoder.get_value();
-    if (result == PROS_ERR) {
-        if (errno == ENODEV) return tl::unexpected(EncoderError::UNKNOWN);
+Angle ADIEncoder::getAbsoluteAngle() {
+    // the ADIEncoder does not support absolute angles, so we just return the relative angle
+    return getRelativeAngle();
+}
+
+Angle ADIEncoder::getRelativeAngle() {
+    const int raw = m_encoder.get_value();
+    // check for errors
+    if (raw == INT_MAX) {
+        errno = ENODEV;
+        return Angle(INFINITY);
     }
-    // return the value as an angle
-    return from_sDeg(result);
+    // return the angle
+    return from_sDeg(raw) + m_offset;
 }
 
-tl::expected<Angle, EncoderError> ADIEncoder::getRelativeAngle() { return getAbsoluteAngle(); }
+int ADIEncoder::setAbsoluteZero() {
+    // the ADIEncoder does not support setting the absolute zero, so we set the relative angle instead
+    return setRelativeAngle(0_stDeg);
+}
 
-tl::expected<void, EncoderError> ADIEncoder::setAbsoluteAngle(Angle) {
-    // since the ADIEncoder can't set its measured values to a specific value, we set the measured value to 0 as we
-    // assume the user is calling this function to reset the encoder
-    auto result = encoder.reset();
-    if (result == PROS_ERR) {
-        if (errno == ENODEV) return tl::unexpected(EncoderError::UNKNOWN);
+int ADIEncoder::setRelativeAngle(Angle angle) {
+    // the Vex SDK does not support setting the relative angle of an ADI encoder to a specific value
+    // but we can overcome this limitation by resetting the relative angle to zero and saving an offset
+    m_offset = angle;
+    const int result = m_encoder.reset();
+    // check for errors
+    if (result == INT_MAX) {
+        errno = ENODEV;
+        return INT_MAX;
     }
-    // return void if there are no errors
-    return {};
+    // return 0 on success
+    return 0;
 }
 
-tl::expected<void, EncoderError> ADIEncoder::setRelativeAngle(Angle) { return setAbsoluteAngle(0_stDeg); }
-
-tl::expected<void, EncoderError> ADIEncoder::setReversed(bool reversed) {
-    // the only way to set the reversed value is to construct the encoder again
-    encoder = pros::adi::Encoder(encoder.get_port(), reversed);
-    return {};
+int ADIEncoder::setReversed(bool reversed) {
+    // the only way to set an encoder to be reversed is to create a new one
+    m_encoder = pros::adi::Encoder(m_encoder.get_port(), reversed);
+    m_reversed = reversed;
+    // check for errors
+    if (m_encoder.get_value() == INT_MAX) {
+        errno = ENODEV;
+        return INT_MAX;
+    }
+    // return 0 on success
+    return 0;
 }
 
-tl::expected<bool, EncoderError> ADIEncoder::isReversed() {
-    // we can't implement this function due to Vex SDK limitations
-    return tl::unexpected(EncoderError::UNKNOWN);
-}
-
-tl::expected<pros::adi::ext_adi_port_tuple_t, EncoderError> ADIEncoder::getPort() {
-    // there is no way for this function to return an error
-    return encoder.get_port();
-}
+pros::adi::ext_adi_port_tuple_t ADIEncoder::getPort() const { return m_encoder.get_port(); }
 } // namespace lemlib
