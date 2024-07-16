@@ -58,7 +58,7 @@ int ADIEncoder::isConnected() {
 
 Angle ADIEncoder::getAbsoluteAngle() {
     // the ADIEncoder does not support absolute angles, so we just return the relative angle
-    return getRelativeAngle();
+    return units::constrainAngle360(getRelativeAngle());
 }
 
 Angle ADIEncoder::getRelativeAngle() {
