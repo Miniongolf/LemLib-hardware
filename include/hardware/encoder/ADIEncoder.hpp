@@ -4,6 +4,10 @@
 #include "pros/adi.hpp"
 
 namespace lemlib {
+/**
+ * @brief Encoder implementation for the Optical Shaft Encoder
+ *
+ */
 class ADIEncoder : public Encoder {
     public:
         /**

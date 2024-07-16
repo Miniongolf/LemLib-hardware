@@ -4,111 +4,304 @@
 #include "pros/rotation.hpp"
 
 namespace lemlib {
+/**
+ * @brief Encoder implementation for the V5 Rotation sensor
+ *
+ */
 class Rotation : public Encoder {
     public:
         /**
-         * @brief Construct a new Rotation object
+         * @brief Construct a new Rotation encoder object
          *
-         * @param port the signed port of the rotation sensor. If the port is negative, the sensor will be reversed.
+         * @param port the signed port of the encoder. If the port is negative, the encoder will be reversed
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // create a new Rotation encoder on port 1 that is not reversed
+         *     Rotation encoder_1(1);
+         *     // create a new Rotation encoder on port 2 that is reversed
+         *     Rotation encoder_2(-2);
+         * }
+         * @endcode
          */
         Rotation(int port);
         /**
-         * @brief Construct a new Rotation object
+         * @brief Construct a new Rotation encoder object
          *
-         * @param rotation the pros::Rotation object to use
+         * @param port the port of the encoder
+         * @param reversed whether the encoder should be reversed or not
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // create a new Rotation encoder on port 1 that is not reversed
+         *     Rotation encoder_1(1, false);
+         *     // create a new Rotation encoder on port 2 that is reversed
+         *     Rotation encoder_2(2, true);
+         *     // create a new Rotation encoder on port 3 that is not reversed
+         *     Rotation encoder_3(3);
+         * }
+         * @endcode
          */
-        Rotation(pros::Rotation rotation);
+        Rotation(std::uint8_t port, bool reversed = false);
         /**
-         * @brief calibrate the encoder
+         * @brief Construct a new Rotation encoder object
          *
-         * This function calibrates the encoder. The V5 Rotation sensor does not actually need to be calibrated, so this
-         * function does nothing
+         * @param encoder the pros::Rotation object to use
          *
-         * @return tl::expected<void, EncoderError>
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     pros::Rotation encoder = pros::Rotation(1);
+         *     Rotation encoder_1(encoder);
+         * }
+         * @endcode
          */
-        tl::expected<void, EncoderError> calibrate() override;
+        Rotation(pros::Rotation encoder);
         /**
-         * @brief whether the encoder has been calibrated
+         * @brief calibrates the encoder
          *
-         * Since the V5 Rotation sensor does not need to be calibrated, this function just checks if the sensor is
-         * connected or not
+         * @deprecated This function is deprecated as the V5 Rotation sensor does not need to be calibrated.
+         * If this function is called, it will act as if it is successful, but may still return an error
          *
-         * @return tl::expected<bool, EncoderError>
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
          */
-        tl::expected<bool, EncoderError> isCalibrated() override;
+        [[deprecated("This function is not implemented as the V5 Rotation Sensor does not need to be calibrated")]]
+        int calibrate() override;
         /**
-         * @brief whether the encoder is calibrating
+         * @brief check if the encoder is calibrated
          *
-         * @return tl::expected<bool, EncoderError>
+         * @deprecated This function is deprecated as the V5 Rotation sensor does not need to be calibrated.
+         * If this function is called, it will act as if the sensor is calibrated, but may still return an error
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @return 0 if its not calibrated
+         * @return 1 if it is calibrated
+         * @return INT_MAX if there is an error, setting errno
          */
-        tl::expected<bool, EncoderError> isCalibrating() override;
+        [[deprecated("This function is not implemented as the V5 Rotation Sensor does not need to be calibrated")]]
+        int isCalibrated() override;
+        /**
+         * @brief check if the encoder is calibrating
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @return 0 if its not calibrating
+         * @return 1 if it is calibrating
+         * @return INT_MAX if there is an error, setting errno
+         */
+        [[deprecated("This function is not implemented as the V5 Rotation Sensor does not need to be calibrated")]]
+        virtual int isCalibrating() override;
         /**
          * @brief whether the encoder is connected
          *
-         * @return tl::expected<bool, EncoderError>
+         *
+         * @return 0 if its not connected
+         * @return 1 if it is connected
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     Rotation encoder(1);
+         *     const int result = encoder.isConnected();
+         *     if (result == 1) {
+         *         std::cout << "Encoder is connected!" << std::endl;
+         *     } else if (result == 0) {
+         *         std::cout << "Encoder is not connected!" << std::endl;
+         *     } else {
+         *         std::cout << "Error checking if encoder is connected!" << std::endl;
+         *     }
+         * }
+         * @endcode
          */
-        tl::expected<bool, EncoderError> isConnected() override;
+        int isConnected() override;
         /**
-         * @brief Get the absolute angle of the encoder
+         * @brief Get the absolute angle measured by the encoder
          *
-         * This function sets the absolute angle of the encoder. The absolute angle is the bounded angle of the encoder,
-         * and it persists between power cycles.
+         * The absolute angle measured by the encoder is the physical angle of the encoder. As such, it is bounded
+         * between 0 and 360 degrees.
          *
-         * @return tl::expected<Angle, EncoderError>
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @return Angle the absolute angle measured by the encoder
+         * @return INFINITY if there is an error, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     Rotation encoder(1);
+         *     const Angle angle = encoder.getAbsoluteAngle();
+         *     if (angle == INFINITY) {
+         *         std::cout << "Error getting absolute angle!" << std::endl;
+         *     } else {
+         *         std::cout << "Absolute angle: " << angle.convert(deg) << std::endl;
+         *     }
+         * }
+         * @endcode
          */
-        tl::expected<Angle, EncoderError> getAbsoluteAngle() override;
+        Angle getAbsoluteAngle() override;
         /**
-         * @brief Set the relative angle of the encoder
+         * @brief Get the relative angle measured by the encoder
          *
-         * This function sets the relative angle of the encoder. The relative angle is the number of rotations the
-         * encoder has measured since the last reset.
+         * The relative angle measured by the encoder is the angle of the encoder relative to the last time the encoder
+         * was reset. As such, it is unbounded.
          *
-         * @param angle
-         * @return tl::expected<void, EncoderError>
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @return Angle the relative angle measured by the encoder
+         * @return INFINITY if there is an error, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     Rotation encoder(1);
+         *     const Angle angle = encoder.getRelativeAngle();
+         *     if (angle == INFINITY) {
+         *         std::cout << "Error getting relative angle!" << std::endl;
+         *     } else {
+         *         std::cout << "Relative angle: " << angle.convert(deg) << std::endl;
+         *     }
+         * }
+         * @endcode
          */
-        tl::expected<Angle, EncoderError> getRelativeAngle() override;
+        Angle getRelativeAngle() override;
         /**
-         * @brief Set the absolute angle of the encoder
+         * @brief Set the absolute zero of the encoder to the current angle
          *
-         * The V5 Rotation sensor only supports setting the absolute angle to 0, so this function does that and ignores
-         * the input angle. This function is non-blocking.
+         * @deprecated This function is deprecated as the VEX SDK does not expose API for setting the absolute zero of
+         * the V5 Rotation Sensor, even though we know there is a way to do it, its just not exposed. If this function
+         * is called, it will set the relative angle to 0, but may still return an error
          *
-         * @param angle
-         * @return tl::expected<void, EncoderError>
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
          */
-        tl::expected<void, EncoderError> setAbsoluteAngle(Angle) override;
+        [[deprecated("This function is deprecated as the VEX SDK does not expose API for setting the absolute zero of "
+                     "the V5 Rotation Sensor")]]
+        int setAbsoluteZero() override;
         /**
          * @brief Set the relative angle of the encoder
          *
          * This function sets the relative angle of the encoder. The relative angle is the number of rotations the
          * encoder has measured since the last reset. This function is non-blocking.
          *
-         * @param angle
-         * @return tl::expected<void, EncoderError>
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @param angle the relative angle to set the measured angle to
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     Rotation encoder(1);
+         *     if (encoder.setRelativeAngle(0_stDeg) == 0) {
+         *         std::cout << "Relative angle set!" << std::endl;
+         *         std::cout < "Relative angle: " << encoder.getRelativeAngle().convert(deg) << std::endl; // outputs 0
+         *     } else {
+         *         std::cout << "Error setting relative angle!" << std::endl;
+         *     }
+         * }
+         * @endcode
          */
-        tl::expected<void, EncoderError> setRelativeAngle(Angle angle) override;
+        int setRelativeAngle(Angle angle) override;
         /**
-         * @brief Set whether the encoder is reversed or not
+         * @brief Set the encoder to be reversed
          *
-         * this function is non-blocking
+         * This function sets the encoder to be reversed. This function is non-blocking.
          *
-         * @param reversed
-         * @return tl::expected<void, EncoderError>
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @param reversed whether the encoder should be reversed or not
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     Rotation encoder(1);
+         *     if (encoder.setReversed(true) == 0) {
+         *         std::cout << "Encoder reversed!" << std::endl;
+         *     } else {
+         *         std::cout << "Error reversing encoder!" << std::endl;
+         *     }
+         * }
+         * @endcode
          */
-        tl::expected<void, EncoderError> setReversed(bool reversed) override;
+        int setReversed(bool reversed) override;
         /**
-         * @brief Get whether the encoder is reversed or not
+         * @brief Check if the encoder is reversed
          *
-         * @return tl::expected<bool, EncoderError>
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @return 0 if its not reversed
+         * @return 1 if it is reversed
+         * @return INT_MAX if there is an error, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     Rotation encoder(1);
+         *     const int result = encoder.isReversed();
+         *     if (result == 1) {
+         *         std::cout << "Encoder is reversed!" << std::endl;
+         *     } else if (result == 0) {
+         *         std::cout << "Encoder is not reversed!" << std::endl;
+         *     } else {
+         *         std::cout << "Error checking if encoder is reversed!" << std::endl;
+         *     }
+         * }
+         * @endcode
          */
-        tl::expected<bool, EncoderError> isReversed() override;
+        int isReversed() override;
         /**
          * @brief Get the port of the encoder
          *
-         * @return tl::expected<int, EncoderError>
+         * @return int
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     Rotation encoder(1);
+         *     std::cout << "Encoder port: " << encoder.getPort() << std::endl;
+         * }
+         * @endcode
          */
-        tl::expected<int, EncoderError> getPort();
+        int getPort() const;
     protected:
-        pros::Rotation rotation;
+        pros::Rotation m_encoder;
 };
 } // namespace lemlib
