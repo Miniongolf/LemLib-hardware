@@ -60,53 +60,6 @@ class Rotation : public Encoder {
          */
         Rotation(pros::Rotation encoder);
         /**
-         * @brief calibrates the encoder
-         *
-         * @deprecated This function is deprecated as the V5 Rotation sensor does not need to be calibrated.
-         * If this function is called, it will act as if it is successful, but may still return an error
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENXIO: the port is not within the range of valid ports (1-21)
-         * ENODEV: the port cannot be configured as an V5 Rotation sensor
-         *
-         * @return 0 on success
-         * @return INT_MAX on failure, setting errno
-         */
-        [[deprecated("This function is not implemented as the V5 Rotation Sensor does not need to be calibrated")]]
-        int calibrate() override;
-        /**
-         * @brief check if the encoder is calibrated
-         *
-         * @deprecated This function is deprecated as the V5 Rotation sensor does not need to be calibrated.
-         * If this function is called, it will act as if the sensor is calibrated, but may still return an error
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENXIO: the port is not within the range of valid ports (1-21)
-         * ENODEV: the port cannot be configured as an V5 Rotation sensor
-         *
-         * @return 0 if its not calibrated
-         * @return 1 if it is calibrated
-         * @return INT_MAX if there is an error, setting errno
-         */
-        [[deprecated("This function is not implemented as the V5 Rotation Sensor does not need to be calibrated")]]
-        int isCalibrated() override;
-        /**
-         * @brief check if the encoder is calibrating
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENXIO: the port is not within the range of valid ports (1-21)
-         * ENODEV: the port cannot be configured as an V5 Rotation sensor
-         *
-         * @return 0 if its not calibrating
-         * @return 1 if it is calibrating
-         * @return INT_MAX if there is an error, setting errno
-         */
-        [[deprecated("This function is not implemented as the V5 Rotation Sensor does not need to be calibrated")]]
-        virtual int isCalibrating() override;
-        /**
          * @brief whether the encoder is connected
          *
          *
@@ -130,34 +83,6 @@ class Rotation : public Encoder {
          */
         int isConnected() override;
         /**
-         * @brief Get the absolute angle measured by the encoder
-         *
-         * The absolute angle measured by the encoder is the physical angle of the encoder. As such, it is bounded
-         * between 0 and 360 degrees.
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENXIO: the port is not within the range of valid ports (1-21)
-         * ENODEV: the port cannot be configured as an V5 Rotation sensor
-         *
-         * @return Angle the absolute angle measured by the encoder
-         * @return INFINITY if there is an error, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     Rotation encoder(1);
-         *     const Angle angle = encoder.getAbsoluteAngle();
-         *     if (angle == INFINITY) {
-         *         std::cout << "Error getting absolute angle!" << std::endl;
-         *     } else {
-         *         std::cout << "Absolute angle: " << angle.convert(deg) << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        Angle getAbsoluteAngle() override;
-        /**
          * @brief Get the relative angle measured by the encoder
          *
          * The relative angle measured by the encoder is the angle of the encoder relative to the last time the encoder
@@ -175,7 +100,7 @@ class Rotation : public Encoder {
          * @code {.cpp}
          * void initialize() {
          *     Rotation encoder(1);
-         *     const Angle angle = encoder.getRelativeAngle();
+         *     const Angle angle = encoder.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
          *     } else {
@@ -184,25 +109,7 @@ class Rotation : public Encoder {
          * }
          * @endcode
          */
-        Angle getRelativeAngle() override;
-        /**
-         * @brief Set the absolute zero of the encoder to the current angle
-         *
-         * @deprecated This function is deprecated as the VEX SDK does not expose API for setting the absolute zero of
-         * the V5 Rotation Sensor, even though we know there is a way to do it, its just not exposed. If this function
-         * is called, it will set the relative angle to 0, but may still return an error
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENXIO: the port is not within the range of valid ports (1-21)
-         * ENODEV: the port cannot be configured as an V5 Rotation sensor
-         *
-         * @return 0 on success
-         * @return INT_MAX on failure, setting errno
-         */
-        [[deprecated("This function is deprecated as the VEX SDK does not expose API for setting the absolute zero of "
-                     "the V5 Rotation Sensor")]]
-        int setAbsoluteZero() override;
+        Angle getAngle() override;
         /**
          * @brief Set the relative angle of the encoder
          *
@@ -222,16 +129,16 @@ class Rotation : public Encoder {
          * @code {.cpp}
          * void initialize() {
          *     Rotation encoder(1);
-         *     if (encoder.setRelativeAngle(0_stDeg) == 0) {
+         *     if (encoder.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
-         *         std::cout < "Relative angle: " << encoder.getRelativeAngle().convert(deg) << std::endl; // outputs 0
+         *         std::cout < "Relative angle: " << encoder.getAngle().convert(deg) << std::endl; // outputs 0
          *     } else {
          *         std::cout << "Error setting relative angle!" << std::endl;
          *     }
          * }
          * @endcode
          */
-        int setRelativeAngle(Angle angle) override;
+        int setAngle(Angle angle) override;
         /**
          * @brief Set the encoder to be reversed
          *

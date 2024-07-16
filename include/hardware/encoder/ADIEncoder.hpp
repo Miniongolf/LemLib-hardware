@@ -76,53 +76,6 @@ class ADIEncoder : public Encoder {
          */
         ADIEncoder(pros::adi::Encoder encoder, bool reversed = false);
         /**
-         * @brief calibrates the encoder
-         *
-         * @deprecated this function is deprecated because the ADIEncoder does not support
-         * calibration. If this function is called, it will act as if it was successful. However, it may still return an
-         * error and set errno
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port could not be configured as an encoder
-         *
-         * @return 0 on success
-         * @return INT_MAX on failure, setting errno
-         */
-        [[deprecated("This function is not implemented as the ADIEncoder does not need to be calibrated")]]
-        int calibrate() override;
-        /**
-         * @brief check if the encoder is calibrated
-         *
-         * @deprecated This function is deprecated because the ADIEncoder does not support calibration. If this function
-         * is called, it will act as if it was successful. However, it may still return an error and set errno
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port could not be configured as an encoder
-         *
-         * @return 1 if there are no errors
-         * @return INT_MAX if there is an error, setting errno
-         */
-        [[deprecated("This function is not implemented as the ADIEncoder does not need to be calibrated")]]
-        int isCalibrated() override;
-        /**
-         * @brief check if the encoder is calibrating
-         *
-         * @deprecated This function is deprecated because the ADIEncoder does not support calibration. If this function
-         * is called, it will act as if the encoder is not calibrating. However, it may still return an error and set
-         * errno
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port could not be configured as an encoder
-         *
-         * @return 0 if there are no errors
-         * @return INT_MAX if there is an error, setting errno
-         */
-        [[deprecated("This function is not implemented as the ADIEncoder does not need to be calibrated")]]
-        int isCalibrating() override;
-        /**
          * @brief whether the encoder is connected
          *
          * @deprecated This function is deprecated because there is no way to check if the ADIEncoder is connected due
@@ -138,21 +91,6 @@ class ADIEncoder : public Encoder {
          */
         [[deprecated("This function is not implemented due to hardware limitations")]]
         int isConnected() override;
-        /**
-         * @brief Get the absolute angle measured by the encoder
-         *
-         * @deprecated This function is deprecated due to hardware limitations. Use getRelativeAngle() instead. If this
-         * function is called, it will act as if getRelativeAngle() was called.
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port could not be configured as an encoder
-         *
-         * @return Angle the relative angle of the encoder
-         * @return INFINITY if there is an error, setting errno
-         */
-        [[deprecated("This function is not implemented due to hardware limitations. Use getRelativeAngle() instead")]]
-        Angle getAbsoluteAngle() override;
         /**
          * @brief Get the relative angle measured by the encoder
          *
@@ -170,7 +108,7 @@ class ADIEncoder : public Encoder {
          * @code {.cpp}
          * void initialize() {
          *     ADIEncoder encoder('A', 'B');
-         *     const Angle angle = encoder.getRelativeAngle();
+         *     const Angle angle = encoder.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
          *     } else {
@@ -179,35 +117,7 @@ class ADIEncoder : public Encoder {
          * }
          * @endcode
          */
-        Angle getRelativeAngle() override;
-        /**
-         * @brief Set the absolute zero of the encoder to the current angle
-         *
-         * @deprecated This function is deprecated due to hardware limitations. Use setRelativeAngle(0_stDeg) instead.
-         * If this function is called, it will act like getRelativeAngle
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port could not be configured as an encoder
-         *
-         * @return 0 on success
-         * @return INT_MAX on failure, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     ADIEncoder encoder('A', 'B');
-         *     const int result = encoder.setAbsoluteZero();
-         *     if (result == 0) {
-         *         std::cout << "Absolute zero set!" << std::endl;
-         *         std::cout < "Absolute angle: " << encoder.getAbsoluteAngle().convert(deg) << std::endl; // outputs 0
-         *     } else {
-         *         std::cout << "Error setting absolute zero!" << std::endl;
-         *     }
-         * }
-         */
-        [[deprecated("This function is not implemented due to hardware limitations. Use getRelativeAngle() instead")]]
-        virtual int setAbsoluteZero() override;
+        Angle getAngle() override;
         /**
          * @brief Set the relative angle of the encoder
          *
@@ -226,16 +136,16 @@ class ADIEncoder : public Encoder {
          * @code {.cpp}
          * void initialize() {
          *     ADIEncoder encoder('A', 'B');
-         *     const int result = encoder.setRelativeAngle(0_stDeg);
+         *     const int result = encoder.setAngle(0_stDeg);
          *     if (result == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
-         *         std::cout < "Relative angle: " << encoder.getRelativeAngle().convert(deg) << std::endl; // outputs 0
+         *         std::cout < "Relative angle: " << encoder.getAngle().convert(deg) << std::endl; // outputs 0
          *     } else {
          *         std::cout << "Error setting relative angle!" << std::endl;
          *     }
          * }
          */
-        int setRelativeAngle(Angle angle) override;
+        int setAngle(Angle angle) override;
         /**
          * @brief Set the encoder to be reversed
          *
