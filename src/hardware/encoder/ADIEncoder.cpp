@@ -64,5 +64,15 @@ int ADIEncoder::setReversed(bool reversed) {
     return 0;
 }
 
+int ADIEncoder::isReversed() {
+    // check for errors
+    if (m_encoder.get_value() == INT_MAX) {
+        errno = ENODEV;
+        return INT_MAX;
+    }
+    // return 1 if the encoder is reversed
+    return m_reversed;
+}
+
 pros::adi::ext_adi_port_tuple_t ADIEncoder::getPort() const { return m_encoder.get_port(); }
 } // namespace lemlib
