@@ -22,11 +22,7 @@ class ADIEncoder : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::adi::Encoder pros_encoder('A', 'B');
-         *     // construct by passing the pros::ADIEncoder object
-         *     lemlib::ADIEncoder encoder(pros_encoder);
-         *     // construct by implicitly passing the pros::ADIEncoder object
-         *     lemlib::ADIEncoder encoder = pros_encoder;
+         *     lemlib::ADIEncoder encoder = pros::adi::Encoder('A', 'B');
          * }
          */
         ADIEncoder(pros::adi::Encoder encoder);

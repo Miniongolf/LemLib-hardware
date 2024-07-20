@@ -11,6 +11,20 @@ enum BrakeMode { COAST = 0, BRAKE = 1, HOLD = 2 };
 class Motor : public Encoder {
     public:
         /**
+         * @brief Construct a new Motor object
+         *
+         * @param port the port of the motor
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // construct a new Motor object with port 1
+         *     lemlib::Motor motor = pros::Motor(1);
+         * }
+         * @endcode
+         */
+        Motor(pros::Motor motor);
+        /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
          * @param percent the power to move the motor at from -1.0 to +1.0
@@ -20,13 +34,13 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Motor* motor = new Motor(1);
+         *     lemlib::Motor motor = pros::Motor(1);
          *     // move the motor forward at 50% power
-         *     motor->move(0.5);
+         *     motor.move(0.5);
          *     // move the motor backward at 50% power
-         *     motor->move(-0.5);
+         *     motor.move(-0.5);
          *     // stop the motor
-         *     motor->move(0);
+         *     motor.move(0);
          * }
          * @endcode
          */
@@ -41,13 +55,13 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Motor* motor = new Motor(1);
+         *     lemlib::Motor motor = pros::Motor(1);
          *     // move the motor forward at 50 degrees per second
-         *     motor->moveVelocity(50_degps);
+         *     motor.moveVelocity(50_degps);
          *     // move the motor backward at 50 degrees per second
-         *     motor->moveVelocity(-50_degps);
+         *     motor.moveVelocity(-50_degps);
          *     // stop the motor
-         *     motor->moveVelocity(0_degps);
+         *     motor.moveVelocity(0_degps);
          * }
          * @endcode
          */
@@ -63,11 +77,11 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Motor* motor = new Motor(1);
+         *     lemlib::Motor motor = pros::Motor(1);
          *     // move the motor forward at 50% power
-         *     motor->move(0.5);
+         *     motor.move(0.5);
          *     // brake the motor
-         *     motor->brake();
+         *     motor.brake();
          * }
          * @endcode
          */
@@ -82,13 +96,13 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Motor* motor = new Motor(1);
+         *     lemlib::Motor motor = pros::Motor(1);
          *     // set the motor to brake when stopped
-         *     motor->setBrakeMode(BrakeMode::BRAKE);
+         *     motor.setBrakeMode(BrakeMode::BRAKE);
          *     // set the motor to coast when stopped
-         *     motor->setBrakeMode(BrakeMode::COAST);
+         *     motor.setBrakeMode(BrakeMode::COAST);
          *     // set the motor to hold when stopped
-         *     motor->setBrakeMode(BrakeMode::HOLD);
+         *     motor.setBrakeMode(BrakeMode::HOLD);
          * }
          * @endcode
          */
@@ -102,8 +116,8 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Motor* motor = new Motor(1);
-         *     const BrakeMode mode = motor->getBrakeMode();
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     const BrakeMode mode = motor.getBrakeMode();
          *     if (mode == BrakeMode::BRAKE) {
          *         std::cout << "Brake mode is set to BRAKE!" << std::endl;
          *     } else if (mode == BrakeMode::COAST) {
@@ -127,8 +141,8 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Motor* motor = new Motor(1);
-         *     const int result = motor->isConnected();
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     const int result = motor.isConnected();
          *     if (result == 1) {
          *         std::cout << "motor is connected!" << std::endl;
          *     } else if (result == 0) {
@@ -139,7 +153,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        int isConnected();
+        int isConnected() override;
         /**
          * @brief Get the relative angle measured by the motor
          *
@@ -152,8 +166,8 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Motor* motor = new Motor(1);
-         *     const Angle angle = motor->getAngle();
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     const Angle angle = motor.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
          *     } else {
@@ -162,7 +176,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        Angle getAngle();
+        Angle getAngle() override;
         /**
          * @brief Set the relative angle of the motor
          *
@@ -176,62 +190,17 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Motor* motor = new Motor(1);
-         *     if (motor->setAngle(0_stDeg) == 0) {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     if (motor.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
-         *         std::cout < "Relative angle: " << motor->getAngle().convert(deg) << std::endl; // outputs 0
+         *         std::cout < "Relative angle: " << motor.getAngle().convert(deg) << std::endl; // outputs 0
          *     } else {
          *         std::cout << "Error setting relative angle!" << std::endl;
          *     }
          * }
          * @endcode
          */
-        int setAngle(Angle angle);
-        /**
-         * @brief Set the motor to be reversed
-         *
-         * This function sets the motor to be reversed. This function is non-blocking.
-         *
-         * @param reversed whether the motor should be reversed or not
-         * @return 0 on success
-         * @return INT_MAX on failure, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     Motor* motor = new Motor(1);
-         *     if (motor->setReversed(true) == 0) {
-         *         std::cout << "motor reversed!" << std::endl;
-         *     } else {
-         *         std::cout << "Error reversing motor!" << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        int setReversed(bool reversed);
-        /**
-         * @brief Check if the motor is reversed
-         *
-         * @return 0 if its not reversed
-         * @return 1 if it is reversed
-         * @return INT_MAX if there is an error, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     Motor* motor = new Motor(1);
-         *     const int result = motor->isReversed();
-         *     if (result == 1) {
-         *         std::cout << "motor is reversed!" << std::endl;
-         *     } else if (result == 0) {
-         *         std::cout << "motor is not reversed!" << std::endl;
-         *     } else {
-         *         std::cout << "Error checking if motor is reversed!" << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        int isReversed();
+        int setAngle(Angle angle) override;
     private:
         pros::Motor m_motor;
 };

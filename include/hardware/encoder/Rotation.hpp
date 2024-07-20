@@ -18,11 +18,7 @@ class Rotation : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Rotation pros_encoder(1);
-         *     // construct by passing the pros::Rotation object
-         *     lemlib::Rotation encoder(pros_encoder);
-         *     // construct by implicitly converting the pros::Rotation object
-         *     lemlib::Rotation encoder = pros_encoder;
+         *     lemlib::Rotation encoder = pros::Rotation(1);
          * }
          * @endcode
          */
