@@ -13,45 +13,6 @@ class ADIEncoder : public Encoder {
         /**
          * @brief Construct a new ADIEncoder object
          *
-         * @param topPort the top port of the ADIEncoder sensor
-         * @param bottomPort the bottom port of the ADIEncoder sensor
-         * @param reversed whether the encoder is reversed or not
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     // create an ADIEncoder on ports A and B, which is not reversed
-         *     ADIEncoder encoder_ab = new ADIEncoder('A', 'B');
-         *     // create an ADIEncoder on ports C and D, which is reversed
-         *     ADIEncoder encoder_cd = new ADIEncoder('C', 'D', true);
-         *     // create an ADIEncoder on ports E and F, which is not reversed
-         *     ADIEncoder encoder_ef = new ADIEncoder('E', 'F', false);
-         * }
-         * @endcode
-         */
-        ADIEncoder(char topPort, char bottomPort, bool reversed = false);
-        /**
-         * @brief Construct a new ADIEncoder object
-         *
-         * @param port the ports of the ADIEncoder along with the port of the ADI expander it is connected to
-         * @param reversed whether the encoder is reversed or not
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     // create an ADIEncoder on ports A and B on the expander on port 1, which is not reversed
-         *     ADIEncoder encoder_ab = new ADIEncoder({1, 'A', 'B'});
-         *     // create an ADIEncoder on ports C and D on the expander on port 1, which is reversed
-         *     ADIEncoder encoder_cd = new ADIEncoder({1, 'C', 'D'}, true);
-         *     // create an ADIEncoder on ports E and F on the expander on port 1, which is not reversed
-         *     ADIEncoder encoder_ef = new ADIEncoder({1, 'E', 'F'}, false);
-         * }
-         * @endcode
-         */
-        ADIEncoder(pros::adi::ext_adi_port_tuple_t port, bool reversed = false);
-        /**
-         * @brief Construct a new ADIEncoder object
-         *
          * Even though VEXOS knows whether the encoder is reversed, it has no API to get this information. As such, its
          * necessary to pass this info to the constructor.
          *
@@ -61,20 +22,11 @@ class ADIEncoder : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     // create an ADIEncoder on ports A and B, which is not reversed
-         *     pros::adi::Encoder pros_encoder_ab('A', 'B');
-         *     // create an ADIEncoder on ports C and D, which is reversed
-         *     pros::adi::Encoder pros_encoder_cd('C', 'D', true);
-         *     // create an ADIEncoder on ports E and F, which is not reversed
-         *     pros::adi::Encoder pros_encoder_ef('E', 'F', false);
-         *     // create the lemlib ADIEncoder objects
-         *     ADIEncoder encoder_ab(pros_encoder_ab);
-         *     ADIEncoder encoder_cd(pros_encoder_cd, true);
-         *     ADIEncoder encoder_ef(pros_encoder_ef, false);
+         *     pros::ADIEncoder encoder('A', 'B');
+         *     ADIEncoder adi_encoder(encoder);
          * }
-         * @endcode
          */
-        ADIEncoder(pros::adi::Encoder encoder, bool reversed = false);
+        ADIEncoder(pros::adi::Encoder encoder);
         /**
          * @brief whether the encoder is connected
          *
@@ -107,7 +59,7 @@ class ADIEncoder : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     ADIEncoder encoder('A', 'B');
+         *     ADIEncoder encoder();
          *     const Angle angle = encoder.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
@@ -146,89 +98,8 @@ class ADIEncoder : public Encoder {
          * }
          */
         int setAngle(Angle angle) override;
-        /**
-         * @brief Set the encoder to be reversed
-         *
-         * This function sets the encoder to be reversed. This function is non-blocking.
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port could not be configured as an encoder
-         *
-         * @param reversed whether the encoder is reversed or not
-         * @return 0 on success
-         * @return INT_MAX on failure, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     ADIEncoder encoder('A', 'B', false);
-         *     const int result = encoder.setReversed(true);
-         *     if (result == 0) {
-         *         std::cout << "Encoder reversed!" << std::endl;
-         *         encoder.isReversed(); // outputs 1
-         *     } else {
-         *         std::cout << "Error reversing encoder!" << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        int setReversed(bool reversed) override;
-        /**
-         * @brief Check if the encoder is reversed
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port could not be configured as an encoder
-         *
-         * @return 0 the encoder is not reversed
-         * @return 1 the encoder is reversed
-         * @return INT_MAX if there is an error, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     ADIEncoder encoder('A', 'B', true);
-         *     const int result = encoder.isReversed();
-         *     if (result == 1) {
-         *         // this is the expected output
-         *         std::cout << "Encoder is reversed!" << std::endl;
-         *     } else if (result == 0) {
-         *         std::cout << "Encoder is not reversed!" << std::endl;
-         *     } else {
-         *         std::cout << "Error checking if encoder is reversed!" << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        int isReversed() override;
-        /**
-         * @brief Get the port of the encoder
-         *
-         * @return pros::adi::ext_adi_port_tuple_t
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     // example 1: encoder on ports A and B
-         *     ADIEncoder encoder_ab('A', 'B');
-         *     const pros::adi::ext_adi_port_tuple_t port = encoder.getPort();
-         *     std::cout << "Top port: " << std::get<1>(port) << std::endl; // outputs 'A'
-         *     std::cout << "Bottom port: " << std::get<2>(port) << std::endl; // outputs 'B'
-         *     // example 2: encoder on ports C and D on the expander on port 1
-         *     ADIEncoder encoder_cd({1, 'C', 'D'});
-         *     const pros::adi::ext_adi_port_tuple_t port = encoder.getPort();
-         *     std::cout << "Expander port: " << std::get<0>(port) << std::endl; // outputs 1
-         *     std::cout << "Top port: " << std::get<1>(port) << std::endl; // outputs 'C'
-         *     std::cout << "Bottom port: " << std::get<2>(port) << std::endl; // outputs 'D'
-         * }
-         * @endcode
-         */
-        pros::adi::ext_adi_port_tuple_t getPort() const;
-    protected:
+    private:
         pros::adi::Encoder m_encoder;
         Angle m_offset = 0_stDeg;
-    private:
-        bool m_reversed;
 };
 } // namespace lemlib

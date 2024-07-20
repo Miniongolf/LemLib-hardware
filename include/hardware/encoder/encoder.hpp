@@ -81,51 +81,6 @@ class Encoder {
          * @endcode
          */
         virtual int setAngle(Angle angle) = 0;
-        /**
-         * @brief Set the encoder to be reversed
-         *
-         * This function sets the encoder to be reversed. This function is non-blocking.
-         *
-         * @param reversed whether the encoder should be reversed or not
-         * @return 0 on success
-         * @return INT_MAX on failure, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     Encoder* encoder = new ADIEncoder('A', 'B');
-         *     if (encoder->setReversed(true) == 0) {
-         *         std::cout << "Encoder reversed!" << std::endl;
-         *     } else {
-         *         std::cout << "Error reversing encoder!" << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        virtual int setReversed(bool reversed) = 0;
-        /**
-         * @brief Check if the encoder is reversed
-         *
-         * @return 0 if its not reversed
-         * @return 1 if it is reversed
-         * @return INT_MAX if there is an error, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     Encoder* encoder = new ADIEncoder('A', 'B');
-         *     const int result = encoder->isReversed();
-         *     if (result == 1) {
-         *         std::cout << "Encoder is reversed!" << std::endl;
-         *     } else if (result == 0) {
-         *         std::cout << "Encoder is not reversed!" << std::endl;
-         *     } else {
-         *         std::cout << "Error checking if encoder is reversed!" << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        virtual int isReversed() = 0;
         virtual ~Encoder() = default;
 };
 } // namespace lemlib
