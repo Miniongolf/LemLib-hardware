@@ -18,8 +18,11 @@ class Rotation : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Rotation encoder = pros::Rotation(1);
-         *     Rotation encoder_1(encoder);
+         *     pros::Rotation pros_encoder(1);
+         *     // construct by passing the pros::Rotation object
+         *     lemlib::Rotation encoder(pros_encoder);
+         *     // construct by implicitly converting the pros::Rotation object
+         *     lemlib::Rotation encoder = pros_encoder;
          * }
          * @endcode
          */
@@ -33,7 +36,7 @@ class Rotation : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Rotation encoder(1);
+         *     lemlib::Rotation encoder = pros::Rotation(1);
          *     const int result = encoder.isConnected();
          *     if (result == 1) {
          *         std::cout << "Encoder is connected!" << std::endl;
@@ -63,7 +66,7 @@ class Rotation : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Rotation encoder(1);
+         *     lemlib::Rotation encoder = pros::Rotation(1);
          *     const Angle angle = encoder.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
@@ -92,7 +95,7 @@ class Rotation : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Rotation encoder(1);
+         *     lemlib::Rotation encoder = pros::Rotation(1);
          *     if (encoder.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
          *         std::cout < "Relative angle: " << encoder.getAngle().convert(deg) << std::endl; // outputs 0

@@ -21,7 +21,7 @@ class Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Encoder* encoder = new ADIEncoder('A', 'B');
+         *     Encoder* encoder;
          *     const int result = encoder->isConnected();
          *     if (result == 1) {
          *         std::cout << "Encoder is connected!" << std::endl;
@@ -46,7 +46,7 @@ class Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Encoder* encoder = new ADIEncoder('A', 'B');
+         *     Encoder* encoder;
          *     const Angle angle = encoder->getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
@@ -70,7 +70,7 @@ class Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Encoder* encoder = new ADIEncoder('A', 'B');
+         *     Encoder* encoder;
          *     if (encoder->setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
          *         std::cout < "Relative angle: " << encoder->getAngle().convert(deg) << std::endl; // outputs 0

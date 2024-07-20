@@ -22,8 +22,11 @@ class ADIEncoder : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::ADIEncoder encoder('A', 'B');
-         *     ADIEncoder adi_encoder(encoder);
+         *     pros::adi::Encoder pros_encoder('A', 'B');
+         *     // construct by passing the pros::ADIEncoder object
+         *     lemlib::ADIEncoder encoder(pros_encoder);
+         *     // construct by implicitly passing the pros::ADIEncoder object
+         *     lemlib::ADIEncoder encoder = pros_encoder;
          * }
          */
         ADIEncoder(pros::adi::Encoder encoder);
@@ -59,7 +62,7 @@ class ADIEncoder : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     ADIEncoder encoder();
+         *     lemlib::ADIEncoder encoder = pros::adi::Encoder('A', 'B');
          *     const Angle angle = encoder.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
@@ -87,7 +90,7 @@ class ADIEncoder : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     ADIEncoder encoder('A', 'B');
+         *     lemlib::ADIEncoder encoder = pros::adi::Encoder('A', 'B');
          *     const int result = encoder.setAngle(0_stDeg);
          *     if (result == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
