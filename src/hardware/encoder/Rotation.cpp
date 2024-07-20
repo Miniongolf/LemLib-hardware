@@ -1,7 +1,6 @@
 #include "hardware/encoder/Rotation.hpp"
+#include "hardware/util.hpp"
 #include <limits.h>
-
-int getSignFromBool(bool x) { return x ? -1 : 1; }
 
 namespace lemlib {
 Rotation::Rotation(int port)

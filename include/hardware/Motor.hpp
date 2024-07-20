@@ -2,12 +2,13 @@
 
 #include "hardware/encoder/Encoder.hpp"
 #include "units/Angle.hpp"
+#include "pros/motors.hpp"
 
 namespace lemlib {
 
 enum BrakeMode { COAST = 0, BRAKE = 1, HOLD = 2 };
 
-class AbstractMotor : public Encoder {
+class Motor : public Encoder {
     public:
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
@@ -29,7 +30,7 @@ class AbstractMotor : public Encoder {
          * }
          * @endcode
          */
-        virtual int move(double percent) = 0;
+        int move(double percent);
         /**
          * @brief move the motor at a given angular velocity
          *
@@ -50,7 +51,7 @@ class AbstractMotor : public Encoder {
          * }
          * @endcode
          */
-        virtual int moveVelocity(AngularVelocity velocity) = 0;
+        int moveVelocity(AngularVelocity velocity);
         /**
          * @brief brake the motor
          *
@@ -70,7 +71,7 @@ class AbstractMotor : public Encoder {
          * }
          * @endcode
          */
-        virtual int brake() = 0;
+        int brake();
         /**
          * @brief set the brake mode of the motor
          *
@@ -91,7 +92,7 @@ class AbstractMotor : public Encoder {
          * }
          * @endcode
          */
-        virtual int setBrakeMode(BrakeMode mode) = 0;
+        int setBrakeMode(BrakeMode mode);
         /**
          * @brief get the brake mode of the motor
          *
@@ -115,9 +116,9 @@ class AbstractMotor : public Encoder {
          * }
          * @endcode
          */
-        virtual BrakeMode getBrakeMode() = 0;
+        BrakeMode getBrakeMode();
         /**
-         * @brief whether the encoder is connected
+         * @brief whether the motor is connected
          *
          * @return 0 if its not connected
          * @return 1 if it is connected
@@ -126,33 +127,33 @@ class AbstractMotor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Encoder* encoder = new Motor(1);
-         *     const int result = encoder->isConnected();
+         *     Motor* motor = new Motor(1);
+         *     const int result = motor->isConnected();
          *     if (result == 1) {
-         *         std::cout << "Encoder is connected!" << std::endl;
+         *         std::cout << "motor is connected!" << std::endl;
          *     } else if (result == 0) {
-         *         std::cout << "Encoder is not connected!" << std::endl;
+         *         std::cout << "motor is not connected!" << std::endl;
          *     } else {
-         *         std::cout << "Error checking if encoder is connected!" << std::endl;
+         *         std::cout << "Error checking if motor is connected!" << std::endl;
          *     }
          * }
          * @endcode
          */
-        virtual int isConnected() = 0;
+        int isConnected();
         /**
-         * @brief Get the relative angle measured by the encoder
+         * @brief Get the relative angle measured by the motor
          *
-         * The relative angle measured by the encoder is the angle of the encoder relative to the last time the encoder
+         * The relative angle measured by the motor is the angle of the motor relative to the last time the motor
          * was reset. As such, it is unbounded.
          *
-         * @return Angle the relative angle measured by the encoder
+         * @return Angle the relative angle measured by the motor
          * @return INFINITY if there is an error, setting errno
          *
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Encoder* encoder = new Motor(1);
-         *     const Angle angle = encoder->getAngle();
+         *     Motor* motor = new Motor(1);
+         *     const Angle angle = motor->getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
          *     } else {
@@ -161,12 +162,12 @@ class AbstractMotor : public Encoder {
          * }
          * @endcode
          */
-        virtual Angle getAngle() = 0;
+        Angle getAngle();
         /**
-         * @brief Set the relative angle of the encoder
+         * @brief Set the relative angle of the motor
          *
-         * This function sets the relative angle of the encoder. The relative angle is the number of rotations the
-         * encoder has measured since the last reset. This function is non-blocking.
+         * This function sets the relative angle of the motor. The relative angle is the number of rotations the
+         * motor has measured since the last reset. This function is non-blocking.
          *
          * @param angle the relative angle to set the measured angle to
          * @return 0 on success
@@ -175,41 +176,41 @@ class AbstractMotor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Encoder* encoder = new Motor(1);
-         *     if (encoder->setAngle(0_stDeg) == 0) {
+         *     Motor* motor = new Motor(1);
+         *     if (motor->setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
-         *         std::cout < "Relative angle: " << encoder->getAngle().convert(deg) << std::endl; // outputs 0
+         *         std::cout < "Relative angle: " << motor->getAngle().convert(deg) << std::endl; // outputs 0
          *     } else {
          *         std::cout << "Error setting relative angle!" << std::endl;
          *     }
          * }
          * @endcode
          */
-        virtual int setAngle(Angle angle) = 0;
+        int setAngle(Angle angle);
         /**
-         * @brief Set the encoder to be reversed
+         * @brief Set the motor to be reversed
          *
-         * This function sets the encoder to be reversed. This function is non-blocking.
+         * This function sets the motor to be reversed. This function is non-blocking.
          *
-         * @param reversed whether the encoder should be reversed or not
+         * @param reversed whether the motor should be reversed or not
          * @return 0 on success
          * @return INT_MAX on failure, setting errno
          *
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Encoder* encoder = new Motor(1);
-         *     if (encoder->setReversed(true) == 0) {
-         *         std::cout << "Encoder reversed!" << std::endl;
+         *     Motor* motor = new Motor(1);
+         *     if (motor->setReversed(true) == 0) {
+         *         std::cout << "motor reversed!" << std::endl;
          *     } else {
-         *         std::cout << "Error reversing encoder!" << std::endl;
+         *         std::cout << "Error reversing motor!" << std::endl;
          *     }
          * }
          * @endcode
          */
-        virtual int setReversed(bool reversed) = 0;
+        int setReversed(bool reversed);
         /**
-         * @brief Check if the encoder is reversed
+         * @brief Check if the motor is reversed
          *
          * @return 0 if its not reversed
          * @return 1 if it is reversed
@@ -218,19 +219,20 @@ class AbstractMotor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     Encoder* encoder = new Motor(1);
-         *     const int result = encoder->isReversed();
+         *     Motor* motor = new Motor(1);
+         *     const int result = motor->isReversed();
          *     if (result == 1) {
-         *         std::cout << "Encoder is reversed!" << std::endl;
+         *         std::cout << "motor is reversed!" << std::endl;
          *     } else if (result == 0) {
-         *         std::cout << "Encoder is not reversed!" << std::endl;
+         *         std::cout << "motor is not reversed!" << std::endl;
          *     } else {
-         *         std::cout << "Error checking if encoder is reversed!" << std::endl;
+         *         std::cout << "Error checking if motor is reversed!" << std::endl;
          *     }
          * }
          * @endcode
          */
-        virtual int isReversed() = 0;
-        virtual ~AbstractMotor() = default;
+        int isReversed();
+    private:
+        pros::Motor m_motor;
 };
 } // namespace lemlib
