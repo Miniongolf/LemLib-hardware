@@ -1,6 +1,6 @@
 #pragma once
 
-#include "units/Vector3D.hpp"
+#include "units/Angle.hpp"
 
 namespace lemlib {
 class IMU {
@@ -49,60 +49,6 @@ class IMU {
          * @param rotation
          */
         virtual void setRotation(Angle rotation) = 0;
-        /**
-         * @brief Get the yaw measured by the IMU
-         *
-         * @return Angle
-         */
-        virtual Angle getYaw() = 0;
-        /**
-         * @brief Get the pitch measured by the IMU
-         *
-         * @return Angle
-         */
-        virtual Angle getPitch() = 0;
-        /**
-         * @brief Get the roll measured by the IMU
-         *
-         * @return Angle
-         */
-        virtual Angle getRoll() = 0;
-        /**
-         * @brief Set the yaw measured by the IMU
-         *
-         * @param yaw
-         */
-        virtual void setYaw(Angle yaw) = 0;
-        /**
-         * @brief Set the pitch measured by the IMU
-         *
-         * @param pitch
-         */
-        virtual void setPitch(Angle pitch) = 0;
-        /**
-         * @brief Set the roll measured by the IMU
-         *
-         * @param roll
-         */
-        virtual void setRoll(Angle roll) = 0;
-        /**
-         * @brief Get the orientation of the IMU in 3D space
-         *
-         * @return units::Vector3D<Angle>
-         */
-        virtual units::Vector3D<Angle> getOrientation() = 0;
-        /**
-         * @brief Get the Linear Acceleration measured by the IMU in 3D space
-         *
-         * @return units::Vector3D<LinearAcceleration>
-         */
-        virtual units::Vector3D<LinearAcceleration> getAcceleration() = 0;
-        /**
-         * @brief Get the Angular Velocity measured by the IMU in 3D space
-         *
-         * @return units::Vector3D<AngularVelocity>
-         */
-        virtual units::Vector3D<AngularVelocity> getAngularVelocity() = 0;
         virtual ~IMU() = default;
 };
 } // namespace lemlib
