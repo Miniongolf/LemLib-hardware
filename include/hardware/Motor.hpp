@@ -7,7 +7,7 @@ namespace lemlib {
 
 enum BrakeMode { COAST = 0, BRAKE = 1, HOLD = 2 };
 
-enum MotorType { V5, EXP };
+enum MotorType { V5 = 0, EXP = 1 };
 
 class Motor : public Encoder {
     public:
