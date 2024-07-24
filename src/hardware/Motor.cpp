@@ -10,9 +10,9 @@ int Motor::move(double percent) {
     // V5 motors have their voltage capped at 12v, while EXP motors have their voltage capped at 7.2v
     // but they have the same max velocity, so we can scale the percent power based on the motor type
     if (getType() == MotorType::V5) {
-        m_motor.move_voltage(percent * 12000);
+        return m_motor.move_voltage(percent * 12000);
     } else {
-        m_motor.move_voltage(percent * 7200);
+        return m_motor.move_voltage(percent * 7200);
     }
 }
 
@@ -22,6 +22,8 @@ MotorType Motor::getType() {
     // it may break between VEXos updates. Instead, we see if we can change the cartridge to something other
     // than the green cartridge, which is only possible on the V5 motor
     const auto oldCart = m_motor.get_gearing();
+    // check for errors
+    if (oldCart == pros::MotorGears::invalid) return MotorType::INVALID;
     m_motor.set_gearing(pros::v5::MotorGears::red);
     if (m_motor.get_gearing() == pros::v5::MotorGears::red) {
         m_motor.set_gearing(oldCart);

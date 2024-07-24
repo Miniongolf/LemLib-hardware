@@ -5,9 +5,9 @@
 
 namespace lemlib {
 
-enum BrakeMode { COAST = 0, BRAKE = 1, HOLD = 2 };
+enum class BrakeMode { COAST, BRAKE, HOLD, INVALID };
 
-enum MotorType { V5 = 0, EXP = 1 };
+enum class MotorType { V5, EXP, INVALID };
 
 class Motor : public Encoder {
     public:
@@ -112,7 +112,7 @@ class Motor : public Encoder {
          * @brief get the brake mode of the motor
          *
          * @return BrakeMode enum value of the brake mode
-         * @return INT_MAX on failure, setting errno
+         * @return BrakeMode::INVALID on failure, setting errno
          *
          * @b Example:
          * @code {.cpp}
@@ -208,7 +208,7 @@ class Motor : public Encoder {
          * There are 2 motors legal for use: The 11W V5 motor and the 5.5W EXP motor
          *
          * @return MotorType the type of the motor
-         * @return INT_MAX on failure, setting errno
+         * @return MotorType::Invalid on failure, setting errno
          */
         MotorType getType();
     private:
