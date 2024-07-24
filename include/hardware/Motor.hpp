@@ -8,6 +8,8 @@ namespace lemlib {
 
 enum BrakeMode { COAST = 0, BRAKE = 1, HOLD = 2 };
 
+enum MotorType { V5, EXP };
+
 class Motor : public Encoder {
     public:
         /**
@@ -201,6 +203,15 @@ class Motor : public Encoder {
          * @endcode
          */
         int setAngle(Angle angle) override;
+        /**
+         * @brief Get the type of the motor
+         *
+         * There are 2 motors legal for use: The 11W V5 motor and the 5.5W EXP motor
+         *
+         * @return MotorType the type of the motor
+         * @return INT_MAX on failure, setting errno
+         */
+        MotorType getType();
     private:
         pros::Motor m_motor;
 };
