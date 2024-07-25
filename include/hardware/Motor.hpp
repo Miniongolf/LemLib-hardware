@@ -209,6 +209,24 @@ class Motor : public Encoder {
          *
          * @return MotorType the type of the motor
          * @return MotorType::Invalid on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     switch (motor.getType()) {
+         *        case (lemlib::MotorType::V5): {
+         *            std::cout << "V5 Motor on port 1" << std::endl;
+         *            break;
+         *        }
+         *        case (lemlib::MotorType::EXP): {
+         *            std::cout << "EXP Motor on port 1" << std::endl;
+         *            break;
+         *        }
+         *        default: std::cout << "Error getting type of motor on port 1" << std::endl;
+         *     }
+         * }
+         * @endcode
          */
         MotorType getType();
     private:
