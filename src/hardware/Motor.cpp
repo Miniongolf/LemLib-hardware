@@ -1,4 +1,4 @@
-#include "hardware/MotorGroup.hpp"
+#include "hardware/Motor.hpp"
 #include "pros/abstract_motor.hpp"
 #include "units/Angle.hpp"
 #include <climits>
@@ -25,10 +25,10 @@ BrakeMode motorBrakeToBrakeMode(pros::MotorBrake mode) {
     }
 }
 
-MotorGroup::MotorGroup(pros::Motor motor)
+Motor::Motor(pros::Motor motor)
     : m_motor(motor) {}
 
-int MotorGroup::move(double percent) {
+int Motor::move(double percent) {
     // the V5 and EXP motors have different voltage caps, so we need to scale based on the motor type
     // V5 motors have their voltage capped at 12v, while EXP motors have their voltage capped at 7.2v
     // but they have the same max velocity, so we can scale the percent power based on the motor type
@@ -39,20 +39,20 @@ int MotorGroup::move(double percent) {
     }
 }
 
-int MotorGroup::moveVelocity(AngularVelocity velocity) {
+int Motor::moveVelocity(AngularVelocity velocity) {
     // pros uses an integer value to represent the rpm of the motor
     return m_motor.move_velocity(to_rpm(units::round(velocity, rpm)));
 }
 
-int MotorGroup::brake() { return m_motor.brake(); }
+int Motor::brake() { return m_motor.brake(); }
 
-int MotorGroup::setBrakeMode(BrakeMode mode) { return m_motor.set_brake_mode(brakeModeToMotorBrake(mode)); }
+int Motor::setBrakeMode(BrakeMode mode) { return m_motor.set_brake_mode(brakeModeToMotorBrake(mode)); }
 
-BrakeMode MotorGroup::getBrakeMode() { return motorBrakeToBrakeMode(m_motor.get_brake_mode()); }
+BrakeMode Motor::getBrakeMode() { return motorBrakeToBrakeMode(m_motor.get_brake_mode()); }
 
-int MotorGroup::isConnected() { return m_motor.is_installed(); }
+int Motor::isConnected() { return m_motor.is_installed(); }
 
-Angle MotorGroup::getAngle() {
+Angle Motor::getAngle() {
     // to allow the user to use whatever encoder units they want, we only deal with raw encoder counts
     // and adjust for different cartridges ourselves
     const pros::MotorGears cartridge = m_motor.get_gearing();
@@ -69,7 +69,7 @@ Angle MotorGroup::getAngle() {
     }
 }
 
-int MotorGroup::setAngle(Angle angle) {
+int Motor::setAngle(Angle angle) {
     // PROS does not let us just set the position, or let us set the zero position using raw encoder ticks
     // one solution is to temporarily set the encoder units, but writing ops open us up to race conditions
     // and other problems which aren't fun to deal with
@@ -97,7 +97,7 @@ int MotorGroup::setAngle(Angle angle) {
     }
 }
 
-MotorType MotorGroup::getType() {
+MotorType Motor::getType() {
     // there is no exposed api to get the motor type
     // while the memory address of the function has been found through reverse engineering,
     // it may break between VEXos updates. Instead, we see if we can change the cartridge to something other

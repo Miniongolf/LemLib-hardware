@@ -9,7 +9,7 @@ enum class BrakeMode { COAST, BRAKE, HOLD, INVALID };
 
 enum class MotorType { V5, EXP, INVALID };
 
-class MotorGroup : public Encoder {
+class Motor : public Encoder {
     public:
         /**
          * @brief Construct a new Motor object
@@ -24,7 +24,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        MotorGroup(pros::Motor motor);
+        Motor(pros::Motor motor);
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
