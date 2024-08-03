@@ -99,11 +99,11 @@ class Motor : public Encoder {
          * void initialize() {
          *     lemlib::Motor motor = pros::Motor(1);
          *     // set the motor to brake when stopped
-         *     motor.setBrakeMode(BrakeMode::BRAKE);
+         *     motor.setBrakeMode(lemlib::BrakeMode::BRAKE);
          *     // set the motor to coast when stopped
-         *     motor.setBrakeMode(BrakeMode::COAST);
+         *     motor.setBrakeMode(lemlib::BrakeMode::COAST);
          *     // set the motor to hold when stopped
-         *     motor.setBrakeMode(BrakeMode::HOLD);
+         *     motor.setBrakeMode(lemlib::BrakeMode::HOLD);
          * }
          * @endcode
          */
@@ -118,12 +118,12 @@ class Motor : public Encoder {
          * @code {.cpp}
          * void initialize() {
          *     lemlib::Motor motor = pros::Motor(1);
-         *     const BrakeMode mode = motor.getBrakeMode();
-         *     if (mode == BrakeMode::BRAKE) {
+         *     const lemlib::BrakeMode mode = motor.getBrakeMode();
+         *     if (mode == lemlib::BrakeMode::BRAKE) {
          *         std::cout << "Brake mode is set to BRAKE!" << std::endl;
-         *     } else if (mode == BrakeMode::COAST) {
+         *     } else if (mode == lemlib::BrakeMode::COAST) {
          *         std::cout << "Brake mode is set to COAST!" << std::endl;
-         *     } else if (mode == BrakeMode::HOLD) {
+         *     } else if (mode == lemlib::BrakeMode::HOLD) {
          *         std::cout << "Brake mode is set to HOLD!" << std::endl;
          *     } else {
          *         std::cout << "Error getting brake mode!" << std::endl;
