@@ -28,6 +28,10 @@ class Motor : public Encoder {
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
          * @param percent the power to move the motor at from -1.0 to +1.0
          * @return 0 on success
          * @return INT_MAX on failure, setting errno
@@ -48,6 +52,10 @@ class Motor : public Encoder {
         int move(double percent);
         /**
          * @brief move the motor at a given angular velocity
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @param velocity the target angular velocity to move the motor at
          * @return 0 on success
@@ -72,6 +80,10 @@ class Motor : public Encoder {
          *
          * This function will stop the motor using the set brake mode
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
          * @return 0 on success
          * @return INT_MAX on failure, setting errno
          *
@@ -89,6 +101,10 @@ class Motor : public Encoder {
         int brake();
         /**
          * @brief set the brake mode of the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @param mode the brake mode to set the motor to
          * @return 0 on success
@@ -111,6 +127,10 @@ class Motor : public Encoder {
         /**
          * @brief get the brake mode of the motor
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
          * @return BrakeMode enum value of the brake mode
          * @return BrakeMode::INVALID on failure, setting errno
          *
@@ -131,9 +151,14 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        BrakeMode getBrakeMode();
+        BrakeMode getBrakeMode() const;
         /**
          * @brief whether the motor is connected
+         *
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @return 0 if its not connected
          * @return 1 if it is connected
@@ -161,6 +186,10 @@ class Motor : public Encoder {
          * The relative angle measured by the motor is the angle of the motor relative to the last time the motor
          * was reset. As such, it is unbounded.
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
          * @return Angle the relative angle measured by the motor
          * @return INFINITY if there is an error, setting errno
          *
@@ -180,6 +209,10 @@ class Motor : public Encoder {
         Angle getAngle() override;
         /**
          * @brief Set the relative angle of the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * This function sets the relative angle of the motor. The relative angle is the number of rotations the
          * motor has measured since the last reset. This function is non-blocking.
@@ -206,6 +239,11 @@ class Motor : public Encoder {
          * @brief Get the type of the motor
          *
          * There are 2 motors legal for use: The 11W V5 motor and the 5.5W EXP motor
+         *
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @return MotorType the type of the motor
          * @return MotorType::Invalid on failure, setting errno

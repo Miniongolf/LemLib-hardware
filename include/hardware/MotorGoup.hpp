@@ -12,7 +12,8 @@ namespace lemlib {
  *
  * Error handling for the MotorGroup class is a bit different from other hardware classes. This is because
  * the MotorGroup class represents a group of motors, any of which could fail. However, as long as one
- * motor in the group is functioning properly, the MotorGroup will not throw any errors.
+ * motor in the group is functioning properly, the MotorGroup will not throw any errors. Since motors could fail
+ * for different reasons, the behaviour of errno is to be considered undefined after a failure.
  */
 class MotorGroup : Encoder {
     public:

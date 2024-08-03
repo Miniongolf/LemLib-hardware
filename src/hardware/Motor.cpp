@@ -4,7 +4,6 @@
 #include <climits>
 
 namespace lemlib {
-
 pros::MotorBrake brakeModeToMotorBrake(BrakeMode mode) {
     // pros::MotorBrake is identical to lemlib::BrakeMode, except for its name and lemlib uses an enum class for type
     // safety
@@ -48,7 +47,7 @@ int Motor::brake() { return m_motor.brake(); }
 
 int Motor::setBrakeMode(BrakeMode mode) { return m_motor.set_brake_mode(brakeModeToMotorBrake(mode)); }
 
-BrakeMode Motor::getBrakeMode() { return motorBrakeToBrakeMode(m_motor.get_brake_mode()); }
+BrakeMode Motor::getBrakeMode() const { return motorBrakeToBrakeMode(m_motor.get_brake_mode()); }
 
 int Motor::isConnected() { return m_motor.is_installed(); }
 
