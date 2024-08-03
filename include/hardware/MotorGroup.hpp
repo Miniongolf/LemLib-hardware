@@ -1,5 +1,7 @@
 #include "hardware/Motor.hpp"
+#include "pros/motor_group.hpp"
 #include <vector>
+#include <initializer_list>
 
 namespace lemlib {
 /**
@@ -17,6 +19,47 @@ namespace lemlib {
  */
 class MotorGroup : Encoder {
     public:
+        /**
+         * @brief Construct a new MotorGroup
+         *
+         * @param ports list of ports of the motors in the group
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     pros::Motor motor1(1);
+         *     pros::Motor motor2(2);
+         *     pros::Motor motor3(3);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3});
+         * }
+         * @endcode
+         */
+        MotorGroup(std::initializer_list<pros::Motor> motors);
+        /**
+         * @brief Construct a new MotorGroup
+         *
+         * @param ports list of ports of the motors in the group
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor1(1);
+         *     lemlib::Motor motor2(2);
+         *     lemlib::Motor motor3(3);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3});
+         * }
+         * @endcode
+         */
+        MotorGroup(std::initializer_list<lemlib::Motor> motors);
+
+        MotorGroup(pros::v5::MotorGroup motors);
+
+        MotorGroup(std::initializer_list<int> ports, pros::MotorGears gear);
+
+        template <int size> MotorGroup(std::array<int, size> ports, std::array<pros::MotorGears, size> gears) {
+            for (int i = 0; i < size; i++) m_motors.push_back(pros::Motor(ports[i], gears[i]));
+        }
+
         /**
          * @brief move the motors at a percent power from -1.0 to +1.0
          *
