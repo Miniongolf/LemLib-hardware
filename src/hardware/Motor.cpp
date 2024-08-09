@@ -110,4 +110,17 @@ MotorType Motor::getType() {
         return MotorType::V5;
     } else return MotorType::EXP;
 }
+
+Cartridge Motor::getCartridge() const {
+    const pros::MotorGears cartridge = m_motor.get_gearing();
+    // check for errors
+    if (cartridge == pros::MotorGears::invalid) return Cartridge::INVALID;
+    // convert the cartridge to our enum
+    switch (cartridge) {
+        case pros::MotorGears::blue: return Cartridge::BLUE;
+        case pros::MotorGears::green: return Cartridge::GREEN;
+        case pros::MotorGears::red: return Cartridge::RED;
+        default: return Cartridge::INVALID;
+    }
+}
 } // namespace lemlib

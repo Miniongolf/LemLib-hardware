@@ -9,6 +9,8 @@ enum class BrakeMode { COAST, BRAKE, HOLD, INVALID };
 
 enum class MotorType { V5, EXP, INVALID };
 
+enum class Cartridge { RED, GREEN, BLUE, INVALID };
+
 class Motor : public Encoder {
     public:
         /**
@@ -155,7 +157,6 @@ class Motor : public Encoder {
         /**
          * @brief whether the motor is connected
          *
-         *
          * This function uses the following values of errno when an error state is reached:
          *
          * ENODEV: the port cannot be configured as a motor
@@ -240,7 +241,6 @@ class Motor : public Encoder {
          *
          * There are 2 motors legal for use: The 11W V5 motor and the 5.5W EXP motor
          *
-         *
          * This function uses the following values of errno when an error state is reached:
          *
          * ENODEV: the port cannot be configured as a motor
@@ -267,6 +267,39 @@ class Motor : public Encoder {
          * @endcode
          */
         MotorType getType();
+        /**
+         * @brief Get the cartridge installed in the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @return Cartridge the type of cartridge installed in the motor
+         * @return Cartridge::Invalid on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     switch (motor.getCartridge()) {
+         *        case (lemlib::Cartridge::RED): {
+         *            std::cout << "Red Cartridge in motor on port 1" << std::endl;
+         *            break;
+         *        }
+         *        case (lemlib::Cartridge::GREEN): {
+         *            std::cout << "Green Cartridge in motor on port 1" << std::endl;
+         *            break;
+         *        }
+         *        case (lemlib::Cartridge::BLUE): {
+         *            std::cout << "Blue Cartridge in motor on port 1" << std::endl;
+         *            break;
+         *        }
+         *        default: std::cout << "Error getting cartridge of motor on port 1" << std::endl;
+         *     }
+         * }
+         * @endcode
+         */
+        Cartridge getCartridge() const;
     private:
         pros::Motor m_motor;
 };
