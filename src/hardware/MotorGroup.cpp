@@ -1,4 +1,5 @@
 #include "hardware/MotorGroup.hpp"
+#include "Motor.hpp"
 #include "units/Angle.hpp"
 #include <climits>
 
@@ -29,7 +30,12 @@ int MotorGroup::moveVelocity(AngularVelocity velocity) {
     for (Motor motor : m_motors) {
         // since the motors in the group are geared together, we need to account for different gearings
         // of different motors in the group
-        const int result = motor.moveVelocity(velocity);
+        const Cartridge cartridge = motor.getCartridge();
+        // check for errors
+        if (cartridge == Cartridge::INVALID) continue;
+        // calculate gear ratio
+        const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;
+        const int result = motor.moveVelocity(velocity * ratio);
         if (result == 0) success = true;
     }
     // as long as one motor moves successfully, return 0 (success)

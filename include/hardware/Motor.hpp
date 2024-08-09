@@ -9,7 +9,7 @@ enum class BrakeMode { COAST, BRAKE, HOLD, INVALID };
 
 enum class MotorType { V5, EXP, INVALID };
 
-enum class Cartridge { RED, GREEN, BLUE, INVALID };
+enum class Cartridge { RED = 100, GREEN = 200, BLUE = 600, INVALID };
 
 class Motor : public Encoder {
     public:
