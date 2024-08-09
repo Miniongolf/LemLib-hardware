@@ -28,9 +28,11 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     // in order for automatic gear ration calculations to work properly, the motors must
+         *     // have a cartridge passed to their constructor
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     // create a new motor group with motors 1, 2, and 3
          *     // with a theoretical maximum output velocity of 200 rpm
          *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
@@ -46,9 +48,11 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     // in order for automatic gear ration calculations to work properly, the motors must
+         *     // have a cartridge passed to their constructor
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3});
          *     // create a new motor group with motors 1, 2, and 3
          *     // with a theoretical maximum output velocity of 200 rpm
@@ -67,9 +71,9 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     // move the motors forward at 50% power
          *     motorGroup.move(0.5);
@@ -91,9 +95,9 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     // move the motors forward at 50 degrees per second
          *     motorGroup.moveVelocity(50_degps);
@@ -116,9 +120,9 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     // move the motors forward at 50% power
          *     motorGroup.move(0.5);
@@ -138,9 +142,9 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     // set the motors to brake when stopped
          *     motorGroup.setBrakeMode(lemlib::BrakeMode::BRAKE);
@@ -161,9 +165,9 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     const lemlib::BrakeMode mode = motorGroup.getBrakeMode();
          *     if (mode == lemlib::BrakeMode::BRAKE) {
@@ -189,9 +193,9 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     const int result = motorGroup.isConnected();
          *     if (result == 1) {
@@ -217,9 +221,9 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     const Angle angle = motorGroup.getAngle();
          *     if (angle == INFINITY) {
@@ -244,9 +248,9 @@ class MotorGroup : Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     pros::Motor motor1(1);
-         *     pros::Motor motor2(2);
-         *     pros::Motor motor3(3);
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     if (motorGroup.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
