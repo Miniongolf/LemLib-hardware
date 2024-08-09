@@ -99,6 +99,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
          *     // move the motors forward at 50 degrees per second
          *     motorGroup.moveVelocity(50_degps);
          *     // move the motors backward at 50 degrees per second
@@ -124,6 +125,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
          *     // move the motors forward at 50% power
          *     motorGroup.move(0.5);
          *     // brake the motors
@@ -146,6 +148,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
          *     // set the motors to brake when stopped
          *     motorGroup.setBrakeMode(lemlib::BrakeMode::BRAKE);
          *     // set the motors to coast when stopped
@@ -169,6 +172,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
          *     const lemlib::BrakeMode mode = motorGroup.getBrakeMode();
          *     if (mode == lemlib::BrakeMode::BRAKE) {
          *         std::cout << "Brake mode is set to BRAKE!" << std::endl;
@@ -197,6 +201,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
          *     const int result = motorGroup.isConnected();
          *     if (result == 1) {
          *         std::cout << "Encoder is connected!" << std::endl;
@@ -225,6 +230,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
          *     const Angle angle = motorGroup.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
@@ -252,6 +258,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
          *     if (motorGroup.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
          *         std::cout < "Relative angle: " << motorGroup.getAngle().convert(deg) << std::endl; // outputs 0
