@@ -31,6 +31,8 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1);
          *     pros::Motor motor2(2);
          *     pros::Motor motor3(3);
+         *     // create a new motor group with motors 1, 2, and 3
+         *     // with a theoretical maximum output velocity of 200 rpm
          *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          * }
          * @endcode
@@ -47,8 +49,10 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1);
          *     pros::Motor motor2(2);
          *     pros::Motor motor3(3);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
-         *     lemlib::MotorGroup motorGroup(motorGroup);
+         *     pros::MotorGroup motorGroup({motor1, motor2, motor3});
+         *     // create a new motor group with motors 1, 2, and 3
+         *     // with a theoretical maximum output velocity of 200 rpm
+         *     lemlib::MotorGroup motorGroup(motorGroup, 200_rpm);
          * }
          * @endcode
          */
