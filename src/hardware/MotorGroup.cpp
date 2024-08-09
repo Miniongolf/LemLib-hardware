@@ -41,4 +41,85 @@ int MotorGroup::moveVelocity(AngularVelocity velocity) {
     // as long as one motor moves successfully, return 0 (success)
     return success ? 0 : INT_MAX;
 }
+
+int MotorGroup::brake() {
+    bool success = false;
+    for (Motor motor : m_motors) {
+        const int result = motor.brake();
+        if (result == 0) success = true;
+    }
+    // as long as one motor brakes successfully, return 0 (success)
+    return success ? 0 : INT_MAX;
+}
+
+int MotorGroup::setBrakeMode(BrakeMode mode) {
+    bool success = false;
+    for (Motor motor : m_motors) {
+        const int result = motor.setBrakeMode(mode);
+        if (result == 0) success = true;
+    }
+    // as long as one motor sets the brake mode successfully, return 0 (success)
+    return success ? 0 : INT_MAX;
+}
+
+std::vector<BrakeMode> MotorGroup::getBrakeModes() {
+    std::vector<BrakeMode> brakeModes;
+    for (Motor motor : m_motors) brakeModes.push_back(motor.getBrakeMode());
+    return brakeModes;
+}
+
+int MotorGroup::isConnected() {
+    for (Motor motor : m_motors) {
+        const int result = motor.isConnected();
+        if (result == 1) return true;
+    }
+    // if no motors are connected, return 0
+    return 0;
+}
+
+Angle MotorGroup::getAngle() {
+    // get the average angle of all motors in the group
+    Angle angle = 0_stDeg;
+    bool success = false;
+    for (Motor motor : m_motors) {
+        // get angle
+        const Angle result = motor.getAngle();
+        if (result == from_sDeg(INFINITY)) continue; // check for errors
+        // get motor cartridge
+        const Cartridge cartridge = motor.getCartridge();
+        if (cartridge == Cartridge::INVALID) continue; // check for errors
+        success = true;
+        // calculate the gear ratio
+        const Number ratio = m_outputVelocity / from_rpm(static_cast<int>(cartridge));
+        angle += result * ratio;
+    }
+    // if no motors are connected, return INFINITY
+    if (!success) return from_sDeg(INFINITY);
+    // otherwise, return the average angle
+    return angle / getSize();
+}
+
+int MotorGroup::setAngle(Angle angle) {
+    bool success = false;
+    for (Motor motor : m_motors) {
+        // since the motors in the group are geared together, we need to account for different gearings
+        // of different motors in the group
+        const Cartridge cartridge = motor.getCartridge();
+        // check for errors
+        if (cartridge == Cartridge::INVALID) continue;
+        // calculate gear ratio
+        const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;
+        const int result = motor.setAngle(angle * ratio);
+        if (result == 0) success = true;
+    }
+    // as long as one motor sets the angle successfully, return 0 (success)
+    return success ? 0 : INT_MAX;
+}
+
+int MotorGroup::getSize() const {
+    int size = 0;
+    for (Motor motor : m_motors)
+        if (motor.isConnected()) size++;
+    return size;
+}
 }; // namespace lemlib

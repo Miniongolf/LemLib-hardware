@@ -173,7 +173,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
-         *     const lemlib::BrakeMode mode = motorGroup.getBrakeMode();
+         *     const lemlib::BrakeMode mode = motorGroup.getBrakeModes();
          *     if (mode == lemlib::BrakeMode::BRAKE) {
          *         std::cout << "Brake mode is set to BRAKE!" << std::endl;
          *     } else if (mode == lemlib::BrakeMode::COAST) {
@@ -186,7 +186,7 @@ class MotorGroup : Encoder {
          * }
          * @endcode
          */
-        std::vector<BrakeMode> getBrakeMode();
+        std::vector<BrakeMode> getBrakeModes();
         /**
          * @brief whether any of the motors in the motor group are connected
          *
@@ -269,6 +269,24 @@ class MotorGroup : Encoder {
          * @endcode
          */
         int setAngle(Angle angle) override;
+        /**
+         * @brief Get the number of connected motors in the group
+         *
+         * @return int the number of connected motors in the group
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
+         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
+         *     std::cout << "Number of connected motors: " << motorGroup.getSize() << std::endl;
+         * }
+         * @endcode
+         */
+        int getSize() const;
     private:
         const AngularVelocity m_outputVelocity;
         std::vector<Motor> m_motors;
