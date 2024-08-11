@@ -122,4 +122,9 @@ int MotorGroup::getSize() const {
         if (motor.isConnected()) size++;
     return size;
 }
+
+int MotorGroup::addMotor(int port) {
+    Motor motor = pros::Motor(port);
+    // set the motor's angle to
+}
 }; // namespace lemlib

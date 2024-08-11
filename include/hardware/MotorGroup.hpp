@@ -287,6 +287,7 @@ class MotorGroup : Encoder {
          * @endcode
          */
         int getSize() const;
+        int addMotor(int port);
     private:
         const AngularVelocity m_outputVelocity;
         std::vector<Motor> m_motors;
