@@ -64,6 +64,10 @@ class MotorGroup : Encoder {
         /**
          * @brief move the motors at a percent power from -1.0 to +1.0
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
          * @param percent the power to move the motors at from -1.0 to +1.0
          * @return 0 on success
          * @return INT_MAX on failure, setting errno
@@ -87,6 +91,10 @@ class MotorGroup : Encoder {
         int move(double percent);
         /**
          * @brief move the motors at a given angular velocity
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @param velocity the target angular velocity to move the motors at
          * @return 0 on success
@@ -113,6 +121,10 @@ class MotorGroup : Encoder {
         /**
          * @brief brake the motors
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
          * This function will stop the motors using the set brake mode
          *
          * @return 0 on success
@@ -136,6 +148,10 @@ class MotorGroup : Encoder {
         int brake();
         /**
          * @brief set the brake mode of the motors
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @param mode the brake mode to set the motors to
          * @return 0 on success
@@ -161,6 +177,10 @@ class MotorGroup : Encoder {
         int setBrakeMode(BrakeMode mode);
         /**
          * @brief get the brake mode of the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @return BrakeMode enum value of the brake mode
          * @return BrakeMode::INVALID on failure, setting errno
@@ -189,6 +209,10 @@ class MotorGroup : Encoder {
         std::vector<BrakeMode> getBrakeModes();
         /**
          * @brief whether any of the motors in the motor group are connected
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @return 0 no motors are connected
          * @return 1 if at least one motor is connected
@@ -220,6 +244,10 @@ class MotorGroup : Encoder {
          * The relative angle measured by the encoder is the angle of the encoder relative to the last time the encoder
          * was reset. As such, it is unbounded.
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
          * @return Angle the relative angle measured by the encoder
          * @return INFINITY if there is an error, setting errno
          *
@@ -247,6 +275,10 @@ class MotorGroup : Encoder {
          * This function sets the relative angle of the encoder. The relative angle is the number of rotations the
          * encoder has measured since the last reset. This function is non-blocking.
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
          * @param angle the relative angle to set the measured angle to
          * @return 0 on success
          * @return INT_MAX on failure, setting errno
@@ -272,6 +304,10 @@ class MotorGroup : Encoder {
         /**
          * @brief Get the number of connected motors in the group
          *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motors
+         *
          * @return int the number of connected motors in the group
          *
          * @b Example:
@@ -287,6 +323,36 @@ class MotorGroup : Encoder {
          * @endcode
          */
         int getSize() const;
+        /**
+         * @brief Add a motor to the motor group
+         *
+         * This function adds a motor to the motor group. If successful, it will set the angle measured by the motor to
+         * the average angle measured by the motor group. It will also set the brake mode of the motor to that of the
+         * first working motor in the group. If there are any errors, the motor will not be added to the group.
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @param port the signed port of the motor to be added to the group. Negative ports indicate the motor should
+         * be reversed
+         *
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
+         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
+         *     // add a motor to the group
+         *     motorGroup.addMotor(4);
+         * }
+         * @endcode
+         */
         int addMotor(int port);
     private:
         const AngularVelocity m_outputVelocity;

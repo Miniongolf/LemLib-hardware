@@ -125,6 +125,23 @@ int MotorGroup::getSize() const {
 
 int MotorGroup::addMotor(int port) {
     Motor motor = pros::Motor(port);
-    // set the motor's angle to
+    // set the motor's break mode to whatever the first working motor's brake mode is
+    for (Motor m : m_motors) {
+        const BrakeMode mode = m.getBrakeMode();
+        if (mode == BrakeMode::INVALID) continue;
+        if (motor.setBrakeMode(mode)) break;
+        else return INT_MAX;
+    }
+    // calculate the gear ratio
+    const Cartridge cartridge = motor.getCartridge();
+    if (cartridge == Cartridge::INVALID) return INT_MAX; // check for errors
+    const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;
+    const Angle angle = getAngle() * ratio;
+    if (angle == from_sDeg(INFINITY)) return INT_MAX; // check for errors
+    // set the angle of the new motor
+    const int result = motor.setAngle(angle);
+    if (result == INT_MAX) return INT_MAX; // check for errors
+    m_motors.push_back(motor);
+    return 0;
 }
 }; // namespace lemlib
