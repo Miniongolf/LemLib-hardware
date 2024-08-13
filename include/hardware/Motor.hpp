@@ -300,6 +300,20 @@ class Motor : public Encoder {
          * @endcode
          */
         Cartridge getCartridge() const;
+        /**
+         * @brief Get the port the motor is connected to
+         *
+         * @return int the port the motor is connected to
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     std::cout << "Motor is connected to port " << motor.getPort() << std::endl;
+         * }
+         * @endcode
+         */
+        int getPort() const;
     private:
         pros::Motor m_motor;
 };

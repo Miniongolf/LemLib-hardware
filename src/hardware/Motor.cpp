@@ -123,4 +123,6 @@ Cartridge Motor::getCartridge() const {
         default: return Cartridge::INVALID;
     }
 }
+
+int Motor::getPort() const { return m_motor.get_port(); }
 } // namespace lemlib
