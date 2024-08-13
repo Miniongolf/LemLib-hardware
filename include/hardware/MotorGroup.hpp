@@ -78,7 +78,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *     // move the motors forward at 50% power
          *     motorGroup.move(0.5);
          *     // move the motors backward at 50% power
@@ -106,7 +106,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     // move the motors forward at 50 degrees per second
          *     motorGroup.moveVelocity(50_degps);
@@ -136,7 +136,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     // move the motors forward at 50% power
          *     motorGroup.move(0.5);
@@ -163,7 +163,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     // set the motors to brake when stopped
          *     motorGroup.setBrakeMode(lemlib::BrakeMode::BRAKE);
@@ -191,7 +191,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     const lemlib::BrakeMode mode = motorGroup.getBrakeModes();
          *     if (mode == lemlib::BrakeMode::BRAKE) {
@@ -224,7 +224,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     const int result = motorGroup.isConnected();
          *     if (result == 1) {
@@ -257,7 +257,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     const Angle angle = motorGroup.getAngle();
          *     if (angle == INFINITY) {
@@ -289,7 +289,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     if (motorGroup.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
@@ -316,7 +316,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     std::cout << "Number of connected motors: " << motorGroup.getSize() << std::endl;
          * }
@@ -346,7 +346,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor1(1, pros::v5::MotorGears::green);
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
-         *     pros::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
          *     // add a motor to the group
          *     motorGroup.addMotor(4);
@@ -354,6 +354,33 @@ class MotorGroup : Encoder {
          * @endcode
          */
         int addMotor(int port);
+        /**
+         * @brief Add a motor to the motor group
+         *
+         * This function adds a motor to the motor group. If successful, it will set the angle measured by the motor to
+         * the average angle measured by the motor group. It will also set the brake mode of the motor to that of the
+         * first working motor in the group. If there are any errors, the motor will not be added to the group.
+         *
+         * @param motor the motor to be added to the group
+         *
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
+         *    // add a motor to the group
+         *     pros::Motor motor4(4, pros::v5::MotorGears::green);
+         *     motorGroup.addMotor(motor4);
+         * }
+         * @endcode
+         */
+        int addMotor(Motor motor);
     private:
         const AngularVelocity m_outputVelocity;
         std::vector<Motor> m_motors;

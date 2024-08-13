@@ -1,12 +1,16 @@
 #include "main.h"
+#include "hardware/MotorGroup.hpp"
 
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
-void initialize() {}
+void initialize() {
+    pros::Motor motor1(1, pros::v5::MotorGears::green);
+    pros::Motor motor2(2, pros::v5::MotorGears::green);
+    pros::Motor motor3(3, pros::v5::MotorGears::green);
+    lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+
+    // add a motor to the group
+    pros::Motor motor4(4, pros::v5::MotorGears::green);
+    motorGroup.addMotor(motor4);
+}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or

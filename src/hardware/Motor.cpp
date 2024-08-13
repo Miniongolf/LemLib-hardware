@@ -76,7 +76,7 @@ int Motor::setAngle(Angle angle) {
     const pros::MotorUnits units = m_motor.get_encoder_units();
     const double raw = m_motor.get_position();
     if (units == pros::MotorUnits::invalid) return INT_MAX;
-    if (raw == INFINITY) return INFINITY;
+    if (raw == INFINITY) return INT_MAX;
     switch (units) {
         case pros::MotorUnits::counts: {
             const pros::MotorGears cartridge = m_motor.get_gearing();
