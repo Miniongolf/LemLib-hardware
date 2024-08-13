@@ -1,16 +1,7 @@
 #include "main.h"
 #include "hardware/MotorGroup.hpp"
 
-void initialize() {
-    pros::Motor motor1(1, pros::v5::MotorGears::green);
-    pros::Motor motor2(2, pros::v5::MotorGears::green);
-    pros::Motor motor3(3, pros::v5::MotorGears::green);
-    lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
-
-    // add a motor to the group
-    pros::Motor motor4(4, pros::v5::MotorGears::green);
-    motorGroup.addMotor(motor4);
-}
+void initialize() {}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or

@@ -125,7 +125,7 @@ int MotorGroup::getSize() const {
 
 int MotorGroup::addMotor(int port) {
     Motor motor = pros::Motor(port);
-    // set the motor's break mode to whatever the first working motor's brake mode is
+    // set the motor's brake mode to whatever the first working motor's brake mode is
     for (Motor m : m_motors) {
         const BrakeMode mode = m.getBrakeMode();
         if (mode == BrakeMode::INVALID) continue;
@@ -144,4 +144,26 @@ int MotorGroup::addMotor(int port) {
     m_motors.push_back(motor);
     return 0;
 }
+
+int MotorGroup::addMotor(Motor motor) { return addMotor(motor.getPort()); }
+
+int MotorGroup::addMotor(Motor motor, bool reversed) {
+    // set the motor reversal
+    motor.setReversed(reversed);
+    return addMotor(motor);
+}
+
+void MotorGroup::removeMotor(int port) {
+    port = abs(port); // make sure the port is positive
+    std::vector<Motor> newGroup;
+    // remove the motor with the specified port
+    for (Motor motor : m_motors) {
+        if (motor.getPort() == port) continue;
+        newGroup.push_back(motor);
+    }
+    // set the new motor group
+    m_motors = newGroup;
+}
+
+void MotorGroup::removeMotor(Motor motor) { removeMotor(motor.getPort()); }
 }; // namespace lemlib

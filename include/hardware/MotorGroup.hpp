@@ -381,6 +381,77 @@ class MotorGroup : Encoder {
          * @endcode
          */
         int addMotor(Motor motor);
+        /**
+         * @brief Add a motor to the motor group
+         *
+         * This function adds a motor to the motor group. If successful, it will set the angle measured by the motor to
+         * the average angle measured by the motor group. It will also set the brake mode of the motor to that of the
+         * first working motor in the group. If there are any errors, the motor will not be added to the group.
+         *
+         * @param motor the motor to be added to the group
+         * @param reversed whether the motor should be reversed
+         *
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
+         *    // add a motor to the group, which should be reversed
+         *     pros::Motor motor4(4, pros::v5::MotorGears::green);
+         *     motorGroup.addMotor(motor4, true);
+         * }
+         * @endcode
+         */
+        int addMotor(Motor motor, bool reversed);
+        /**
+         * @brief Remove a motor from the motor group
+         *
+         * This function does not return any errors
+         *
+         * @param port the port of the motor to be removed from the group
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
+         *     // remove a motor from the group
+         *     motorGroup.removeMotor(4);
+         * }
+         * @endcode
+         */
+        void removeMotor(int port);
+        /**
+         * @brief Remove a motor from the motor group
+         *
+         * This function does not return any errors
+         *
+         * @param motor the motor to be removed from the group
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     pros::Motor motor1(1, pros::v5::MotorGears::green);
+         *     pros::Motor motor2(2, pros::v5::MotorGears::green);
+         *     pros::Motor motor3(3, pros::v5::MotorGears::green);
+         *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
+         *     // remove a motor from the group
+         *     pros::Motor motor4(4, pros::v5::MotorGears::green);
+         *     motorGroup.removeMotor(motor4);
+         * }
+         * @endcode
+         */
+        void removeMotor(Motor motor);
     private:
         const AngularVelocity m_outputVelocity;
         std::vector<Motor> m_motors;

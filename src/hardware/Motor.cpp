@@ -124,5 +124,18 @@ Cartridge Motor::getCartridge() const {
     }
 }
 
-int Motor::getPort() const { return m_motor.get_port(); }
+bool Motor::isReversed() const {
+    // technically this returns an int, because if a non-zero value is passed to pros::Motor::is_reversed(), it will
+    // return INT_MAX
+    // but as long as we don't (which is easy, just don't pass a value to it), it will either return a 0 or 1
+    return m_motor.is_reversed();
+}
+
+void Motor::setReversed(bool reversed) { m_motor.set_reversed(reversed); }
+
+int Motor::getPort() const {
+    // PROS returns the port number as a signed integer, which is negative if the motor is reversed.
+    // We return the absolute value of the port number to avoid negative port numbers.
+    return std::abs(m_motor.get_port());
+}
 } // namespace lemlib

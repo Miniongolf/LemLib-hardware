@@ -301,6 +301,46 @@ class Motor : public Encoder {
          */
         Cartridge getCartridge() const;
         /**
+         * @brief get whether the motor is reversed
+         *
+         * @return 0 if the motor is not reversed
+         * @return 1 if the motor is reversed
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     if (motor.isReversed() == 1) {
+         *         std::cout << "Motor is reversed!" << std::endl;
+         *     } else if (motor.isReversed() == 0) {
+         *         std::cout << "Motor is not reversed!" << std::endl;
+         *     } else {
+         *         std::cout << "Error checking if motor is reversed!" << std::endl;
+         *     }
+         * }
+         * @endcode
+         */
+        bool isReversed() const;
+        /**
+         * @brief set whether the motor should be reversed or not
+         *
+         * This function does not return a value or set errno, as it is impossible for it to fail
+         *
+         * @param reversed whether the motor should be reversed or not
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *     // reverse the motor
+         *     motor.setReversed(true);
+         * }
+         * @endcode
+         */
+        void setReversed(bool reversed);
+        /**
          * @brief Get the port the motor is connected to
          *
          * @return int the port the motor is connected to
