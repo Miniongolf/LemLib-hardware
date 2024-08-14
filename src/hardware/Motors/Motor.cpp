@@ -24,7 +24,7 @@ BrakeMode motorBrakeToBrakeMode(pros::MotorBrake mode) {
     }
 }
 
-Motor::Motor(pros::Motor motor)
+Motor::Motor(pros::Motor& motor)
     : m_motor(motor) {}
 
 int Motor::move(double percent) {
