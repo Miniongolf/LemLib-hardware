@@ -1,6 +1,4 @@
-#include "hardware/MotorGroup.hpp"
-#include "Motor.hpp"
-#include "units/Angle.hpp"
+#include "hardware/Motors/MotorGroup.hpp"
 #include <climits>
 
 namespace lemlib {

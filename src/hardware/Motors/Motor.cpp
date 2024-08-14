@@ -1,4 +1,4 @@
-#include "hardware/Motor.hpp"
+#include "hardware/Motors/Motor.hpp"
 #include "pros/abstract_motor.hpp"
 #include "units/Angle.hpp"
 #include <climits>

@@ -1,4 +1,4 @@
-#include "hardware/Motor.hpp"
+#include "hardware/Motors/Motor.hpp"
 #include "pros/motor_group.hpp"
 #include <vector>
 #include <initializer_list>
