@@ -228,7 +228,7 @@ class Motor : public Encoder {
          *     lemlib::Motor motor = pros::Motor(1);
          *     if (motor.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
-         *         std::cout < "Relative angle: " << motor.getAngle().convert(deg) << std::endl; // outputs 0
+         *         std::cout < "Relative angle: " << to_sDeg(motor.getAngle()) << std::endl; // outputs 0
          *     } else {
          *         std::cout << "Error setting relative angle!" << std::endl;
          *     }

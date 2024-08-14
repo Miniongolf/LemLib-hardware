@@ -264,7 +264,7 @@ class MotorGroup : Encoder {
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
          *     } else {
-         *         std::cout << "Relative angle: " << angle.convert(deg) << std::endl;
+         *         std::cout << "Relative angle: " << to_sDeg(angle) << std::endl;
          *     }
          * }
          * @endcode

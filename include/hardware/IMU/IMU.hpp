@@ -12,7 +12,7 @@ class IMU {
          * This function is non-blocking.
          *
          * @return 0 success
-         * @return INT_MAX error occurred
+         * @return INT_MAX error occurred, setting errno
          */
         virtual int calibrate() = 0;
         /**
@@ -20,7 +20,7 @@ class IMU {
          *
          * @return true the IMU is calibrated
          * @return false the IMU is not calibrated
-         * @return INT_MAX error occurred
+         * @return INT_MAX error occurred, setting errno
          */
         virtual int isCalibrated() = 0;
         /**
@@ -28,7 +28,7 @@ class IMU {
          *
          * @return true the IMU is calibrating
          * @return false the IMU is not calibrating
-         * @return INT_MAX error occurred
+         * @return INT_MAX error occurred, setting errno
          */
         virtual int isCalibrating() = 0;
         /**
@@ -36,15 +36,16 @@ class IMU {
          *
          * @return true the IMU is connected
          * @return false the IMU is not connected
+         * @return INT_MAX error occurred, setting errno
          */
-        virtual bool isConnected() = 0;
+        virtual int isConnected() = 0;
         /**
          * @brief Get the rotation of the IMU
          *
          * This function returns the unbounded heading of the IMU
          *
          * @return Angle the rotation of the IMU
-         * @return INFINITY error occurred
+         * @return INFINITY error occurred, setting errno
          */
         virtual Angle getRotation() = 0;
         /**
@@ -54,7 +55,7 @@ class IMU {
          *
          * @param rotation
          * @return int 0 success
-         * @return INT_MAX error occurred
+         * @return INT_MAX error occurred, setting errno
          */
         virtual int setRotation(Angle rotation) = 0;
         virtual ~IMU() = default;
