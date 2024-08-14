@@ -26,7 +26,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        Motor(pros::Motor& motor);
+        Motor(pros::Motor motor);
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
