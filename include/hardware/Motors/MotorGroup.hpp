@@ -79,6 +79,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor2(2, pros::v5::MotorGears::green);
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
+         *
          *     // move the motors forward at 50% power
          *     motorGroup.move(0.5);
          *     // move the motors backward at 50% power
