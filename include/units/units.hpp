@@ -41,24 +41,21 @@ class Quantity {
          *
          * This constructor initializes the value to 0
          */
-        explicit constexpr Quantity()
-            : value(0) {}
+        explicit constexpr Quantity() : value(0) {}
 
         /**
          * @brief construct a new Quantity object
          *
          * @param value the value to initialize the quantity with
          */
-        explicit constexpr Quantity(double value)
-            : value(value) {}
+        explicit constexpr Quantity(double value) : value(value) {}
 
         /**
          * @brief construct a new Quantity object
          *
          * @param other the quantity to copy
          */
-        constexpr Quantity(Self const& other)
-            : value(other.value) {}
+        constexpr Quantity(Self const& other) : value(other.value) {}
 
         /**
          * @brief get the value of the quantity in its base unit type
@@ -132,7 +129,7 @@ concept isQuantity = requires(Q q) { quantityChecker(q); };
 
 // Isomorphic concept - used to ensure unit equivalecy
 template <typename Q, typename... Quantities>
-concept Isomorphic = ((std::convertible_to<Q, Quantities> && std::convertible_to<Quantities, Q>) && ...);
+concept Isomorphic = ((std::convertible_to<Q, Quantities> && std::convertible_to<Quantities, Q>)&&...);
 
 // Un(type)safely coerce the a unit into a different unit
 template <isQuantity Q1, isQuantity Q2> constexpr inline Q1 unit_cast(Q2 quantity) { return Q1(quantity.internal()); }
