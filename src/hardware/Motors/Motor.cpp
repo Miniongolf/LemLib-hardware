@@ -80,9 +80,9 @@ int Motor::setAngle(Angle angle) {
     const double position = raw / tpr;
     // handle different units
     switch (units) {
-        case (pros::MotorUnits::degrees): return !m_motor.set_zero_position(to_stDeg(angle) - position * 360);
-        case (pros::MotorUnits::rotations): return !m_motor.set_zero_position(to_stRot(angle) - position);
-        case (pros::MotorUnits::counts): return !m_motor.set_zero_position(to_stRot(angle) * tpr - raw);
+        case (pros::MotorUnits::degrees): return m_motor.set_zero_position(to_stDeg(angle) - position * 360);
+        case (pros::MotorUnits::rotations): return m_motor.set_zero_position(to_stRot(angle) - position);
+        case (pros::MotorUnits::counts): return m_motor.set_zero_position(to_stRot(angle) * tpr - raw);
         default: return INT_MAX;
     }
 }
