@@ -9,8 +9,8 @@ void initialize() {
     pros::Task screen_task([&]() {
         while (true) {
             pros::lcd::print(0, "Position: %f", to_sDeg(motor.getAngle()));
-            pros::lcd::print(1, "Motor Velocity: %f", pros::c::motor_get_actual_velocity(motor.getPort()));
-            // delay to save resources
+            // pros::lcd::print(1, "Motor Velocity: %f", pros::c::motor_get_actual_velocity(motor.getPort()));
+            //  delay to save resources
             pros::delay(20);
         }
     });
@@ -62,9 +62,9 @@ void autonomous() {}
  */
 void opcontrol() {
     while (true) {
-        double speed;
-        std::cin >> speed;
-        motor.moveVelocity(from_rpm(speed));
+        double position;
+        std::cin >> position;
+        motor.setAngle(from_sDeg(position));
         pros::delay(10);
     }
 }

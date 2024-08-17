@@ -355,6 +355,13 @@ class Motor : public Encoder {
          */
         int getPort() const;
     private:
+        /**
+         * This offset is applied when reading the raw position from the motor.
+         * Doing this instead of using the PROS function for doing so means that
+         * we can avoid a write to the motor. This prevents possible race conditions
+         * and possible conflicts with user code.
+         */
+        Angle m_offset = 0_stDeg;
         pros::Motor m_motor;
 };
 } // namespace lemlib
