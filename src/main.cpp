@@ -2,7 +2,7 @@
 #include "hardware/motors/Motor.hpp"
 #include "pros/motors.h"
 
-lemlib::Motor motor = pros::Motor(8, pros::MotorGears::green);
+lemlib::Motor motor = pros::Motor(8, pros::MotorGears::blue);
 
 void initialize() {
     pros::lcd::initialize(); // initialize brain screen
