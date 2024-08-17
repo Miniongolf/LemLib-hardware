@@ -55,24 +55,36 @@ Angle Motor::getAngle() {
     // to allow the user to use whatever encoder units they want, we only deal with raw encoder counts
     // and adjust for different cartridges ourselves
     const pros::MotorGears cartridge = m_motor.get_gearing();
-    const int counts = m_motor.get_raw_position(NULL);
+    const int counts = getAbsoluteCounts();
     if (counts == INT_MAX) return from_stDeg(INFINITY);
     switch (cartridge) {
         // without a cartridge, the encoder measures 50 counts per revolution
         // so we multiply the number of ticks by the gear ratio of the cartridge, and then by 360 to get the
         // value in degrees
-        case pros::MotorGears::blue: return from_stDeg(360 * (counts / 300.0)) + m_offset;
-        case pros::MotorGears::green: return from_stDeg(360 * (counts / 900.0)) + m_offset;
-        case pros::MotorGears::red: return from_stDeg(360 * (counts / 1800.0)) + m_offset;
+        case pros::MotorGears::blue: return from_stDeg(360 * (counts / 300.0));
+        case pros::MotorGears::green: return from_stDeg(360 * (counts / 900.0));
+        case pros::MotorGears::red: return from_stDeg(360 * (counts / 1800.0));
         default: return from_stDeg(INFINITY);
     }
 }
 
 int Motor::setAngle(Angle angle) {
-    const Angle rawAngle = getAngle() - m_offset;
-    if (to_stDeg(rawAngle) == INFINITY) return INT_MAX; // check for errors
-    m_offset = angle - rawAngle;
-    return 0;
+    const int raw = m_motor.get_raw_position(NULL);
+    const pros::MotorUnits units = m_motor.get_encoder_units();
+    const Cartridge cartridge = getCartridge();
+    // check for errors
+    if (raw == INT_MAX) return INT_MAX;
+    if (cartridge == Cartridge::INVALID) return INT_MAX;
+    // calculate ticks per rotation
+    const double tpr = (50 * 3600.0 / static_cast<int>(cartridge));
+    const double position = raw / tpr;
+    // handle different units
+    switch (units) {
+        case (pros::MotorUnits::degrees): return !m_motor.set_zero_position(to_stDeg(angle) - position * 360);
+        case (pros::MotorUnits::rotations): return !m_motor.set_zero_position(to_stRot(angle) - position);
+        case (pros::MotorUnits::counts): return !m_motor.set_zero_position(to_stRot(angle) * tpr - raw);
+        default: return INT_MAX;
+    }
 }
 
 MotorType Motor::getType() {
@@ -113,4 +125,23 @@ bool Motor::isReversed() const {
 void Motor::setReversed(bool reversed) { m_motor.set_reversed(reversed); }
 
 int Motor::getPort() const { return m_motor.get_port(); }
+
+int Motor::getAbsoluteCounts() {
+    // get telemetry from the motor
+    const Cartridge cartridge = getCartridge();
+    const pros::MotorUnits units = m_motor.get_encoder_units();
+    const double position = m_motor.get_position();
+    // error checking
+    if (cartridge == Cartridge::INVALID) return INT_MAX;
+    if (position == INFINITY) return INT_MAX;
+    // calculate ticks per rotation
+    const double tpr = 50 * (3600.0 / static_cast<int>(cartridge));
+    // handle different units
+    switch (units) {
+        case (pros::MotorUnits::degrees): return (position / 360.0) * tpr;
+        case (pros::MotorUnits::rotations): return position * tpr;
+        case (pros::MotorUnits::counts): return position;
+        default: return INT_MAX;
+    }
+}
 } // namespace lemlib

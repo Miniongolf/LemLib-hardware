@@ -94,6 +94,7 @@ Angle MotorGroup::getAngle() {
         success = true;
         // calculate the gear ratio
         const Number ratio = m_outputVelocity / from_rpm(static_cast<int>(cartridge));
+        std::cout << to_stDeg(result) << std::endl;
         angle += result * ratio;
     }
     // if no motors are connected, return INFINITY
