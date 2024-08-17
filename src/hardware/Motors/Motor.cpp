@@ -112,9 +112,5 @@ bool Motor::isReversed() const {
 
 void Motor::setReversed(bool reversed) { m_motor.set_reversed(reversed); }
 
-int Motor::getPort() const {
-    // PROS returns the port number as a signed integer, which is negative if the motor is reversed.
-    // We return the absolute value of the port number to avoid negative port numbers.
-    return std::abs(m_motor.get_port());
-}
+int Motor::getPort() const { return m_motor.get_port(); }
 } // namespace lemlib

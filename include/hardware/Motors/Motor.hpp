@@ -343,6 +343,8 @@ class Motor : public Encoder {
         /**
          * @brief Get the port the motor is connected to
          *
+         * Just like in PROS, the port is negative if the motor is reversed
+         *
          * @return int the port the motor is connected to
          *
          * @b Example:
