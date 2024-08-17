@@ -1,7 +1,20 @@
 #include "main.h"
 #include "hardware/motors/Motor.hpp"
+#include "pros/motors.h"
 
-void initialize() {}
+lemlib::Motor motor = pros::Motor(8, pros::MotorGears::green);
+
+void initialize() {
+    pros::lcd::initialize(); // initialize brain screen
+    pros::Task screen_task([&]() {
+        while (true) {
+            pros::lcd::print(0, "Position: %f", to_sDeg(motor.getAngle()));
+            pros::lcd::print(1, "Motor Velocity: %f", pros::c::motor_get_actual_velocity(motor.getPort()));
+            // delay to save resources
+            pros::delay(20);
+        }
+    });
+}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -47,4 +60,11 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {}
+void opcontrol() {
+    while (true) {
+        double speed;
+        std::cin >> speed;
+        motor.moveVelocity(from_rpm(speed));
+        pros::delay(10);
+    }
+}
