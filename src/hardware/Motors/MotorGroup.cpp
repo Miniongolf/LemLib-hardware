@@ -87,7 +87,7 @@ Angle MotorGroup::getAngle() {
     for (Motor motor : motors) {
         // get angle
         const Angle result = motor.getAngle();
-        if (result == from_sDeg(INFINITY)) continue; // check for errors
+        if (result == from_stDeg(INFINITY)) continue; // check for errors
         // get motor cartridge
         const Cartridge cartridge = motor.getCartridge();
         if (cartridge == Cartridge::INVALID) continue; // check for errors
@@ -97,7 +97,7 @@ Angle MotorGroup::getAngle() {
         angle += result * ratio;
     }
     // if no motors are connected, return INFINITY
-    if (!success) return from_sDeg(INFINITY);
+    if (!success) return from_stDeg(INFINITY);
     // otherwise, return the average angle
     return angle / getSize();
 }
@@ -143,7 +143,7 @@ int MotorGroup::addMotor(int port) {
     if (cartridge == Cartridge::INVALID) return INT_MAX; // check for errors
     const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;
     const Angle angle = getAngle() * ratio;
-    if (angle == from_sDeg(INFINITY)) return INT_MAX; // check for errors
+    if (angle == from_stDeg(INFINITY)) return INT_MAX; // check for errors
     // set the angle of the new motor
     const int result = motor.setAngle(angle);
     if (result == INT_MAX) return INT_MAX; // check for errors

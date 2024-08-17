@@ -15,7 +15,7 @@ int V5IMU::isConnected() { return m_imu.is_installed(); }
 Angle V5IMU::getRotation() {
     const double result = m_imu.get_rotation();
     // check for errors
-    if (result == INFINITY) return from_sDeg(INFINITY);
+    if (result == INFINITY) return from_stDeg(INFINITY);
     return from_cDeg(result);
 }
 

@@ -7,7 +7,7 @@ void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     pros::Task screen_task([&]() {
         while (true) {
-            pros::lcd::print(0, "Position: %f", to_stDeg(motor.getAngle()));
+            // pros::lcd::print(0, "Position: %f", to_stDeg(motor.getAngle()));
             // pros::lcd::print(1, "Motor Velocity: %f", pros::c::motor_get_actual_velocity(motor.getPort()));
             //  delay to save resources
             pros::delay(20);
@@ -60,10 +60,8 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-    while (true) {
-        double position;
-        std::cin >> position;
-        motor.setAngle(from_stDeg(position));
-        pros::delay(10);
-    }
+    motor.setBrakeMode(lemlib::BrakeMode::BRAKE);
+    motor.move(1);
+    pros::delay(1000);
+    motor.brake();
 }

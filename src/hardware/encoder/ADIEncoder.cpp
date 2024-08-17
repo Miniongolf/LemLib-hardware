@@ -25,7 +25,7 @@ Angle ADIEncoder::getAngle() {
         return Angle(INFINITY);
     }
     // return the angle
-    return from_sDeg(raw) + m_offset;
+    return from_stDeg(raw) + m_offset;
 }
 
 int ADIEncoder::setAngle(Angle angle) {
