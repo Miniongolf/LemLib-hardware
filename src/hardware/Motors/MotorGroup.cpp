@@ -4,18 +4,17 @@
 namespace lemlib {
 MotorGroup::MotorGroup(std::initializer_list<pros::Motor> motors, AngularVelocity outputVelocity)
     : m_outputVelocity(outputVelocity) {
-    for (const pros::Motor motor : motors) m_motors.push_back(motor);
+    for (const pros::Motor& motor : motors) m_ports.push_back(motor.get_port());
 }
 
 MotorGroup::MotorGroup(pros::v5::MotorGroup motors, AngularVelocity outputVelocity)
-    : m_outputVelocity(outputVelocity) {
-    const int size = motors.size();
-    for (int i = 0; i < size; i++) m_motors.push_back(pros::Motor(motors.get_port(i)));
-}
+    : m_outputVelocity(outputVelocity),
+      m_ports(motors.get_port_all()) {}
 
 int MotorGroup::move(double percent) {
+    std::vector<Motor> motors = getMotors();
     bool success = false;
-    for (Motor motor : m_motors) {
+    for (Motor& motor : motors) {
         const int result = motor.move(percent);
         if (result == 0) success = true;
     }
@@ -24,8 +23,9 @@ int MotorGroup::move(double percent) {
 }
 
 int MotorGroup::moveVelocity(AngularVelocity velocity) {
+    std::vector<Motor> motors = getMotors();
     bool success = false;
-    for (Motor motor : m_motors) {
+    for (Motor& motor : motors) {
         // since the motors in the group are geared together, we need to account for different gearings
         // of different motors in the group
         const Cartridge cartridge = motor.getCartridge();
@@ -41,8 +41,9 @@ int MotorGroup::moveVelocity(AngularVelocity velocity) {
 }
 
 int MotorGroup::brake() {
+    std::vector<Motor> motors = getMotors();
     bool success = false;
-    for (Motor motor : m_motors) {
+    for (Motor& motor : motors) {
         const int result = motor.brake();
         if (result == 0) success = true;
     }
@@ -51,8 +52,9 @@ int MotorGroup::brake() {
 }
 
 int MotorGroup::setBrakeMode(BrakeMode mode) {
+    std::vector<Motor> motors = getMotors();
     bool success = false;
-    for (Motor motor : m_motors) {
+    for (Motor& motor : motors) {
         const int result = motor.setBrakeMode(mode);
         if (result == 0) success = true;
     }
@@ -61,13 +63,15 @@ int MotorGroup::setBrakeMode(BrakeMode mode) {
 }
 
 std::vector<BrakeMode> MotorGroup::getBrakeModes() {
+    std::vector<Motor> motors = getMotors();
     std::vector<BrakeMode> brakeModes;
-    for (Motor motor : m_motors) brakeModes.push_back(motor.getBrakeMode());
+    for (const Motor& motor : motors) brakeModes.push_back(motor.getBrakeMode());
     return brakeModes;
 }
 
 int MotorGroup::isConnected() {
-    for (Motor motor : m_motors) {
+    std::vector<Motor> motors = getMotors();
+    for (Motor& motor : motors) {
         const int result = motor.isConnected();
         if (result == 1) return true;
     }
@@ -76,10 +80,11 @@ int MotorGroup::isConnected() {
 }
 
 Angle MotorGroup::getAngle() {
+    std::vector<Motor> motors = getMotors();
     // get the average angle of all motors in the group
     Angle angle = 0_stDeg;
     bool success = false;
-    for (Motor motor : m_motors) {
+    for (Motor& motor : motors) {
         // get angle
         const Angle result = motor.getAngle();
         if (result == from_sDeg(INFINITY)) continue; // check for errors
@@ -98,8 +103,9 @@ Angle MotorGroup::getAngle() {
 }
 
 int MotorGroup::setAngle(Angle angle) {
+    std::vector<Motor> motors = getMotors();
     bool success = false;
-    for (Motor motor : m_motors) {
+    for (Motor& motor : motors) {
         // since the motors in the group are geared together, we need to account for different gearings
         // of different motors in the group
         const Cartridge cartridge = motor.getCartridge();
@@ -115,16 +121,18 @@ int MotorGroup::setAngle(Angle angle) {
 }
 
 int MotorGroup::getSize() const {
+    std::vector<Motor> motors = getMotors();
     int size = 0;
-    for (Motor motor : m_motors)
+    for (Motor& motor : motors)
         if (motor.isConnected()) size++;
     return size;
 }
 
 int MotorGroup::addMotor(int port) {
+    std::vector<Motor> motors = getMotors();
     Motor motor = pros::Motor(port);
     // set the motor's brake mode to whatever the first working motor's brake mode is
-    for (Motor m : m_motors) {
+    for (Motor& m : motors) {
         const BrakeMode mode = m.getBrakeMode();
         if (mode == BrakeMode::INVALID) continue;
         if (motor.setBrakeMode(mode)) break;
@@ -139,7 +147,7 @@ int MotorGroup::addMotor(int port) {
     // set the angle of the new motor
     const int result = motor.setAngle(angle);
     if (result == INT_MAX) return INT_MAX; // check for errors
-    m_motors.push_back(motor);
+    m_ports.push_back(port);
     return 0;
 }
 
@@ -153,14 +161,22 @@ int MotorGroup::addMotor(Motor motor, bool reversed) {
 
 void MotorGroup::removeMotor(int port) {
     port = abs(port); // make sure the port is positive
-    std::vector<Motor> newGroup;
     // remove the motor with the specified port
-    for (Motor motor : m_motors) {
-        if (motor.getPort() == port) continue;
-        newGroup.push_back(motor);
+    auto it = m_ports.begin();
+    while (it < m_ports.end()) {
+        if (std::abs(*it) == std::abs(port)) {
+            m_ports.erase(it);
+        } else {
+            it++;
+        }
     }
     // set the new motor group
-    m_motors = newGroup;
+}
+
+const std::vector<Motor> MotorGroup::getMotors() const {
+    std::vector<Motor> motors;
+    for (const int port : m_ports) motors.push_back(pros::Motor(port));
+    return motors;
 }
 
 void MotorGroup::removeMotor(Motor motor) { removeMotor(motor.getPort()); }

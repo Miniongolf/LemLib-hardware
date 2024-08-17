@@ -454,7 +454,23 @@ class MotorGroup : Encoder {
          */
         void removeMotor(Motor motor);
     private:
+        /**
+         * @brief Get motors in the motor group as a vector of lemlib::Motor objects
+         *
+         * This function exists to simplify logic in the MotorGroup source code.
+         *
+         * @return const std::vector<Motor> vector of lemlib::Motor objects
+         */
+        const std::vector<Motor> getMotors() const;
         const AngularVelocity m_outputVelocity;
-        std::vector<Motor> m_motors;
+        /**
+         * This member variable is a vector of motor ports
+         *
+         * Ideally, we'd use a vector of lemlib::Motor objects, but this does not work if you want to remove an element
+         * from the vector as the copy constructor is implicitly deleted.
+         *
+         * The ports are signed to indicate whether a motor should be reversed or not.
+         */
+        std::vector<int8_t> m_ports;
 };
 }; // namespace lemlib
