@@ -1,6 +1,5 @@
 #include "main.h"
 #include "hardware/motors/MotorGroup.hpp"
-#include "pros/abstract_motor.hpp"
 
 pros::Motor motorA(8, pros::v5::MotorGears::green, pros::MotorEncoderUnits::counts);
 pros::Motor motorB(9, pros::v5::MotorGears::green);
@@ -16,7 +15,9 @@ void initialize() {
     // print position to brain screen
     pros::Task screen_task([&]() {
         while (true) {
-            pros::lcd::print(1, "Pos A: %f", to_stDeg(lemMotorA.getAngle()));
+            pros::lcd::print(1, "Group: %f", to_stDeg(group.getAngle()));
+            pros::lcd::print(2, "A: %f", to_stDeg(lemMotorA.getAngle()));
+            pros::lcd::print(3, "B: %f", to_stDeg(lemMotorB.getAngle()));
             // print robot location to the brain screen
             // delay to save resources
             pros::delay(20);
@@ -32,9 +33,9 @@ void autonomous() {}
 
 void opcontrol() {
     while (true) {
-        double angle;
-        std::cin >> angle;
-        lemMotorA.setAngle(from_stDeg(angle));
+        int port;
+        std::cin >> port;
+        group.addMotor(port);
         pros::delay(10);
     }
 }

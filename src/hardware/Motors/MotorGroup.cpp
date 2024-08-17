@@ -161,7 +161,6 @@ int MotorGroup::addMotor(Motor motor, bool reversed) {
 }
 
 void MotorGroup::removeMotor(int port) {
-    port = abs(port); // make sure the port is positive
     // remove the motor with the specified port
     auto it = m_ports.begin();
     while (it < m_ports.end()) {
@@ -171,7 +170,6 @@ void MotorGroup::removeMotor(int port) {
             it++;
         }
     }
-    // set the new motor group
 }
 
 const std::vector<Motor> MotorGroup::getMotors() const {
