@@ -56,21 +56,21 @@ Angle Motor::getAngle() {
     // and adjust for different cartridges ourselves
     const pros::MotorGears cartridge = m_motor.get_gearing();
     const int counts = m_motor.get_raw_position(NULL);
-    if (counts == INT_MAX) return from_sDeg(INFINITY);
+    if (counts == INT_MAX) return from_stDeg(INFINITY);
     switch (cartridge) {
         // without a cartridge, the encoder measures 50 counts per revolution
         // so we multiply the number of ticks by the gear ratio of the cartridge, and then by 360 to get the
         // value in degrees
-        case pros::MotorGears::blue: return from_sDeg(360 * (counts / 300.0)) + m_offset;
-        case pros::MotorGears::green: return from_sDeg(360 * (counts / 900.0)) + m_offset;
-        case pros::MotorGears::red: return from_sDeg(360 * (counts / 1800.0)) + m_offset;
-        default: return from_sDeg(INFINITY);
+        case pros::MotorGears::blue: return from_stDeg(360 * (counts / 300.0)) + m_offset;
+        case pros::MotorGears::green: return from_stDeg(360 * (counts / 900.0)) + m_offset;
+        case pros::MotorGears::red: return from_stDeg(360 * (counts / 1800.0)) + m_offset;
+        default: return from_stDeg(INFINITY);
     }
 }
 
 int Motor::setAngle(Angle angle) {
     const Angle rawAngle = getAngle() - m_offset;
-    if (to_sDeg(rawAngle) == INFINITY) return INT_MAX; // check for errors
+    if (to_stDeg(rawAngle) == INFINITY) return INT_MAX; // check for errors
     m_offset = angle - rawAngle;
     return 0;
 }

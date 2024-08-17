@@ -1,6 +1,5 @@
 #include "main.h"
 #include "hardware/motors/Motor.hpp"
-#include "pros/motors.h"
 
 lemlib::Motor motor = pros::Motor(8, pros::MotorGears::blue);
 
@@ -8,7 +7,7 @@ void initialize() {
     pros::lcd::initialize(); // initialize brain screen
     pros::Task screen_task([&]() {
         while (true) {
-            pros::lcd::print(0, "Position: %f", to_sDeg(motor.getAngle()));
+            pros::lcd::print(0, "Position: %f", to_stDeg(motor.getAngle()));
             // pros::lcd::print(1, "Motor Velocity: %f", pros::c::motor_get_actual_velocity(motor.getPort()));
             //  delay to save resources
             pros::delay(20);
@@ -64,7 +63,7 @@ void opcontrol() {
     while (true) {
         double position;
         std::cin >> position;
-        motor.setAngle(from_sDeg(position));
+        motor.setAngle(from_stDeg(position));
         pros::delay(10);
     }
 }
