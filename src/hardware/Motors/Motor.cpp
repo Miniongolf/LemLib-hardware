@@ -72,18 +72,17 @@ Angle Motor::getAngle() {
 
 int Motor::setAngle(Angle angle) {
     const int raw = m_motor.get_raw_position(NULL);
-    const pros::MotorUnits units = m_motor.get_encoder_units();
     const Cartridge cartridge = getCartridge();
     // check for errors
     if (raw == INT_MAX) return INT_MAX;
     if (cartridge == Cartridge::INVALID) return INT_MAX;
     // calculate ticks per rotation
-    const double tpr = (50 * 3600.0 / static_cast<int>(cartridge));
+    const double tpr = (50.0 * 3600.0 / static_cast<int>(cartridge));
     const double position = raw / tpr;
     // handle different units
-    switch (units) {
+    switch (m_motor.get_encoder_units()) {
         case (pros::MotorUnits::degrees):
-            return convertStatus(m_motor.set_zero_position(to_stDeg(angle) - position * 360));
+            return convertStatus(m_motor.set_zero_position(to_stDeg(angle) - position * 360.0));
         case (pros::MotorUnits::rotations): return convertStatus(m_motor.set_zero_position(to_stRot(angle) - position));
         case (pros::MotorUnits::counts): return convertStatus(m_motor.set_zero_position(to_stRot(angle) * tpr - raw));
         default: return INT_MAX;
@@ -96,14 +95,16 @@ MotorType Motor::getType() {
     // it may break between VEXos updates. Instead, we see if we can change the cartridge to something other
     // than the green cartridge, which is only possible on the V5 motor
     const pros::MotorGears oldCart = m_motor.get_gearing();
-    if (oldCart == pros::MotorGears::invalid) return MotorType::INVALID; // check for errors
     const int result = m_motor.set_gearing(pros::v5::MotorGears::red);
-    if (result == INT_MAX) return MotorType::INVALID; // check for errors
+    // check for errors
+    if (oldCart == pros::MotorGears::invalid) return MotorType::INVALID;
+    if (result == INT_MAX) return MotorType::INVALID;
+    // check if the gearing changed or not
     const pros::MotorGears newCart = m_motor.get_gearing();
-    if (newCart == pros::v5::MotorGears::invalid) return MotorType::INVALID; // check for errors
+    if (newCart == pros::v5::MotorGears::invalid) return MotorType::INVALID;
     if (newCart != pros::v5::MotorGears::green) {
-        const int result = m_motor.set_gearing(oldCart);
-        if (result == INT_MAX) return MotorType::INVALID;
+        // set the cartridge back to its original value
+        if (m_motor.set_gearing(oldCart) == INT_MAX) return MotorType::INVALID;
         else return MotorType::V5;
     } else return MotorType::EXP;
 }
@@ -137,14 +138,13 @@ int Motor::getAbsoluteCounts() {
     // get telemetry from the motor
     const Cartridge cartridge = getCartridge();
     const double position = m_motor.get_position();
-    const pros::MotorUnits units = m_motor.get_encoder_units();
     // error checking
     if (cartridge == Cartridge::INVALID) return INT_MAX;
     if (position == INFINITY) return INT_MAX;
     // calculate ticks per rotation
     const double tpr = 50 * (3600.0 / static_cast<int>(cartridge));
     // handle different units
-    switch (units) {
+    switch (m_motor.get_encoder_units()) {
         case (pros::MotorUnits::degrees): return (position / 360.0) * tpr;
         case (pros::MotorUnits::rotations): return position * tpr;
         case (pros::MotorUnits::counts): return position;
