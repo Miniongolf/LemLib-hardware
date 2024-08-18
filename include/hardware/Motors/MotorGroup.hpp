@@ -321,7 +321,7 @@ class MotorGroup : Encoder {
          * }
          * @endcode
          */
-        int getSize() const;
+        int getSize();
         /**
          * @brief Add a motor to the motor group
          *
@@ -453,13 +453,27 @@ class MotorGroup : Encoder {
         void removeMotor(Motor motor);
     private:
         /**
+         * @brief Configure a motor so its ready to join the motor group
+         *
+         * Motors may be added to the motor group or reconnect to the motor group during runtime. When this happens,
+         * functions like getAngle() would break as the motor is not configured like other motors in the group. This
+         * function sets the angle measured by the specified motor to the average angle measured by the group. It also
+         * sets the brake mode of the motor to be the same as the first working motor in the group.
+         *
+         * @param port the port of the motor to configure
+         *
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         */
+        int configureMotor(int port);
+        /**
          * @brief Get motors in the motor group as a vector of lemlib::Motor objects
          *
          * This function exists to simplify logic in the MotorGroup source code.
          *
          * @return const std::vector<Motor> vector of lemlib::Motor objects
          */
-        const std::vector<Motor> getMotors() const;
+        const std::vector<Motor> getMotors();
         const AngularVelocity m_outputVelocity;
         /**
          * This member variable is a vector of motor ports
