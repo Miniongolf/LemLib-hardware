@@ -14,6 +14,13 @@ namespace lemlib {
  *
  * @return 0 on success
  * @return INT_MAX on failure
+ *
+ * @b Example:
+ * @code {.cpp}
+ * int setReversed(int port, bool reversed) {
+ *     return convertStatus(pros::c::motor_set_reversed(port, reversed));
+ * }
+ * @endcode
  */
 inline int convertStatus(int status) {
     if (status == 1) return 0;
