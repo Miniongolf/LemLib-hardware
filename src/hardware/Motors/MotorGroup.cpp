@@ -4,12 +4,13 @@
 namespace lemlib {
 MotorGroup::MotorGroup(std::initializer_list<pros::Motor> motors, AngularVelocity outputVelocity)
     : m_outputVelocity(outputVelocity) {
-    for (const pros::Motor& motor : motors) m_ports.push_back(motor.get_port());
+    for (const pros::Motor& motor : motors) m_motors.push_back(std::pair<std::int8_t, bool>(motor.get_port(), true));
 }
 
 MotorGroup::MotorGroup(pros::v5::MotorGroup motors, AngularVelocity outputVelocity)
-    : m_outputVelocity(outputVelocity),
-      m_ports(motors.get_port_all()) {}
+    : m_outputVelocity(outputVelocity) {
+    for (int i = 0; i < motors.size(); i++) m_motors.push_back(std::pair<int8_t, bool>(motors.get_port(i), true));
+}
 
 int MotorGroup::move(double percent) {
     const std::vector<Motor> motors = getMotors();
@@ -148,7 +149,7 @@ int MotorGroup::addMotor(int port) {
     // set the angle of the new motor
     const int result = motor.setAngle(angle);
     if (result == INT_MAX) return INT_MAX; // check for errors
-    m_ports.push_back(port);
+    m_motors.push_back(std::pair<int8_t, bool>(port, true));
     return 0;
 }
 
@@ -162,10 +163,10 @@ int MotorGroup::addMotor(Motor motor, bool reversed) {
 
 void MotorGroup::removeMotor(int port) {
     // remove the motor with the specified port
-    auto it = m_ports.begin();
-    while (it < m_ports.end()) {
-        if (std::abs(*it) == std::abs(port)) {
-            m_ports.erase(it);
+    auto it = m_motors.begin();
+    while (it < m_motors.end()) {
+        if (std::abs(it->first) == std::abs(port)) {
+            m_motors.erase(it);
         } else {
             it++;
         }
@@ -174,7 +175,7 @@ void MotorGroup::removeMotor(int port) {
 
 const std::vector<Motor> MotorGroup::getMotors() const {
     std::vector<Motor> motors;
-    for (const int port : m_ports) motors.push_back(pros::Motor(port));
+    for (const auto pair : m_motors) motors.push_back(pros::Motor(pair.first));
     return motors;
 }
 

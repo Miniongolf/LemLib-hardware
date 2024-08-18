@@ -468,7 +468,10 @@ class MotorGroup : Encoder {
          * from the vector as the copy constructor is implicitly deleted.
          *
          * The ports are signed to indicate whether a motor should be reversed or not.
+         *
+         * It also has a bool for every port, which represents whether the motor was connected or not the last time
+         * `getAngle` was called. This enables the motor group to properly handle a motor reconnect.
          */
-        std::vector<int8_t> m_ports;
+        std::vector<std::pair<int8_t, bool>> m_motors;
 };
 }; // namespace lemlib
