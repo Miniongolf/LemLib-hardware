@@ -356,6 +356,7 @@ class Motor : public Encoder {
          * @endcode
          */
         int getPort() const;
+    private:
         /**
          * @brief Get the number of counts the motor recorded in absolute position
          *
@@ -366,7 +367,6 @@ class Motor : public Encoder {
          * @return int number of counts
          */
         int getAbsoluteCounts();
-    private:
         pros::Motor m_motor;
 };
 } // namespace lemlib
