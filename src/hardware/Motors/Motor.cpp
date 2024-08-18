@@ -16,6 +16,8 @@ pros::MotorBrake brakeModeToMotorBrake(BrakeMode mode) {
 }
 
 BrakeMode motorBrakeToBrakeMode(pros::MotorBrake mode) {
+    // pros::MotorBrake is identical to lemlib::BrakeMode, except for its name and lemlib uses an enum class for type
+    // safety
     switch (mode) {
         case pros::MotorBrake::coast: return BrakeMode::COAST;
         case pros::MotorBrake::brake: return BrakeMode::BRAKE;
@@ -31,10 +33,10 @@ int Motor::move(double percent) {
     // the V5 and EXP motors have different voltage caps, so we need to scale based on the motor type
     // V5 motors have their voltage capped at 12v, while EXP motors have their voltage capped at 7.2v
     // but they have the same max velocity, so we can scale the percent power based on the motor type
-    if (getType() == MotorType::V5) {
-        return convertStatus(m_motor.move_voltage(percent * 12000));
-    } else {
-        return convertStatus(m_motor.move_voltage(percent * 7200));
+    switch (getType()) {
+        case (MotorType::V5): return convertStatus(m_motor.move_voltage(percent * 12000));
+        case (MotorType::EXP): return convertStatus(m_motor.move_voltage(percent * 7200));
+        default: return INT_MAX;
     }
 }
 
