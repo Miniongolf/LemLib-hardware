@@ -7,7 +7,7 @@ pros::Motor motorB(9, pros::v5::MotorGears::green);
 lemlib::Motor lemMotorA = motorA;
 lemlib::Motor lemMotorB = motorB;
 
-lemlib::MotorGroup group({motorA}, 200_rpm);
+lemlib::MotorGroup group({motorA, motorB}, 200_rpm);
 
 // initialize function. Runs on program startup
 void initialize() {
@@ -18,6 +18,7 @@ void initialize() {
             pros::lcd::print(1, "Group: %f", to_stDeg(group.getAngle()));
             pros::lcd::print(2, "A: %f", to_stDeg(lemMotorA.getAngle()));
             pros::lcd::print(3, "B: %f", to_stDeg(lemMotorB.getAngle()));
+            pros::lcd::print(4, "Time: %d", pros::millis());
             // print robot location to the brain screen
             // delay to save resources
             pros::delay(20);

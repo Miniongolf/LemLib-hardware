@@ -97,7 +97,6 @@ Angle MotorGroup::getAngle() {
         success = true;
         // calculate the gear ratio
         const Number ratio = m_outputVelocity / from_rpm(static_cast<int>(cartridge));
-        std::cout << to_stDeg(result) << std::endl;
         angle += result * ratio;
     }
     // if no motors are connected, return INFINITY
@@ -176,11 +175,14 @@ const std::vector<Motor> MotorGroup::getMotors() {
         // check if the motor is connected
         const bool connected = motor.is_installed();
         // don't add the motor if it is not connected
-        if (!connected) continue;
+        if (!connected) {
+            pair.second = false;
+            continue;
+        }
         // if the motor is connected, but wasn't the last time we checked, then configure it to prevent side
         // effects of reconnecting
         // don't add the motor if configuration
-        if (pair.second == false && configureMotor(pair.first) != 0) continue;
+        if (pair.second == false && configureMotor(pair.first) != 1) continue;
         // add the motor and set save it as connected
         motors.push_back(pros::Motor(pair.first));
         pair.second = true;
@@ -191,17 +193,21 @@ const std::vector<Motor> MotorGroup::getMotors() {
 void MotorGroup::removeMotor(Motor motor) { removeMotor(motor.getPort()); }
 
 int MotorGroup::configureMotor(int port) {
+    // since this function is called in other MotorGroup member functions, this function can't call any other member
+    // function, otherwise it would cause a recursion loop. This means that this function is ugly and complex, but at
+    // least it means that the other functions can stay simple
+
     // this function does not return immediately when something goes wrong. Instead it will continue with the process to
     // add the motor, and the motor will automatically be reconfigured when it is working properly again
     // whether there was a failure or not is kept track of with this boolean
     bool success = true;
-    const std::vector<Motor> motors = getMotors();
     Motor motor = pros::Motor(port);
     // set the motor's brake mode to whatever the first working motor's brake mode is
-    for (Motor m : motors) {
+    for (std::pair<int8_t, bool> pair : m_motors) {
+        Motor m = pros::Motor(pair.second);
         const BrakeMode mode = m.getBrakeMode();
         if (mode == BrakeMode::INVALID) continue;
-        if (motor.setBrakeMode(mode) == 0) break;
+        if (m.setBrakeMode(mode) == 0) break;
         else {
             success = false;
             break;
@@ -211,7 +217,46 @@ int MotorGroup::configureMotor(int port) {
     const Cartridge cartridge = motor.getCartridge();
     if (cartridge == Cartridge::INVALID) success = false; // check for errors
     const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;
-    const Angle angle = getAngle() * ratio;
+
+    Angle angle = 0_stDeg;
+    {
+        // find all the working motors
+        std::vector<Motor> motors;
+        for (auto& pair : m_motors) {
+            pros::Motor m(pair.first);
+            // check if the motor is connected
+            const bool connected = m.is_installed();
+            // check that the motor is not the motor we are configuring
+            if (std::abs(m.get_port()) == std::abs(port)) continue;
+            // don't add the motor if it is not connected
+            if (!connected) continue;
+            else motors.push_back(pros::Motor(pair.first));
+        }
+
+        // get the average angle of all motors in the group
+        Angle tempAngle = 0_stDeg;
+        int errors = 0;
+        for (Motor m : motors) {
+            // get angle
+            const Angle result = m.getAngle();
+            if (result == from_stDeg(INFINITY)) { // check for errors
+                errors++;
+                continue;
+            }
+            // get motor cartridge
+            const Cartridge cartridge = m.getCartridge();
+            if (cartridge == Cartridge::INVALID) { // check for errors
+                errors++;
+                continue;
+            }
+            // calculate the gear ratio
+            const Number tempRatio = m_outputVelocity / from_rpm(static_cast<int>(cartridge));
+            tempAngle += result * tempRatio;
+        }
+        // prevent divide by zero if all motors failed
+        if (motors.size() != errors) angle = ratio * tempAngle / (motors.size() - errors);
+    }
+
     if (angle == from_stDeg(INFINITY)) success = false; // check for errors
     // set the angle of the new motor
     const int result = motor.setAngle(angle);
