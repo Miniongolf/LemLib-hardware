@@ -12,8 +12,8 @@ namespace lemlib {
  *
  * Error handling for the MotorGroup class is a bit different from other hardware classes. This is because
  * the MotorGroup class represents a group of motors, any of which could fail. However, as long as one
- * motor in the group is functioning properly, the MotorGroup will not throw any errors. Since motors could fail
- * for different reasons, the behaviour of errno is to be considered undefined after a failure.
+ * motor in the group is functioning properly, the MotorGroup will not throw any errors. In addition, errno will be set
+ * to whatever error was thrown last, as there may be multiple motors in a motor group.
  */
 class MotorGroup : Encoder {
     public:
@@ -209,13 +209,8 @@ class MotorGroup : Encoder {
         /**
          * @brief whether any of the motors in the motor group are connected
          *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port cannot be configured as a motor
-         *
          * @return 0 no motors are connected
          * @return 1 if at least one motor is connected
-         * @return INT_MAX if there is an error, setting errno
          *
          * @b Example:
          * @code {.cpp}
@@ -303,10 +298,6 @@ class MotorGroup : Encoder {
         /**
          * @brief Get the number of connected motors in the group
          *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port cannot be configured as a motors
-         *
          * @return int the number of connected motors in the group
          *
          * @b Example:
@@ -327,7 +318,8 @@ class MotorGroup : Encoder {
          *
          * This function adds a motor to the motor group. If successful, it will set the angle measured by the motor to
          * the average angle measured by the motor group. It will also set the brake mode of the motor to that of the
-         * first working motor in the group. If there are any errors, the motor will not be added to the group.
+         * first working motor in the group. If there are any errors, the motor will still be added to the group and it
+         * will be configured as soon as it is functional again.
          *
          * This function uses the following values of errno when an error state is reached:
          *
@@ -358,7 +350,8 @@ class MotorGroup : Encoder {
          *
          * This function adds a motor to the motor group. If successful, it will set the angle measured by the motor to
          * the average angle measured by the motor group. It will also set the brake mode of the motor to that of the
-         * first working motor in the group. If there are any errors, the motor will not be added to the group.
+         * first working motor in the group. If there are any errors, the motor will still be added to the group and it
+         * will be configured as soon as it is functional again.
          *
          * @param motor the motor to be added to the group
          *
@@ -385,7 +378,8 @@ class MotorGroup : Encoder {
          *
          * This function adds a motor to the motor group. If successful, it will set the angle measured by the motor to
          * the average angle measured by the motor group. It will also set the brake mode of the motor to that of the
-         * first working motor in the group. If there are any errors, the motor will not be added to the group.
+         * first working motor in the group. If there are any errors, the motor will still be added to the group and it
+         * will be configured as soon as it is functional again.
          *
          * @param motor the motor to be added to the group
          * @param reversed whether the motor should be reversed
@@ -411,8 +405,6 @@ class MotorGroup : Encoder {
         /**
          * @brief Remove a motor from the motor group
          *
-         * This function does not return any errors
-         *
          * @param port the port of the motor to be removed from the group
          *
          * @b Example:
@@ -431,8 +423,6 @@ class MotorGroup : Encoder {
         void removeMotor(int port);
         /**
          * @brief Remove a motor from the motor group
-         *
-         * This function does not return any errors
          *
          * @param motor the motor to be removed from the group
          *
@@ -459,6 +449,10 @@ class MotorGroup : Encoder {
          * functions like getAngle() would break as the motor is not configured like other motors in the group. This
          * function sets the angle measured by the specified motor to the average angle measured by the group. It also
          * sets the brake mode of the motor to be the same as the first working motor in the group.
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
          *
          * @param port the port of the motor to configure
          *

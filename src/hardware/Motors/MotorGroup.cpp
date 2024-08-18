@@ -207,7 +207,7 @@ int MotorGroup::configureMotor(int port) {
             break;
         }
     }
-    // calculate the gear ratio
+    // calculate the angle to set the motor to
     const Cartridge cartridge = motor.getCartridge();
     if (cartridge == Cartridge::INVALID) success = false; // check for errors
     const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;

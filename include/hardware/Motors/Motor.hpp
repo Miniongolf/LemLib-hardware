@@ -157,13 +157,8 @@ class Motor : public Encoder {
         /**
          * @brief whether the motor is connected
          *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port cannot be configured as a motor
-         *
          * @return 0 if its not connected
          * @return 1 if it is connected
-         * @return INT_MAX if there is an error, setting errno
          *
          * @b Example:
          * @code {.cpp}
