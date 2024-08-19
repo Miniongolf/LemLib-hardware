@@ -39,4 +39,4 @@ This PROS template aims to simplify interactions with devices, and implement a c
 
 ## Who Should Use This?
 
-This template is geared for developers of PROS templates such as [LemLib](https://github.com/LemLib/LemLib) and their users, especially VURC and VAIRC teams.
+This template is geared for developers of PROS templates such as [LemLib](https://github.com/LemLib/LemLib) and its users, especially VURC and VAIRC teams.
