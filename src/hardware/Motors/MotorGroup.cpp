@@ -133,10 +133,9 @@ int MotorGroup::getSize() {
 
 int MotorGroup::addMotor(int port) {
     // check that the motor isn't already part of the group
-    auto it = m_motors.begin();
-    while (it < m_motors.end()) {
+    for (const std::pair<int8_t, bool>& pair : m_motors) {
         // return an error if the motor is already added to the group
-        if (std::abs(it->first) == std::abs(port)) {
+        if (std::abs(pair.first) == std::abs(port)) {
             errno = EEXIST;
             return INT_MAX;
         }
@@ -182,10 +181,10 @@ const std::vector<Motor> MotorGroup::getMotors() {
         // if the motor is connected, but wasn't the last time we checked, then configure it to prevent side
         // effects of reconnecting
         // don't add the motor if configuration
-        if (pair.second == false && configureMotor(pair.first) != 1) continue;
+        if (pair.second == false && configureMotor(pair.first) != 0) continue;
         // add the motor and set save it as connected
-        motors.push_back(pros::Motor(pair.first));
         pair.second = true;
+        motors.push_back(pros::Motor(pair.first));
     }
     return motors;
 }
@@ -216,7 +215,6 @@ int MotorGroup::configureMotor(int port) {
     // calculate the angle to set the motor to
     const Cartridge cartridge = motor.getCartridge();
     if (cartridge == Cartridge::INVALID) success = false; // check for errors
-    const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;
 
     Angle angle = 0_stDeg;
     {
@@ -249,18 +247,15 @@ int MotorGroup::configureMotor(int port) {
                 errors++;
                 continue;
             }
-            // calculate the gear ratio
-            const Number tempRatio = m_outputVelocity / from_rpm(static_cast<int>(cartridge));
-            tempAngle += result * tempRatio;
+            tempAngle += result;
         }
         // prevent divide by zero if all motors failed
-        if (motors.size() != errors) angle = ratio * tempAngle / (motors.size() - errors);
+        if (motors.size() != errors) angle = tempAngle / (motors.size() - errors);
     }
 
-    if (angle == from_stDeg(INFINITY)) success = false; // check for errors
     // set the angle of the new motor
     const int result = motor.setAngle(angle);
     if (result == INT_MAX) return success = false; // check for errors
-    return success;
+    return !success;
 }
 }; // namespace lemlib

@@ -56,35 +56,30 @@ int Motor::isConnected() { return m_motor.is_installed(); }
 Angle Motor::getAngle() {
     // to allow the user to use whatever encoder units they want, we only deal with raw encoder counts
     // and adjust for different cartridges ourselves
-    const pros::MotorGears cartridge = m_motor.get_gearing();
+    const Cartridge cartridge = getCartridge();
     const int counts = getAbsoluteCounts();
+    if (cartridge == Cartridge::INVALID) return from_stDeg(INFINITY);
     if (counts == INT_MAX) return from_stDeg(INFINITY);
-    switch (cartridge) {
-        // without a cartridge, the encoder measures 50 counts per revolution
-        // so we multiply the number of ticks by the gear ratio of the cartridge, and then by 360 to get the
-        // value in degrees
-        case pros::MotorGears::blue: return from_stDeg(360 * (counts / 300.0));
-        case pros::MotorGears::green: return from_stDeg(360 * (counts / 900.0));
-        case pros::MotorGears::red: return from_stDeg(360 * (counts / 1800.0));
-        default: return from_stDeg(INFINITY);
-    }
+    // calculate ticks per rotation
+    // the only 3 possible outcomes are integers, so we use integers to prevent a loss of precision
+    const int tpr = 50 * 3600 / static_cast<int>(cartridge);
+    return from_stRot(counts / double(tpr));
 }
 
 int Motor::setAngle(Angle angle) {
-    const int raw = m_motor.get_raw_position(NULL);
     const Cartridge cartridge = getCartridge();
     // check for errors
-    if (raw == INT_MAX) return INT_MAX;
     if (cartridge == Cartridge::INVALID) return INT_MAX;
-    // calculate ticks per rotation
-    const double tpr = (50.0 * 3600.0 / static_cast<int>(cartridge));
-    const double position = raw / tpr;
     // handle different units
     switch (m_motor.get_encoder_units()) {
-        case (pros::MotorUnits::degrees):
-            return convertStatus(m_motor.set_zero_position(to_stDeg(angle) - position * 360.0));
-        case (pros::MotorUnits::rotations): return convertStatus(m_motor.set_zero_position(to_stRot(angle) - position));
-        case (pros::MotorUnits::counts): return convertStatus(m_motor.set_zero_position(to_stRot(angle) * tpr - raw));
+        case (pros::MotorUnits::degrees): return convertStatus(m_motor.set_zero_position(to_stDeg(angle)));
+        case (pros::MotorUnits::rotations): return convertStatus(m_motor.set_zero_position(to_stRot(angle)));
+        case (pros::MotorUnits::counts): {
+            // calculate ticks per rotation
+            // the only 3 possible outcomes are integers, so we use integers to prevent a loss of precision
+            const int tpr = 50 * 3600 / static_cast<int>(cartridge);
+            return convertStatus(m_motor.set_zero_position(to_stRot(angle) * tpr));
+        }
         default: return INT_MAX;
     }
 }
