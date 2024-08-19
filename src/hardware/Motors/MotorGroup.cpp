@@ -100,7 +100,6 @@ Angle MotorGroup::getAngle() {
             errors++;
             continue;
         }
-        continue; // check for errors
         // calculate the gear ratio
         const Number ratio = m_outputVelocity / from_rpm(static_cast<int>(cartridge));
         angle += result * ratio;

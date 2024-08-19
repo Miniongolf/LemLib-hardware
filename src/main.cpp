@@ -1,13 +1,13 @@
 #include "main.h"
 #include "hardware/motors/MotorGroup.hpp"
 
-pros::Motor motorA(8, pros::v5::MotorGears::green);
-pros::Motor motorB(9, pros::v5::MotorGears::green, pros::MotorEncoderUnits::rotations);
+pros::Motor motorA(8, pros::v5::MotorGears::red);
+pros::Motor motorB(9, pros::v5::MotorGears::green);
 
 lemlib::Motor lemMotorA = motorA;
 lemlib::Motor lemMotorB = motorB;
 
-lemlib::MotorGroup group({motorA}, 200_rpm);
+lemlib::MotorGroup group({motorA, motorB}, 400_rpm);
 
 // initialize function. Runs on program startup
 void initialize() {
