@@ -86,23 +86,29 @@ Angle MotorGroup::getAngle() {
     const std::vector<Motor> motors = getMotors();
     // get the average angle of all motors in the group
     Angle angle = 0_stDeg;
-    bool success = false;
+    int errors = 0;
     for (Motor motor : motors) {
         // get angle
         const Angle result = motor.getAngle();
-        if (result == from_stDeg(INFINITY)) continue; // check for errors
+        if (result == from_stDeg(INFINITY)) {
+            errors++;
+            continue;
+        }; // check for errors
         // get motor cartridge
         const Cartridge cartridge = motor.getCartridge();
-        if (cartridge == Cartridge::INVALID) continue; // check for errors
-        success = true;
+        if (cartridge == Cartridge::INVALID) {
+            errors++;
+            continue;
+        }
+        continue; // check for errors
         // calculate the gear ratio
         const Number ratio = m_outputVelocity / from_rpm(static_cast<int>(cartridge));
         angle += result * ratio;
     }
     // if no motors are connected, return INFINITY
-    if (!success) return from_stDeg(INFINITY);
+    if (errors == motors.size()) return from_stDeg(INFINITY);
     // otherwise, return the average angle
-    return angle / getSize();
+    return angle / (getSize() - errors);
 }
 
 int MotorGroup::setAngle(Angle angle) {
