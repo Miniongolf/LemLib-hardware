@@ -1,13 +1,13 @@
 #include "main.h"
 #include "hardware/motors/MotorGroup.hpp"
 
-pros::Motor motorA(8, pros::v5::MotorGears::red);
+pros::Motor motorA(8, pros::v5::MotorGears::green);
 pros::Motor motorB(9, pros::v5::MotorGears::green);
 
 lemlib::Motor lemMotorA = motorA;
 lemlib::Motor lemMotorB = motorB;
 
-lemlib::MotorGroup group({motorA, motorB}, 400_rpm);
+lemlib::MotorGroup group({motorA, motorB}, 200_rpm);
 
 // initialize function. Runs on program startup
 void initialize() {
@@ -34,9 +34,9 @@ void autonomous() {}
 
 void opcontrol() {
     while (true) {
-        int port;
-        std::cin >> port;
-        group.addMotor(port);
+        double angle;
+        std::cin >> angle;
+        group.setAngle(from_stDeg(angle));
         pros::delay(10);
     }
 }
