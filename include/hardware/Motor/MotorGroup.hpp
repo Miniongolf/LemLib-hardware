@@ -1,4 +1,4 @@
-#include "hardware/Motors/Motor.hpp"
+#include "hardware/Motor/Motor.hpp"
 #include "pros/motor_group.hpp"
 
 namespace lemlib {

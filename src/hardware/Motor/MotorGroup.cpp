@@ -1,4 +1,4 @@
-#include "hardware/Motors/MotorGroup.hpp"
+#include "hardware/Motor/MotorGroup.hpp"
 #include <climits>
 #include <errno.h>
 #include <utility>

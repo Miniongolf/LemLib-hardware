@@ -1,5 +1,5 @@
 #include "main.h"
-#include "hardware/motors/MotorGroup.hpp"
+#include "hardware/Motor/MotorGroup.hpp"
 
 pros::Motor motorA(8, pros::v5::MotorGears::green);
 pros::Motor motorB(9, pros::v5::MotorGears::green);

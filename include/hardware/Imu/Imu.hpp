@@ -3,7 +3,7 @@
 #include "units/Angle.hpp"
 
 namespace lemlib {
-class IMU {
+class Imu {
     public:
         /**
          * @brief calibrate the IMU
@@ -58,6 +58,6 @@ class IMU {
          * @return INT_MAX error occurred, setting errno
          */
         virtual int setRotation(Angle rotation) = 0;
-        virtual ~IMU() = default;
+        virtual ~Imu() = default;
 };
 } // namespace lemlib

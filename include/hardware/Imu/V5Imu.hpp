@@ -1,10 +1,10 @@
 #pragma once
 
-#include "hardware/IMU/IMU.hpp"
+#include "hardware/Imu/Imu.hpp"
 #include "pros/imu.hpp"
 
 namespace lemlib {
-class V5IMU : public IMU {
+class V5Imu : public Imu {
     public:
         /**
          * @brief Construct a new V5 Inertial Sensor
@@ -19,7 +19,7 @@ class V5IMU : public IMU {
          * }
          * @endcode
          */
-        V5IMU(pros::Imu imu);
+        V5Imu(pros::Imu imu);
         /**
          * @brief calibrate the V5 Inertial Sensor
          *

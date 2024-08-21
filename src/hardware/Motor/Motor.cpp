@@ -1,4 +1,4 @@
-#include "hardware/Motors/Motor.hpp"
+#include "hardware/Motor/Motor.hpp"
 #include "hardware/util.hpp"
 #include "pros/abstract_motor.hpp"
 #include "units/Angle.hpp"
