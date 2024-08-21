@@ -4,7 +4,7 @@
 #include "pros/imu.hpp"
 
 namespace lemlib {
-class V5Imu : public Imu {
+class V5InertialSensor : public Imu {
     public:
         /**
          * @brief Construct a new V5 Inertial Sensor
@@ -15,11 +15,11 @@ class V5Imu : public Imu {
          * @code {.cpp}
          * void initialize() {
          *    // Create a new V5 Inertial Sensor on port 1
-         *    lemlib::V5IMU imu = pros::Imu(1);
+         *    lemlib::V5InertialSensor imu = pros::Imu(1);
          * }
          * @endcode
          */
-        V5Imu(pros::Imu imu);
+        V5InertialSensor(pros::Imu imu);
         /**
          * @brief calibrate the V5 Inertial Sensor
          *
@@ -38,7 +38,7 @@ class V5Imu : public Imu {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *    lemlib::V5IMU imu = pros::Imu(1);
+         *    lemlib::V5InertialSensor imu = pros::Imu(1);
          *
          *    if (imu.calibrate() == 0) {
          *        std::cout << "IMU calibration started" << std::endl;
@@ -61,7 +61,7 @@ class V5Imu : public Imu {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *    lemlib::V5IMU imu = pros::Imu(1);
+         *    lemlib::V5InertialSensor imu = pros::Imu(1);
          *
          *    if (imu.isCalibrated()) {
          *        std::cout << "IMU is calibrated" << std::endl;
@@ -84,7 +84,7 @@ class V5Imu : public Imu {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *    lemlib::V5IMU imu = pros::Imu(1);
+         *    lemlib::V5InertialSensor imu = pros::Imu(1);
          *
          *    if (imu.isCalibrating()) {
          *        std::cout << "IMU is calibrating" << std::endl;
@@ -107,7 +107,7 @@ class V5Imu : public Imu {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *    lemlib::V5IMU imu = pros::Imu(1);
+         *    lemlib::V5InertialSensor imu = pros::Imu(1);
          *
          *    if (imu.isConnected()) {
          *        std::cout << "IMU is connected" << std::endl;
@@ -135,7 +135,7 @@ class V5Imu : public Imu {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::V5IMU imu = pros::Imu(1);
+         *     lemlib::V5InertialSensor imu = pros::Imu(1);
          *
          *     // wait for the IMU to calibrate
          *     imu.calibrate();
@@ -167,7 +167,7 @@ class V5Imu : public Imu {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::V5IMU imu = pros::Imu(1);
+         *     lemlib::V5InertialSensor imu = pros::Imu(1);
          *
          *     // wait for the IMU to calibrate
          *     imu.calibrate();
