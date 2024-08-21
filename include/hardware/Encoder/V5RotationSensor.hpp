@@ -8,10 +8,10 @@ namespace lemlib {
  * @brief Encoder implementation for the V5 Rotation sensor
  *
  */
-class Rotation : public Encoder {
+class V5RotationSensor : public Encoder {
     public:
         /**
-         * @brief Construct a new Rotation encoder object
+         * @brief Construct a new V5 Rotation Sensor object
          *
          * @param encoder the pros::Rotation object to use
          *
@@ -22,9 +22,9 @@ class Rotation : public Encoder {
          * }
          * @endcode
          */
-        Rotation(pros::Rotation encoder);
+        V5RotationSensor(pros::Rotation encoder);
         /**
-         * @brief whether the encoder is connected
+         * @brief whether the V5 Rotation Sensor is connected
          *
          * @return 0 if its not connected
          * @return 1 if it is connected
@@ -46,10 +46,10 @@ class Rotation : public Encoder {
          */
         int isConnected() override;
         /**
-         * @brief Get the relative angle measured by the encoder
+         * @brief Get the relative angle measured by the V5 Rotation Sensor
          *
-         * The relative angle measured by the encoder is the angle of the encoder relative to the last time the encoder
-         * was reset. As such, it is unbounded.
+         * The relative angle measured by the V5 Rotation Sensor is the angle of the encoder relative to the last time
+         * the V5 Rotation Sensor was reset. As such, it is unbounded.
          *
          * This function uses the following values of errno when an error state is reached:
          *
@@ -74,10 +74,10 @@ class Rotation : public Encoder {
          */
         Angle getAngle() override;
         /**
-         * @brief Set the relative angle of the encoder
+         * @brief Set the relative angle of the V5 Rotation Sensor
          *
-         * This function sets the relative angle of the encoder. The relative angle is the number of rotations the
-         * encoder has measured since the last reset. This function is non-blocking.
+         * This function sets the relative angle of the V5 Rotation Sensor. The relative angle is the number of
+         * rotations the V5 Rotation Sensor has measured since the last reset. This function is non-blocking.
          *
          * This function uses the following values of errno when an error state is reached:
          *
