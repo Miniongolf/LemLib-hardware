@@ -4,6 +4,9 @@
 #include "units/Angle.hpp"
 
 namespace lemlib {
+Motor::Motor(pros::Motor motor)
+    : m_motor(motor) {}
+
 pros::MotorBrake brakeModeToMotorBrake(BrakeMode mode) {
     // pros::MotorBrake is identical to lemlib::BrakeMode, except for its name and lemlib uses an enum class for type
     // safety
@@ -25,9 +28,6 @@ BrakeMode motorBrakeToBrakeMode(pros::MotorBrake mode) {
         default: return BrakeMode::INVALID;
     }
 }
-
-Motor::Motor(pros::Motor motor)
-    : m_motor(motor) {}
 
 int Motor::move(double percent) {
     // the V5 and EXP motors have different voltage caps, so we need to scale based on the motor type
@@ -54,34 +54,39 @@ BrakeMode Motor::getBrakeMode() const { return motorBrakeToBrakeMode(m_motor.get
 int Motor::isConnected() { return m_motor.is_installed(); }
 
 Angle Motor::getAngle() {
-    // to allow the user to use whatever encoder units they want, we only deal with raw encoder counts
-    // and adjust for different cartridges ourselves
+    // get the raw position
+    const int ticks = m_motor.get_raw_position(NULL);
+    if (ticks == INT_MAX) return from_stRot(INFINITY);
+    // get the cartridge
     const Cartridge cartridge = getCartridge();
-    const int counts = getAbsoluteCounts();
-    if (cartridge == Cartridge::INVALID) return from_stDeg(INFINITY);
-    if (counts == INT_MAX) return from_stDeg(INFINITY);
-    // calculate ticks per rotation
-    // the only 3 possible outcomes are integers, so we use integers to prevent a loss of precision
+    if (cartridge == Cartridge::INVALID) return from_stRot(INFINITY);
+    // convert the raw position into an angle
     const int tpr = 50 * 3600 / static_cast<int>(cartridge);
-    return from_stRot(counts / double(tpr));
+    const Angle position = from_stRot(double(ticks) / double(tpr));
+    // return position + offset
+    return position + m_offset;
 }
 
 int Motor::setAngle(Angle angle) {
+    // get the raw position
+    const int ticks = m_motor.get_raw_position(NULL);
+    if (ticks == INT_MAX) return INT_MAX;
+    // get the cartridge
     const Cartridge cartridge = getCartridge();
-    // check for errors
     if (cartridge == Cartridge::INVALID) return INT_MAX;
-    // handle different units
-    switch (m_motor.get_encoder_units()) {
-        case (pros::MotorUnits::degrees): return convertStatus(m_motor.set_zero_position(to_stDeg(angle)));
-        case (pros::MotorUnits::rotations): return convertStatus(m_motor.set_zero_position(to_stRot(angle)));
-        case (pros::MotorUnits::counts): {
-            // calculate ticks per rotation
-            // the only 3 possible outcomes are integers, so we use integers to prevent a loss of precision
-            const int tpr = 50 * 3600 / static_cast<int>(cartridge);
-            return convertStatus(m_motor.set_zero_position(to_stRot(angle) * tpr));
-        }
-        default: return INT_MAX;
-    }
+    // convert the raw position into an angle
+    const int tpr = 50 * 3600 / static_cast<int>(cartridge);
+    const Angle position = from_stRot(double(ticks) / double(tpr));
+    // calculate offset
+    m_offset = angle - position;
+    return 0;
+}
+
+Angle Motor::getOffset() const { return m_offset; }
+
+int Motor::setOffset(Angle offset) {
+    m_offset = offset;
+    return 0;
 }
 
 MotorType Motor::getType() {
@@ -130,22 +135,4 @@ void Motor::setReversed(bool reversed) {
 int Motor::getPort() const { return m_motor.get_port(); }
 
 Temperature Motor::getTemperature() const { return units::from_celsius(m_motor.get_temperature()); }
-
-int Motor::getAbsoluteCounts() {
-    // get telemetry from the motor
-    const Cartridge cartridge = getCartridge();
-    const double position = m_motor.get_position();
-    // error checking
-    if (cartridge == Cartridge::INVALID) return INT_MAX;
-    if (position == INFINITY) return INT_MAX;
-    // calculate ticks per rotation
-    const double tpr = 50 * (3600.0 / static_cast<int>(cartridge));
-    // handle different units
-    switch (m_motor.get_encoder_units()) {
-        case (pros::MotorUnits::degrees): return (position / 360.0) * tpr;
-        case (pros::MotorUnits::rotations): return position * tpr;
-        case (pros::MotorUnits::counts): return position;
-        default: return INT_MAX;
-    }
-}
 } // namespace lemlib

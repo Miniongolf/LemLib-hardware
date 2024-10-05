@@ -324,7 +324,7 @@ class MotorGroup : Encoder {
          * }
          * @endcode
          */
-        std::vector<Temperature> getTemperatures() const;
+        std::vector<Temperature> getTemperatures();
         /**
          * @brief Get the number of connected motors in the group
          *
@@ -472,8 +472,14 @@ class MotorGroup : Encoder {
          */
         void removeMotor(Motor motor);
     private:
+        struct MotorInfo {
+                int port;
+                bool connectedLastCycle;
+                Angle offset;
+        };
+
         /**
-         * @brief Configure a motor so its ready to join the motor group
+         * @brief Configure a motor so its ready to join the motor group, and return its offset
          *
          * Motors may be added to the motor group or reconnect to the motor group during runtime. When this happens,
          * functions like getAngle() would break as the motor is not configured like other motors in the group. This
@@ -489,7 +495,7 @@ class MotorGroup : Encoder {
          * @return 0 on success
          * @return INT_MAX on failure, setting errno
          */
-        int configureMotor(int port);
+        Angle configureMotor(int port);
         /**
          * @brief Get motors in the motor group as a vector of lemlib::Motor objects
          *
@@ -499,8 +505,9 @@ class MotorGroup : Encoder {
          */
         const std::vector<Motor> getMotors();
         const AngularVelocity m_outputVelocity;
+        std::vector<Angle> m_offsets;
         /**
-         * This member variable is a vector of motor ports
+         * This member variable is a vector of motor information
          *
          * Ideally, we'd use a vector of lemlib::Motor objects, but this does not work if you want to remove an element
          * from the vector as the copy constructor is implicitly deleted.
@@ -509,7 +516,10 @@ class MotorGroup : Encoder {
          *
          * It also has a bool for every port, which represents whether the motor was connected or not the last time
          * `getAngle` was called. This enables the motor group to properly handle a motor reconnect.
+         *
+         * It also contains the offset of each motor. This needs to be saved by the motor group, because it can't be
+         * saved in a motor object, as motor objects are not saved as member variables
          */
-        std::vector<std::pair<int8_t, bool>> m_motors;
+        std::vector<MotorInfo> m_motors;
 };
 }; // namespace lemlib

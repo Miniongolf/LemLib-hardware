@@ -207,6 +207,9 @@ class Motor : public Encoder {
         /**
          * @brief Set the relative angle of the motor
          *
+         * Setting the relative angle of the motor does so only on a software level, meaning that any other
+         * lemlib::Motor objects will not register a change in the angle, only this object will
+         *
          * This function uses the following values of errno when an error state is reached:
          *
          * ENODEV: the port cannot be configured as a motor
@@ -232,6 +235,57 @@ class Motor : public Encoder {
          * @endcode
          */
         int setAngle(Angle angle) override;
+        /**
+         * @brief Get the offset of the motor encoder
+         *
+         * Motor position is calculated as raw position + offset
+         *
+         * @return Angle
+         *
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *
+         *     // expected output: 0 degrees
+         *     std::cout << "offset: " << to_stDeg(motor.getOffset()) << std::endl;
+         *     // expected output: 0 degrees
+         *     std::cout << "angle: " << to_stDeg(motor.getAngle()) << std::endl;
+         *
+         *     // set the motor angle
+         *     motor.setAngle(180_stDeg);
+         *
+         *     // expected output: 180 degrees
+         *     std::cout << "offset: " << to_stDeg(motor.getOffset()) << std::endl;
+         *     // expected output: 180 degrees
+         *     std::cout << "angle: " << to_stDeg(motor.getAngle()) << std::endl;
+         * }
+         * @endcode
+         */
+        Angle getOffset() const;
+        /**
+         * @brief Set the offset of the motor encoder
+         *
+         * Motor position is calculated as raw position + offset. This function sets the offset
+         *
+         * @param offset the new offset
+         * @return int 0 on success
+         *
+         * @b Example
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *
+         *     // expected output: 0 degrees
+         *     std::cout << "angle: " << to_stDeg(motor.getAngle()) << std::endl;
+         *
+         *     // set the motor offset
+         *     motor.setOffset(180_stDeg);
+         *     // expected output: 180
+         *     std::cout << "angle: " << to_stDeg(motor.getAngle()) << std::endl;
+         * }
+         * @endcode
+         */
+        int setOffset(Angle offset);
         /**
          * @brief Get the type of the motor
          *
@@ -379,16 +433,7 @@ class Motor : public Encoder {
          */
         Temperature getTemperature() const;
     private:
-        /**
-         * @brief Get the number of counts the motor recorded in absolute position
-         *
-         * PROS does not allow you to get the absolute position of a motor in a specific encoder unit without a
-         * write op. We want to avoid writing to the motor to avoid race conditions, which means we have to do the
-         * unit conversions ourselves
-         *
-         * @return int number of counts
-         */
-        int getAbsoluteCounts();
+        Angle m_offset = 0_stDeg;
         pros::Motor m_motor;
 };
 } // namespace lemlib

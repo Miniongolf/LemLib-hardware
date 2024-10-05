@@ -1,19 +1,21 @@
 #include "hardware/Motor/MotorGroup.hpp"
-#include "pros/motors.h"
 #include "units/Temperature.hpp"
 #include <climits>
 #include <errno.h>
-#include <utility>
 
 namespace lemlib {
 MotorGroup::MotorGroup(std::initializer_list<pros::Motor> motors, AngularVelocity outputVelocity)
     : m_outputVelocity(outputVelocity) {
-    for (const pros::Motor& motor : motors) m_motors.push_back(std::pair<std::int8_t, bool>(motor.get_port(), true));
+    for (const pros::Motor& motor : motors) {
+        m_motors.push_back({.port = motor.get_port(), .connectedLastCycle = true, .offset = 0_stDeg});
+    }
 }
 
 MotorGroup::MotorGroup(pros::v5::MotorGroup motors, AngularVelocity outputVelocity)
     : m_outputVelocity(outputVelocity) {
-    for (int i = 0; i < motors.size(); i++) m_motors.push_back(std::pair<int8_t, bool>(motors.get_port(i), true));
+    for (int i = 0; i < motors.size(); i++) {
+        m_motors.push_back({.port = motors.get_port(i), .connectedLastCycle = true, .offset = 0_stDeg});
+    }
 }
 
 int MotorGroup::move(double percent) {
@@ -130,11 +132,10 @@ int MotorGroup::setAngle(Angle angle) {
     return success ? 0 : INT_MAX;
 }
 
-std::vector<Temperature> MotorGroup::getTemperatures() const {
+std::vector<Temperature> MotorGroup::getTemperatures() {
+    std::vector<Motor> motors = getMotors();
     std::vector<Temperature> temperatures;
-    for (std::pair<int8_t, bool> motor : m_motors) {
-        temperatures.push_back(units::from_celsius(pros::c::motor_get_temperature(motor.first)));
-    }
+    for (const Motor motor : motors) { temperatures.push_back(motor.getTemperature()); }
     return temperatures;
 }
 
@@ -148,18 +149,20 @@ int MotorGroup::getSize() {
 
 int MotorGroup::addMotor(int port) {
     // check that the motor isn't already part of the group
-    for (const std::pair<int8_t, bool>& pair : m_motors) {
+    for (const MotorInfo& info : m_motors) {
         // return an error if the motor is already added to the group
-        if (std::abs(pair.first) == std::abs(port)) {
+        if (std::abs(info.port) == std::abs(port)) {
             errno = EEXIST;
             return INT_MAX;
         }
     }
     // configure the motor
-    const int result = configureMotor(port);
+    const Angle offset = configureMotor(port);
     // add the motor to the group
-    m_motors.push_back(std::pair<int8_t, bool>(port, result == 0));
-    return result;
+    MotorInfo info {.port = port, .connectedLastCycle = offset == from_stRot(INFINITY), .offset = offset};
+    m_motors.push_back(info);
+    if (offset == from_stRot(INFINITY)) return INFINITY;
+    return 0;
 }
 
 int MotorGroup::addMotor(Motor motor) { return addMotor(motor.getPort()); }
@@ -174,7 +177,7 @@ void MotorGroup::removeMotor(int port) {
     // remove the motor with the specified port
     auto it = m_motors.begin();
     while (it < m_motors.end()) {
-        if (std::abs(it->first) == std::abs(port)) {
+        if (std::abs(it->port) == std::abs(port)) {
             m_motors.erase(it);
         } else {
             it++;
@@ -184,29 +187,33 @@ void MotorGroup::removeMotor(int port) {
 
 const std::vector<Motor> MotorGroup::getMotors() {
     std::vector<Motor> motors;
-    for (auto& pair : m_motors) {
-        pros::Motor motor(pair.first);
+    for (int i = 0; i < m_motors.size(); i++) {
+        // create a temporary motor
+        Motor motor(m_motors.at(i).port);
+        // set motor offset
+        motor.setOffset(m_offsets.at(i));
         // check if the motor is connected
-        const bool connected = motor.is_installed();
+        const bool connected = motor.isConnected();
         // don't add the motor if it is not connected
         if (!connected) {
-            pair.second = false;
+            m_motors.at(i).connectedLastCycle = false;
             continue;
         }
         // if the motor is connected, but wasn't the last time we checked, then configure it to prevent side
         // effects of reconnecting
-        // don't add the motor if configuration
-        if (pair.second == false && configureMotor(pair.first) != 0) continue;
+        // don't add the motor if configuration fails
+        if (m_motors.at(i).connectedLastCycle == false && configureMotor(m_motors.at(i).port) != from_stRot(INFINITY))
+            continue;
         // add the motor and set save it as connected
-        pair.second = true;
-        motors.push_back(pros::Motor(pair.first));
+        m_motors.at(i).connectedLastCycle = true;
+        motors.push_back(motor);
     }
     return motors;
 }
 
 void MotorGroup::removeMotor(Motor motor) { removeMotor(motor.getPort()); }
 
-int MotorGroup::configureMotor(int port) {
+Angle MotorGroup::configureMotor(int port) {
     // since this function is called in other MotorGroup member functions, this function can't call any other member
     // function, otherwise it would cause a recursion loop. This means that this function is ugly and complex, but at
     // least it means that the other functions can stay simple
@@ -217,8 +224,8 @@ int MotorGroup::configureMotor(int port) {
     bool success = true;
     Motor motor = pros::Motor(port);
     // set the motor's brake mode to whatever the first working motor's brake mode is
-    for (std::pair<int8_t, bool> pair : m_motors) {
-        Motor m = pros::Motor(pair.second);
+    for (MotorInfo info : m_motors) {
+        Motor m = pros::Motor(info.port);
         const BrakeMode mode = m.getBrakeMode();
         if (mode == BrakeMode::INVALID) continue;
         if (m.setBrakeMode(mode) == 0) break;
@@ -235,15 +242,18 @@ int MotorGroup::configureMotor(int port) {
     {
         // find all the working motors
         std::vector<Motor> motors;
-        for (auto& pair : m_motors) {
-            pros::Motor m(pair.first);
+        for (int i = 0; i < m_motors.size(); i++) {
+            // temporary motor object
+            Motor m = pros::Motor(m_motors.at(i).port);
+            // set the offset of the motor
+            m.setOffset(m_offsets.at(i));
             // check if the motor is connected
-            const bool connected = m.is_installed();
+            const bool connected = m.isConnected();
             // check that the motor is not the motor we are configuring
-            if (std::abs(m.get_port()) == std::abs(port)) continue;
+            if (std::abs(m.getPort()) == std::abs(port)) continue;
             // don't add the motor if it is not connected
             if (!connected) continue;
-            else motors.push_back(pros::Motor(pair.first));
+            else motors.push_back(m);
         }
 
         // get the average angle of all motors in the group
@@ -270,7 +280,8 @@ int MotorGroup::configureMotor(int port) {
 
     // set the angle of the new motor
     const int result = motor.setAngle(angle);
-    if (result == INT_MAX) return success = false; // check for errors
-    return !success;
+    if (result == INT_MAX) return from_stRot(INFINITY); // check for errors
+    if (success == true) return motor.getOffset();
+    return from_stRot(INFINITY);
 }
 }; // namespace lemlib
