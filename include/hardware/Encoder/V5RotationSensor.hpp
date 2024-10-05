@@ -103,6 +103,7 @@ class V5RotationSensor : public Encoder {
          */
         int setAngle(Angle angle) override;
     private:
+        Angle m_offset = 0_stRot;
         pros::Rotation m_encoder;
 };
 } // namespace lemlib
