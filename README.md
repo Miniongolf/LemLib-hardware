@@ -21,19 +21,19 @@ This PROS template aims to simplify interactions with devices, and implement a c
     - [X] Removing motors doesn't affect the measured angle
     - [X] Automatic per-motor gear ratio calculations. Just input port and cartridge. Supports different cartridges in the same group
 
- - [ ] **Abstract Encoders**
+ - [X] **Abstract Encoders**
     - [X] Generic interface for any encoder
-    - [ ] Support for all VEX encoders, as well as any custom encoder for use in VEX AI (VAIRC) or VEX U (VURC)
+    - [X] Support for all VEX encoders
         - [X] All custom encoders
         - [X] Motors / Motor Groups
-        - [ ] V5 Rotation Sensor
-        - [ ] Optical Shaft encoder
+        - [X] V5 Rotation Sensor
+        - [X] Optical Shaft encoder
 
- - [ ] **Abstract Gyro**
+ - [X] **Abstract Gyro**
     - [X] Generic interface for any gyro
-    - [ ] Support for VEX gyros, as well as any custom gyros for use in VEX AI or VEX U
+    - [X] Support for VEX gyros, as well as any custom gyros for use in VEX AI or VEX U
         - [X] All custom gyros
-        - [ ] V5 Inertial Sensor
+        - [X] V5 Inertial Sensor
         - [ ] V5 GPS Sensor (pending viability tests, gyro only)
 
 
