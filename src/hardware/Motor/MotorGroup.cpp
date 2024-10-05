@@ -1,4 +1,6 @@
 #include "hardware/Motor/MotorGroup.hpp"
+#include "pros/motors.h"
+#include "units/Temperature.hpp"
 #include <climits>
 #include <errno.h>
 #include <utility>
@@ -126,6 +128,14 @@ int MotorGroup::setAngle(Angle angle) {
     }
     // as long as one motor sets the angle successfully, return 0 (success)
     return success ? 0 : INT_MAX;
+}
+
+std::vector<Temperature> MotorGroup::getTemperatures() const {
+    std::vector<Temperature> temperatures;
+    for (std::pair<int8_t, bool> motor : m_motors) {
+        temperatures.push_back(units::from_celsius(pros::c::motor_get_temperature(motor.first)));
+    }
+    return temperatures;
 }
 
 int MotorGroup::getSize() {

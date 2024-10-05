@@ -129,6 +129,8 @@ void Motor::setReversed(bool reversed) {
 
 int Motor::getPort() const { return m_motor.get_port(); }
 
+Temperature Motor::getTemperature() const { return units::from_celsius(m_motor.get_temperature()); }
+
 int Motor::getAbsoluteCounts() {
     // get telemetry from the motor
     const Cartridge cartridge = getCartridge();

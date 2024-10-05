@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hardware/encoder/Encoder.hpp"
+#include "units/Temperature.hpp"
 #include "pros/motors.hpp"
 
 namespace lemlib {
@@ -351,13 +352,39 @@ class Motor : public Encoder {
          * @endcode
          */
         int getPort() const;
+        /**
+         * @brief Get the temperature of the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @return Temperature the temperature of the motor
+         * @return INFINITY on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor = pros::Motor(1);
+         *
+         *     // output motor temperature to the console
+         *     Temperature temperature = motor.getTemperature();
+         *     if (units::to_celsius(temperature) == INFINITY) {
+         *         std::cout << "Error getting motor temperature" << std::endl;
+         *     } else {
+         *         std::cout << "Motor Temperature: " << units::to_celsius(motor.getTemperature()) << std::endl;
+         *     }
+         * }
+         * @endcode
+         */
+        Temperature getTemperature() const;
     private:
         /**
          * @brief Get the number of counts the motor recorded in absolute position
          *
-         * PROS does not allow you to get the absolute position of a motor in a specific encoder unit without a write
-         * op. We want to avoid writing to the motor to avoid race conditions, which means we have to do the unit
-         * conversions ourselves
+         * PROS does not allow you to get the absolute position of a motor in a specific encoder unit without a
+         * write op. We want to avoid writing to the motor to avoid race conditions, which means we have to do the
+         * unit conversions ourselves
          *
          * @return int number of counts
          */

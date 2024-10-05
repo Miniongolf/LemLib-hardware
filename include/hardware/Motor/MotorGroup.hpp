@@ -296,6 +296,36 @@ class MotorGroup : Encoder {
          */
         int setAngle(Angle angle) override;
         /**
+         * @brief Get the temperatures of the motors in the motor group
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @return vector<Temperature> vector of the temperatures of the motors
+         * @return INFINITY on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor1 = pros::Motor(1);
+         *     lemlib::Motor motor2 = pros::Motor(2);
+         *     lemlib::MotorGroup motorGroup = { motor1, motor2 };
+         *
+         *     // output motor temperatures to the console
+         *     std::vector<Temperature> temperatures = motorGroup.getTemperatures();
+         *     for (lemlib::Motor motor : motorGroup) {
+         *         if (units::to_celsius(temperature) == INFINITY) {
+         *             std::cout << "Error getting motor temperature" << std::endl;
+         *         } else {
+         *             std::cout << "Motor Temperature: " << units::to_celsius(motor.getTemperature()) << std::endl;
+         *         }
+         *     }
+         * }
+         * @endcode
+         */
+        std::vector<Temperature> getTemperatures() const;
+        /**
          * @brief Get the number of connected motors in the group
          *
          * @return int the number of connected motors in the group
