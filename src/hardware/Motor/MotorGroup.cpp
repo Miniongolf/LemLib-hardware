@@ -1,6 +1,7 @@
 #include "hardware/Motor/MotorGroup.hpp"
 #include "units/Temperature.hpp"
 #include <climits>
+#include <cmath>
 #include <errno.h>
 
 namespace lemlib {
@@ -161,7 +162,7 @@ int MotorGroup::addMotor(int port) {
     // add the motor to the group
     MotorInfo info {.port = port, .connectedLastCycle = offset == from_stRot(INFINITY), .offset = offset};
     m_motors.push_back(info);
-    if (offset == from_stRot(INFINITY)) return INFINITY;
+    if (offset == from_stRot(INFINITY)) return INT_MAX;
     return 0;
 }
 
@@ -202,8 +203,9 @@ const std::vector<Motor> MotorGroup::getMotors() {
         // if the motor is connected, but wasn't the last time we checked, then configure it to prevent side
         // effects of reconnecting
         // don't add the motor if configuration fails
-        if (m_motors.at(i).connectedLastCycle == false && configureMotor(m_motors.at(i).port) != from_stRot(INFINITY))
-            continue;
+        if (!m_motors.at(i).connectedLastCycle) {
+            if (std::isinf(to_stRot(configureMotor(m_motors.at(i).port)))) continue;
+        }
         // add the motor and set save it as connected
         m_motors.at(i).connectedLastCycle = true;
         motors.push_back(motor);
