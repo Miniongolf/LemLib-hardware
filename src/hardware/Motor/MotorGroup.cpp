@@ -191,7 +191,7 @@ const std::vector<Motor> MotorGroup::getMotors() {
         // create a temporary motor
         Motor motor(m_motors.at(i).port);
         // set motor offset
-        motor.setOffset(m_offsets.at(i));
+        motor.setOffset(m_motors.at(i).offset);
         // check if the motor is connected
         const bool connected = motor.isConnected();
         // don't add the motor if it is not connected
@@ -246,7 +246,7 @@ Angle MotorGroup::configureMotor(int port) {
             // temporary motor object
             Motor m = pros::Motor(m_motors.at(i).port);
             // set the offset of the motor
-            m.setOffset(m_offsets.at(i));
+            m.setOffset(m_motors.at(i).offset);
             // check if the motor is connected
             const bool connected = m.isConnected();
             // check that the motor is not the motor we are configuring

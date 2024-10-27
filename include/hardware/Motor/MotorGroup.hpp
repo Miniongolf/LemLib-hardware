@@ -505,7 +505,6 @@ class MotorGroup : Encoder {
          */
         const std::vector<Motor> getMotors();
         const AngularVelocity m_outputVelocity;
-        std::vector<Angle> m_offsets;
         /**
          * This member variable is a vector of motor information
          *
