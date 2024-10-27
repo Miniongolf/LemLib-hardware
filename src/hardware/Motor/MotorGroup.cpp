@@ -1,4 +1,5 @@
 #include "hardware/Motor/MotorGroup.hpp"
+#include "Motor.hpp"
 #include "units/Temperature.hpp"
 #include <climits>
 #include <cmath>
@@ -60,21 +61,14 @@ int MotorGroup::brake() {
 }
 
 int MotorGroup::setBrakeMode(BrakeMode mode) {
-    const std::vector<Motor> motors = getMotors();
-    bool success = false;
-    for (Motor motor : motors) {
-        const int result = motor.setBrakeMode(mode);
-        if (result == 0) success = true;
-    }
-    // as long as one motor sets the brake mode successfully, return 0 (success)
-    return success ? 0 : INT_MAX;
+    m_brakeMode = mode;
+    getMotors(); // even though we don't use this, we call it anyway for brake mode setting and disconnect handling
+    return 0;
 }
 
-std::vector<BrakeMode> MotorGroup::getBrakeModes() {
-    const std::vector<Motor> motors = getMotors();
-    std::vector<BrakeMode> brakeModes;
-    for (const Motor& motor : motors) brakeModes.push_back(motor.getBrakeMode());
-    return brakeModes;
+BrakeMode MotorGroup::getBrakeMode() {
+    getMotors(); // even though we don't use this, we call it anyway for brake mode setting and disconnect handling
+    return m_brakeMode;
 }
 
 int MotorGroup::isConnected() {
@@ -206,6 +200,11 @@ const std::vector<Motor> MotorGroup::getMotors() {
         if (!m_motors.at(i).connectedLastCycle) {
             if (std::isinf(to_stRot(configureMotor(m_motors.at(i).port)))) continue;
         }
+        // check that the brake mode of the motor is correct
+        BrakeMode mode = motor.getBrakeMode();
+        if (mode != m_brakeMode) {
+            if (motor.setBrakeMode(m_brakeMode) != 0) continue;
+        } else if (mode == BrakeMode::INVALID) continue;
         // add the motor and set save it as connected
         m_motors.at(i).connectedLastCycle = true;
         motors.push_back(motor);

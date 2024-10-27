@@ -148,13 +148,8 @@ class MotorGroup : Encoder {
         /**
          * @brief set the brake mode of the motors
          *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port cannot be configured as a motor
-         *
          * @param mode the brake mode to set the motors to
          * @return 0 on success
-         * @return INT_MAX on failure, setting errno
          *
          * @b Example:
          * @code {.cpp}
@@ -175,14 +170,9 @@ class MotorGroup : Encoder {
          */
         int setBrakeMode(BrakeMode mode);
         /**
-         * @brief get the brake mode of the motor
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port cannot be configured as a motor
+         * @brief get the brake mode of the motor group
          *
          * @return BrakeMode enum value of the brake mode
-         * @return BrakeMode::INVALID on failure, setting errno
          *
          * @b Example:
          * @code {.cpp}
@@ -192,7 +182,7 @@ class MotorGroup : Encoder {
          *     pros::Motor motor3(3, pros::v5::MotorGears::green);
          *     lemlib::MotorGroup motorGroup({motor1, motor2, motor3}, 200_rpm);
          *
-         *     const lemlib::BrakeMode mode = motorGroup.getBrakeModes();
+         *     const lemlib::BrakeMode mode = motorGroup.getBrakeMode();
          *     if (mode == lemlib::BrakeMode::BRAKE) {
          *         std::cout << "Brake mode is set to BRAKE!" << std::endl;
          *     } else if (mode == lemlib::BrakeMode::COAST) {
@@ -205,7 +195,7 @@ class MotorGroup : Encoder {
          * }
          * @endcode
          */
-        std::vector<BrakeMode> getBrakeModes();
+        BrakeMode getBrakeMode();
         /**
          * @brief whether any of the motors in the motor group are connected
          *
@@ -496,6 +486,7 @@ class MotorGroup : Encoder {
          * @return INT_MAX on failure, setting errno
          */
         Angle configureMotor(int port);
+        BrakeMode m_brakeMode = BrakeMode::COAST;
         /**
          * @brief Get motors in the motor group as a vector of lemlib::Motor objects
          *
