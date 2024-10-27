@@ -11,6 +11,26 @@ void initialize() {
             const AngularVelocity vel = (cur - prev) / 20_msec;
             prev = cur;
             pros::lcd::print(0, "rps: %f", to_rps(vel));
+            std::string mode;
+            switch (motor.getBrakeMode()) {
+                case lemlib::BrakeMode::COAST: {
+                    mode = "coast";
+                    break;
+                }
+                case lemlib::BrakeMode::BRAKE: {
+                    mode = "brake";
+                    break;
+                }
+                case lemlib::BrakeMode::HOLD: {
+                    mode = "hold";
+                    break;
+                }
+                case lemlib::BrakeMode::INVALID: {
+                    mode = "invalid";
+                    break;
+                }
+            }
+            pros::lcd::print(1, "mode: %s", mode.c_str());
             pros::delay(20);
         }
     });
