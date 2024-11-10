@@ -6,18 +6,12 @@
 #include <errno.h>
 
 namespace lemlib {
-MotorGroup::MotorGroup(std::initializer_list<pros::Motor> motors, AngularVelocity outputVelocity)
-    : m_outputVelocity(outputVelocity) {
-    for (const pros::Motor& motor : motors) {
-        m_motors.push_back({.port = motor.get_port(), .connectedLastCycle = true, .offset = 0_stDeg});
+MotorGroup::MotorGroup(std::initializer_list<int> ports, AngularVelocity outputVelocity)
+: m_outputVelocity(outputVelocity) {
+    for (const int port : ports) {
+        m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg});
     }
-}
 
-MotorGroup::MotorGroup(pros::v5::MotorGroup motors, AngularVelocity outputVelocity)
-    : m_outputVelocity(outputVelocity) {
-    for (int i = 0; i < motors.size(); i++) {
-        m_motors.push_back({.port = motors.get_port(i), .connectedLastCycle = true, .offset = 0_stDeg});
-    }
 }
 
 int MotorGroup::move(double percent) {
@@ -223,10 +217,10 @@ Angle MotorGroup::configureMotor(int port) {
     // add the motor, and the motor will automatically be reconfigured when it is working properly again
     // whether there was a failure or not is kept track of with this boolean
     bool success = true;
-    Motor motor = pros::Motor(port);
+    Motor motor(port);
     // set the motor's brake mode to whatever the first working motor's brake mode is
     for (MotorInfo info : m_motors) {
-        Motor m = pros::Motor(info.port);
+        Motor m = info.port;
         const BrakeMode mode = m.getBrakeMode();
         if (mode == BrakeMode::INVALID) continue;
         if (m.setBrakeMode(mode) == 0) break;
@@ -245,7 +239,7 @@ Angle MotorGroup::configureMotor(int port) {
         std::vector<Motor> motors;
         for (int i = 0; i < m_motors.size(); i++) {
             // temporary motor object
-            Motor m = pros::Motor(m_motors.at(i).port);
+            Motor m = m_motors.at(i).port;
             // set the offset of the motor
             m.setOffset(m_motors.at(i).offset);
             // check if the motor is connected

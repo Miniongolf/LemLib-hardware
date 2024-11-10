@@ -2,7 +2,6 @@
 
 #include "hardware/encoder/Encoder.hpp"
 #include "units/Temperature.hpp"
-#include "pros/motors.hpp"
 
 namespace lemlib {
 
@@ -17,17 +16,32 @@ class Motor : public Encoder {
         /**
          * @brief Construct a new Motor object
          *
-         * @param port the port of the motor
+         * @param port the signed port of the motor. Negative if the motor is reversed
          *
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     // construct a new Motor object with port 1
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     // construct a new Motor object on port 1, which is reversed
+         *     lemlib::Motor motor(-1);
          * }
          * @endcode
          */
-        Motor(pros::Motor motor);
+        Motor(int port);
+        /**
+         * @brief Construct a new Motor object
+         *
+         * @param port the port of the motor
+         * @param reversed whether the motor is reversed or not
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // construct a new Motor object on port 1, which is reversed
+         *     lemlib::Motor motor(1, true);
+         * }
+         * @endcode
+         */
+        Motor(uint8_t port, bool reversed);
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
@@ -370,15 +384,12 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        bool isReversed() const;
+        int isReversed() const;
         /**
          * @brief set whether the motor should be reversed or not
          *
-         * This function does not return a value or set errno, as it is impossible for it to fail
-         *
          * @param reversed whether the motor should be reversed or not
          * @return 0 on success
-         * @return INT_MAX on failure, setting errno
          *
          * @b Example:
          * @code {.cpp}
@@ -389,7 +400,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        void setReversed(bool reversed);
+        int setReversed(bool reversed);
         /**
          * @brief Get the port the motor is connected to
          *
@@ -434,6 +445,6 @@ class Motor : public Encoder {
         Temperature getTemperature() const;
     private:
         Angle m_offset = 0_stDeg;
-        pros::Motor m_motor;
+        int m_port;
 };
 } // namespace lemlib
