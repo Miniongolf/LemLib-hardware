@@ -11,7 +11,6 @@ MotorGroup::MotorGroup(std::initializer_list<int> ports, AngularVelocity outputV
     for (const int port : ports) {
         m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg});
     }
-
 }
 
 int MotorGroup::move(double percent) {
