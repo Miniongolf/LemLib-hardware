@@ -99,7 +99,7 @@ class MotorGroup : Encoder {
          *
          * @b Example:
          * @code {.cpp}
-         * void initialize() { 
+         * void initialize() {
          *     lemlib::MotorGroup motorGroup({1, -2, 3}, 360_rpm);
          *
          *     // move the motors forward at 50% power
@@ -235,6 +235,57 @@ class MotorGroup : Encoder {
          * @endcode
          */
         int setAngle(Angle angle) override;
+        /**
+         * @brief Get the combined current limit of all motors in the group
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * TODO: see how overheating affects this value
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @return Current the combined current limit of the motor group
+         * @return INFINITY on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::MotorGroup motorGroup({1, -2, 3}, 360_rpm);
+         *
+         *     // output the current limit to the console
+         *     Current limit = motorGroup.getCurrentLimit();
+         *     if (units::to_amp(limit) == INFINITY) {
+         *         std::cout << "Error getting motor group current limit" << std::endl;
+         *     } else {
+         *         std::cout << "Current Limit: " << units::to_amp(limit) << std::endl;
+         *     }
+         * }
+         * @endcode
+         */
+        Current getCurrentLimit();
+        /**
+         * @brief set the combined current limit of all motors in the group
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @param limit the maximum allowed current
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::MotorGroup motorGroup({1, -2, 3}, 360_rpm);
+         *     // set the current limit to 6 amp
+         *     // every motor in the group will have a current limit of 2 amp
+         *     // making for a total current limit of 6 amp
+         *     motorGroup.setCurrentLimit(6_amp);
+         * }
+         * @endcode
+         */
+        int setCurrentLimit(Current limit);
         /**
          * @brief Get the temperatures of the motors in the motor group
          *
@@ -397,6 +448,7 @@ class MotorGroup : Encoder {
                 bool connectedLastCycle;
                 Angle offset;
         };
+
         /**
          * @brief Configure a motor so its ready to join the motor group, and return its offset
          *

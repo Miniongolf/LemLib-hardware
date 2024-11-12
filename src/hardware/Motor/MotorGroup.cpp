@@ -97,6 +97,34 @@ int MotorGroup::setAngle(Angle angle) {
     return success ? 0 : INT_MAX;
 }
 
+Current MotorGroup::getCurrentLimit() {
+    const std::vector<Motor> motors = getMotors();
+    Current total = 0_amp;
+    int errors = 0;
+    // find the total current limit
+    for (Motor motor : motors) {
+        Current result = motor.getCurrentLimit();
+        if (result.internal() == INFINITY) { // error checking
+            errors += 1;
+            continue;
+        }
+        total += result;
+    }
+    if (errors == motors.size()) return from_amp(INFINITY); // error checking
+    return total;
+}
+
+int MotorGroup::setCurrentLimit(Current limit) {
+    const std::vector<Motor> motors = getMotors();
+    if (motors.size() == 0) return INT_MAX; // error handling
+    // set current limits
+    for (Motor motor : motors) {
+        int result = motor.setCurrentLimit(limit / motors.size());
+        if (result == INT_MAX) return setCurrentLimit(limit); // redo if there was a failure
+    }
+    return 0;
+}
+
 std::vector<Temperature> MotorGroup::getTemperatures() {
     std::vector<Motor> motors = getMotors();
     std::vector<Temperature> temperatures;
