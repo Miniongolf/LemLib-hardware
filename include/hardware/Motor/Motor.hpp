@@ -9,8 +9,6 @@ enum class BrakeMode { COAST, BRAKE, HOLD, INVALID };
 
 enum class MotorType { V5, EXP, INVALID };
 
-enum class Cartridge { RED = 100, GREEN = 200, BLUE = 600, INVALID };
-
 class Motor : public Encoder {
     public:
         /**
@@ -21,12 +19,12 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     // construct a new Motor object on port 1, which is reversed
-         *     lemlib::Motor motor(-1);
+         *     // construct a new Motor object on port 1, which is reversed, and powers a mechanism that spins at 15 rpm
+         *     lemlib::Motor motor(-1, 15_rpm);
          * }
          * @endcode
          */
-        Motor(int port);
+        Motor(int port, AngularVelocity outputVelocity);
         /**
          * @brief Construct a new Motor object
          *
@@ -36,12 +34,13 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     // construct a new Motor object on port 1, which is reversed
-         *     lemlib::Motor motor(1, true);
+         *     // construct a new Motor object on port 1, which is not reversed,
+         *     // and powers a mechanism spinning at 600 rpm
+         *     lemlib::Motor motor(1, false, 600_rpm);
          * }
          * @endcode
          */
-        Motor(uint8_t port, bool reversed);
+        Motor(uint8_t port, bool reversed, AngularVelocity outputVelocity);
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
@@ -56,7 +55,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     // move the motor forward at 50% power
          *     motor.move(0.5);
          *     // move the motor backward at 50% power
@@ -81,7 +80,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     // move the motor forward at 50 degrees per second
          *     motor.moveVelocity(50_degps);
          *     // move the motor backward at 50 degrees per second
@@ -107,7 +106,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     // move the motor forward at 50% power
          *     motor.move(0.5);
          *     // brake the motor
@@ -130,7 +129,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     // set the motor to brake when stopped
          *     motor.setBrakeMode(lemlib::BrakeMode::BRAKE);
          *     // set the motor to coast when stopped
@@ -154,7 +153,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     const lemlib::BrakeMode mode = motor.getBrakeMode();
          *     if (mode == lemlib::BrakeMode::BRAKE) {
          *         std::cout << "Brake mode is set to BRAKE!" << std::endl;
@@ -178,7 +177,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     const int result = motor.isConnected();
          *     if (result == 1) {
          *         std::cout << "motor is connected!" << std::endl;
@@ -207,7 +206,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     const Angle angle = motor.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
@@ -238,7 +237,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     if (motor.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
          *         std::cout < "Relative angle: " << to_sDeg(motor.getAngle()) << std::endl; // outputs 0
@@ -258,7 +257,7 @@ class Motor : public Encoder {
          *
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *
          *     // expected output: 0 degrees
          *     std::cout << "offset: " << to_stDeg(motor.getOffset()) << std::endl;
@@ -287,7 +286,7 @@ class Motor : public Encoder {
          * @b Example
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *
          *     // expected output: 0 degrees
          *     std::cout << "angle: " << to_stDeg(motor.getAngle()) << std::endl;
@@ -315,7 +314,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     switch (motor.getType()) {
          *        case (lemlib::MotorType::V5): {
          *            std::cout << "V5 Motor on port 1" << std::endl;
@@ -332,39 +331,6 @@ class Motor : public Encoder {
          */
         MotorType getType();
         /**
-         * @brief Get the cartridge installed in the motor
-         *
-         * This function uses the following values of errno when an error state is reached:
-         *
-         * ENODEV: the port cannot be configured as a motor
-         *
-         * @return Cartridge the type of cartridge installed in the motor
-         * @return Cartridge::Invalid on failure, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
-         *     switch (motor.getCartridge()) {
-         *        case (lemlib::Cartridge::RED): {
-         *            std::cout << "Red Cartridge in motor on port 1" << std::endl;
-         *            break;
-         *        }
-         *        case (lemlib::Cartridge::GREEN): {
-         *            std::cout << "Green Cartridge in motor on port 1" << std::endl;
-         *            break;
-         *        }
-         *        case (lemlib::Cartridge::BLUE): {
-         *            std::cout << "Blue Cartridge in motor on port 1" << std::endl;
-         *            break;
-         *        }
-         *        default: std::cout << "Error getting cartridge of motor on port 1" << std::endl;
-         *     }
-         * }
-         * @endcode
-         */
-        Cartridge getCartridge() const;
-        /**
          * @brief get whether the motor is reversed
          *
          * @return 0 if the motor is not reversed
@@ -373,7 +339,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     if (motor.isReversed() == 1) {
          *         std::cout << "Motor is reversed!" << std::endl;
          *     } else if (motor.isReversed() == 0) {
@@ -394,7 +360,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     // reverse the motor
          *     motor.setReversed(true);
          * }
@@ -411,7 +377,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *     std::cout << "Motor is connected to port " << motor.getPort() << std::endl;
          * }
          * @endcode
@@ -430,7 +396,7 @@ class Motor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Motor motor = pros::Motor(1);
+         *     lemlib::Motor motor(1, 200_rpm);
          *
          *     // output motor temperature to the console
          *     Temperature temperature = motor.getTemperature();
@@ -444,6 +410,7 @@ class Motor : public Encoder {
          */
         Temperature getTemperature() const;
     private:
+        AngularVelocity m_outputVelocity;
         Angle m_offset = 0_stDeg;
         int m_port;
 };

@@ -8,14 +8,13 @@ using namespace pros;
 using namespace pros::c;
 
 namespace lemlib {
-Motor::Motor(int port) {
-    m_port = port;
-}
+Motor::Motor(int port, AngularVelocity outputVelocity)
+    : m_port(port),
+      m_outputVelocity(outputVelocity) {}
 
-Motor::Motor(uint8_t port, bool reversed) {
-    if (reversed) m_port = -port;
-    else m_port = port;
-}
+Motor::Motor(uint8_t port, bool reversed, AngularVelocity outputVelocity)
+    : m_port(reversed ? -port : port),
+      m_outputVelocity(outputVelocity) {}
 
 motor_brake_mode_e_t brakeModeToMotorBrake(BrakeMode mode) {
     // MotorBrake is identical to lemlib::BrakeMode, except for its name and lemlib uses an enum class for type
@@ -57,22 +56,23 @@ int Motor::moveVelocity(AngularVelocity velocity) {
 
 int Motor::brake() { return convertStatus(motor_brake(m_port)); }
 
-int Motor::setBrakeMode(BrakeMode mode) { return convertStatus(motor_set_brake_mode(m_port, brakeModeToMotorBrake(mode))); }
+int Motor::setBrakeMode(BrakeMode mode) {
+    return convertStatus(motor_set_brake_mode(m_port, brakeModeToMotorBrake(mode)));
+}
 
 BrakeMode Motor::getBrakeMode() const { return motorBrakeToBrakeMode(motor_get_brake_mode(m_port)); }
 
 int Motor::isConnected() { return get_plugged_type(m_port) == v5_device_e_t::E_DEVICE_MOTOR; }
 
 Angle Motor::getAngle() {
-    // get the raw position
+    // get the number of encoder ticks
     const int ticks = motor_get_raw_position(m_port, NULL);
     if (ticks == INT_MAX) return from_stRot(INFINITY);
-    // get the cartridge
-    const Cartridge cartridge = getCartridge();
-    if (cartridge == Cartridge::INVALID) return from_stRot(INFINITY);
-    // convert the raw position into an angle
-    const int tpr = 50 * 3600 / static_cast<int>(cartridge);
-    const Angle position = from_stRot(double(ticks) / double(tpr));
+    // get the number of times the motor rotated
+    const Angle raw = from_stRot(ticks / 3600.0);
+    // calculate position after using the gear ratio
+    const Angle position = raw * (m_outputVelocity / 3600_rpm);
+    // raw output * 200/3600
     // return position + offset
     return position + m_offset;
 }
@@ -81,12 +81,10 @@ int Motor::setAngle(Angle angle) {
     // get the raw position
     const int ticks = motor_get_raw_position(m_port, NULL);
     if (ticks == INT_MAX) return INT_MAX;
-    // get the cartridge
-    const Cartridge cartridge = getCartridge();
-    if (cartridge == Cartridge::INVALID) return INT_MAX;
-    // convert the raw position into an angle
-    const int tpr = 50 * 3600 / static_cast<int>(cartridge);
-    const Angle position = from_stRot(double(ticks) / double(tpr));
+    // get the number of times the motor rotated
+    const Angle raw = from_stRot(ticks / 3600.0);
+    // calculate position after using the gear ratio
+    const Angle position = raw * (m_outputVelocity / 3600_rpm);
     // calculate offset
     m_offset = angle - position;
     return 0;
@@ -117,17 +115,6 @@ MotorType Motor::getType() {
         if (motor_set_gearing(m_port, oldCart) == INT_MAX) return MotorType::INVALID;
         else return MotorType::V5;
     } else return MotorType::EXP;
-}
-
-Cartridge Motor::getCartridge() const {
-    const motor_gearset_e_t cartridge = motor_get_gearing(m_port);
-    // convert the cartridge to our enum
-    switch (cartridge) {
-        case E_MOTOR_GEAR_BLUE: return Cartridge::BLUE;
-        case E_MOTOR_GEAR_GREEN: return Cartridge::GREEN;
-        case E_MOTOR_GEAR_RED: return Cartridge::RED;
-        default: return Cartridge::INVALID;
-    }
 }
 
 int Motor::isReversed() const {

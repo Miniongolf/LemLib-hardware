@@ -7,10 +7,8 @@
 
 namespace lemlib {
 MotorGroup::MotorGroup(std::initializer_list<int> ports, AngularVelocity outputVelocity)
-: m_outputVelocity(outputVelocity) {
-    for (const int port : ports) {
-        m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg});
-    }
+    : m_outputVelocity(outputVelocity) {
+    for (const int port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
 }
 
 int MotorGroup::move(double percent) {
@@ -28,14 +26,7 @@ int MotorGroup::moveVelocity(AngularVelocity velocity) {
     const std::vector<Motor> motors = getMotors();
     bool success = false;
     for (Motor motor : motors) {
-        // since the motors in the group are geared together, we need to account for different gearings
-        // of different motors in the group
-        const Cartridge cartridge = motor.getCartridge();
-        // check for errors
-        if (cartridge == Cartridge::INVALID) continue;
-        // calculate gear ratio
-        const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;
-        const int result = motor.moveVelocity(velocity * ratio);
+        const int result = motor.moveVelocity(velocity);
         if (result == 0) success = true;
     }
     // as long as one motor moves successfully, return 0 (success)
@@ -85,16 +76,9 @@ Angle MotorGroup::getAngle() {
         if (result == from_stDeg(INFINITY)) {
             errors++;
             continue;
-        }; // check for errors
-        // get motor cartridge
-        const Cartridge cartridge = motor.getCartridge();
-        if (cartridge == Cartridge::INVALID) {
-            errors++;
-            continue;
-        }
-        // calculate the gear ratio
-        const Number ratio = m_outputVelocity / from_rpm(static_cast<int>(cartridge));
-        angle += result * ratio;
+        };
+        // add to sum
+        angle += result;
     }
     // if no motors are connected, return INFINITY
     if (errors == motors.size()) return from_stDeg(INFINITY);
@@ -106,14 +90,7 @@ int MotorGroup::setAngle(Angle angle) {
     const std::vector<Motor> motors = getMotors();
     bool success = false;
     for (Motor motor : motors) {
-        // since the motors in the group are geared together, we need to account for different gearings
-        // of different motors in the group
-        const Cartridge cartridge = motor.getCartridge();
-        // check for errors
-        if (cartridge == Cartridge::INVALID) continue;
-        // calculate gear ratio
-        const Number ratio = from_rpm(static_cast<int>(cartridge)) / m_outputVelocity;
-        const int result = motor.setAngle(angle * ratio);
+        const int result = motor.setAngle(angle);
         if (result == 0) success = true;
     }
     // as long as one motor sets the angle successfully, return 0 (success)
@@ -177,7 +154,7 @@ const std::vector<Motor> MotorGroup::getMotors() {
     std::vector<Motor> motors;
     for (int i = 0; i < m_motors.size(); i++) {
         // create a temporary motor
-        Motor motor(m_motors.at(i).port);
+        Motor motor(m_motors.at(i).port, m_outputVelocity);
         // set motor offset
         motor.setOffset(m_motors.at(i).offset);
         // check if the motor is connected
@@ -216,10 +193,10 @@ Angle MotorGroup::configureMotor(int port) {
     // add the motor, and the motor will automatically be reconfigured when it is working properly again
     // whether there was a failure or not is kept track of with this boolean
     bool success = true;
-    Motor motor(port);
+    Motor motor(port, m_outputVelocity);
     // set the motor's brake mode to whatever the first working motor's brake mode is
     for (MotorInfo info : m_motors) {
-        Motor m = info.port;
+        Motor m(info.port, m_outputVelocity);
         const BrakeMode mode = m.getBrakeMode();
         if (mode == BrakeMode::INVALID) continue;
         if (m.setBrakeMode(mode) == 0) break;
@@ -228,9 +205,6 @@ Angle MotorGroup::configureMotor(int port) {
             break;
         }
     }
-    // calculate the angle to set the motor to
-    const Cartridge cartridge = motor.getCartridge();
-    if (cartridge == Cartridge::INVALID) success = false; // check for errors
 
     Angle angle = 0_stDeg;
     {
@@ -238,7 +212,7 @@ Angle MotorGroup::configureMotor(int port) {
         std::vector<Motor> motors;
         for (int i = 0; i < m_motors.size(); i++) {
             // temporary motor object
-            Motor m = m_motors.at(i).port;
+            Motor m(m_motors.at(i).port, m_outputVelocity);
             // set the offset of the motor
             m.setOffset(m_motors.at(i).offset);
             // check if the motor is connected
@@ -257,12 +231,6 @@ Angle MotorGroup::configureMotor(int port) {
             // get angle
             const Angle result = m.getAngle();
             if (result == from_stDeg(INFINITY)) { // check for errors
-                errors++;
-                continue;
-            }
-            // get motor cartridge
-            const Cartridge cartridge = m.getCartridge();
-            if (cartridge == Cartridge::INVALID) { // check for errors
                 errors++;
                 continue;
             }
