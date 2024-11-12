@@ -139,14 +139,6 @@ int Motor::setReversed(bool reversed) {
 
 int Motor::getPort() const { return m_port; }
 
-Voltage Motor::getVoltageLimit() const {
-    const Voltage result = from_volt(motor_get_voltage_limit(m_port));
-    if (result.internal() == INT32_MAX) return from_volt(INFINITY); // error checking
-    return result;
-}
-
-int Motor::setVoltageLimit(Voltage limit) { return motor_set_voltage_limit(m_port, to_volt(limit)); }
-
 Current Motor::getCurrentLimit() const {
     const Current result = from_amp(motor_get_current_limit(m_port));
     if (result.internal() == INT32_MAX) return from_amp(INFINITY); // error checking
