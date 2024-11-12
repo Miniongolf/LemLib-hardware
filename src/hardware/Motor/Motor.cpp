@@ -3,6 +3,9 @@
 #include "units/Angle.hpp"
 #include "pros/device.h"
 #include "pros/motors.h"
+#include "units/Temperature.hpp"
+#include "units/units.hpp"
+#include <cstdint>
 
 using namespace pros;
 using namespace pros::c;
@@ -136,5 +139,25 @@ int Motor::setReversed(bool reversed) {
 
 int Motor::getPort() const { return m_port; }
 
-Temperature Motor::getTemperature() const { return units::from_celsius(motor_get_temperature(m_port)); }
+Voltage Motor::getVoltageLimit() const {
+    const Voltage result = from_volt(motor_get_voltage_limit(m_port));
+    if (result.internal() == INT32_MAX) return from_volt(INFINITY); // error checking
+    return result;
+}
+
+int Motor::setVoltageLimit(Voltage limit) { return motor_set_voltage_limit(m_port, to_volt(limit)); }
+
+Current Motor::getCurrentLimit() const {
+    const Current result = from_amp(motor_get_current_limit(m_port));
+    if (result.internal() == INT32_MAX) return from_amp(INFINITY); // error checking
+    return result;
+}
+
+int Motor::setCurrentLimit(Current limit) { return motor_set_current_limit(m_port, to_amp(limit) * 1000); }
+
+Temperature Motor::getTemperature() const {
+    const Temperature result = units::from_celsius(motor_get_temperature(m_port));
+    if (result.internal() == INFINITY) return result; // error checking
+    return result;
+}
 } // namespace lemlib

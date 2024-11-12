@@ -9,6 +9,8 @@ enum class BrakeMode { COAST, BRAKE, HOLD, INVALID };
 
 enum class MotorType { V5, EXP, INVALID };
 
+// TODO: if the user tries to set the
+
 class Motor : public Encoder {
     public:
         /**
@@ -383,6 +385,102 @@ class Motor : public Encoder {
          * @endcode
          */
         int getPort() const;
+        /**
+         * @brief Get the voltage limit of the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @return Voltage the voltage limit of the motor
+         * @return INFINITY on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor(1, 200_rpm);
+         *
+         *     // output the voltage limit to the console
+         *     Voltage limit = motor.getVoltageLimit();
+         *     if (units::to_volt(limit) == INFINITY) {
+         *         std::cout << "Error getting motor voltage limit" << std::endl;
+         *     } else {
+         *         std::cout << "Voltage Limit: " << units::to_volt(limit) << std::endl;
+         *     }
+         * }
+         * @endcode
+         */
+        Voltage getVoltageLimit() const;
+        /**
+         * @brief set the voltage limit of the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @param limit the maximum allowed voltage
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor(1, 200_rpm);
+         *     // set the voltage limit to 8 volt
+         *     motor.setVoltageLimit(8_volt);
+         * }
+         * @endcode
+         */
+        int setVoltageLimit(Voltage limit);
+        /**
+         * @brief Get the current limit of the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * TODO: see how overheating affects this value
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @return Current the current limit of the motor
+         * @return INFINITY on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor(1, 200_rpm);
+         *
+         *     // output the current limit to the console
+         *     Current limit = motor.getCurrentLimit();
+         *     if (units::to_amp(limit) == INFINITY) {
+         *         std::cout << "Error getting motor current limit" << std::endl;
+         *     } else {
+         *         std::cout << "Current Limit: " << units::to_amp(limit) << std::endl;
+         *     }
+         * }
+         * @endcode
+         */
+        Current getCurrentLimit() const;
+        /**
+         * @brief set the current limit of the motor
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENODEV: the port cannot be configured as a motor
+         *
+         * @param limit the maximum allowed current
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor(1, 200_rpm);
+         *     // set the current limit to 0.5 amp
+         *     motor.setCurrentLimit(0.5_amp);
+         * }
+         * @endcode
+         */
+        int setCurrentLimit(Current limit);
         /**
          * @brief Get the temperature of the motor
          *
