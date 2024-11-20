@@ -16,15 +16,13 @@ This PROS template aims to simplify interactions with devices, and implement a c
     - [X] Differentiate 11W and 5.5W motors
     - [X] -1.0 to +1.0 power levels, adjusts automatically to motor type
     - [X] Type Safe enums
-    - [ ] Custom Velocity controller
-    - [ ] Custom Position controller
+    - [ ] Micro-disconnect detection
 
  - [ ] **Motor Groups**
     - [X] Motor disconnects/reconnects don't affect measured angle
     - [X] Removing motors doesn't affect the measured angle
     - [X] Automatic per-motor gear ratio calculations
-    - [ ] Custom Velocity controller
-    - [ ] Custom Position controller
+    - [ ] Micro-disconnect detection
 
  - [X] **Abstract Encoders**
     - [X] Generic interface for any encoder
