@@ -21,6 +21,20 @@ class V5InertialSensor : public Imu {
          */
         V5InertialSensor(pros::Imu imu);
         /**
+         * @brief Construct a new V5 Inertial Sensor
+         *
+         * @param port the port of the V5 inertial sensor
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *    // Create a new V5 Inertial Sensor on port 1
+         *    lemlib::V5InertialSensor imu(1);
+         * }
+         * @endcode
+         */
+        V5InertialSensor(std::uint8_t port);
+        /**
          * @brief calibrate the V5 Inertial Sensor
          *
          * This function calibrates the IMU. Calibrating the IMU is needed before it can be used.
