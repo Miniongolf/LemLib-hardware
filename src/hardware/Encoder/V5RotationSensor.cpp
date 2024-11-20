@@ -1,23 +1,48 @@
 #include "hardware/Encoder/V5RotationSensor.hpp"
+#include "pros/rotation.h"
 #include <limits.h>
 
 namespace lemlib {
 V5RotationSensor::V5RotationSensor(pros::Rotation encoder)
-    : m_encoder(encoder) {}
+    : m_port(encoder.get_port()),
+      m_reversed(encoder.get_port()) {
+    pros::c::rotation_set_reversed(m_port, m_reversed);
+}
 
-int V5RotationSensor::isConnected() { return m_encoder.is_installed(); }
+V5RotationSensor::V5RotationSensor(std::int8_t port)
+    : m_port(abs(port)),
+      m_reversed(port < 0) {
+    pros::c::rotation_set_reversed(m_port, m_reversed);
+}
+
+V5RotationSensor::V5RotationSensor(std::uint8_t port, bool reversed)
+    : m_port(port),
+      m_reversed(reversed) {
+    pros::c::rotation_set_reversed(m_port, m_reversed);
+}
+
+int V5RotationSensor::isConnected() {
+    if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return 0;
+    if (pros::c::rotation_get_angle(m_port) == INT32_MAX) return 0;
+    else return 1;
+}
 
 Angle V5RotationSensor::getAngle() {
-    const Angle angle = from_stDeg(double(m_encoder.get_position()) / 100);
+    if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return from_stRot(INFINITY);
+    const int32_t raw = pros::c::rotation_get_position(m_port);
+    if (raw == INT_MAX) return from_stRot(INFINITY);
+    const Angle angle = from_stDeg(double(raw) / 100);
     return angle + m_offset;
 }
 
 int V5RotationSensor::setAngle(Angle angle) {
+    if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return INT_MAX;
     // requestedAngle = pos + offset
     // offset = requestedAngle - raw
-    const Angle position = from_stDeg(double(m_encoder.get_position()) / 100);
+    const int32_t raw = pros::c::rotation_get_position(m_port);
+    if (raw == INT_MAX) return INT_MAX;
+    const Angle position = from_stDeg(double(raw) / 100);
     m_offset = angle - position;
-    if (to_stRot(position) == INFINITY) return INT_MAX;
     return 0;
 }
 } // namespace lemlib

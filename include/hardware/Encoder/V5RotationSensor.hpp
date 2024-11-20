@@ -11,7 +11,7 @@ namespace lemlib {
 class V5RotationSensor : public Encoder {
     public:
         /**
-         * @brief Construct a new V5 Rotation Sensor object
+         * @brief Construct a new V5 Rotation Sensor
          *
          * @param encoder the pros::Rotation object to use
          *
@@ -23,6 +23,35 @@ class V5RotationSensor : public Encoder {
          * @endcode
          */
         V5RotationSensor(pros::Rotation encoder);
+        /**
+         * @brief Construct a new V5 Rotation Sensor
+         *
+         * @param port the signed port of the rotation sensor. Positive if the sensor is reversed, Negative otherwise
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // rotation sensor on port 1, which is reversed
+         *     lemlib::Rotation encoder(-1);
+         * }
+         * @endcode
+         */
+        V5RotationSensor(std::int8_t port);
+        /**
+         * @brief Construct a new V5 Rotation Sensor
+         *
+         * @param port the port of the rotation sensor
+         * @param reversed whether the sensor should be reversed or not
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // rotation sensor on port 1, which is not reversed
+         *     lemlib::Rotation encoder(1, false);
+         * }
+         * @endcode
+         */
+        V5RotationSensor(std::uint8_t port, bool reversed);
         /**
          * @brief whether the V5 Rotation Sensor is connected
          *
@@ -104,6 +133,7 @@ class V5RotationSensor : public Encoder {
         int setAngle(Angle angle) override;
     private:
         Angle m_offset = 0_stRot;
-        pros::Rotation m_encoder;
+        bool m_reversed;
+        int m_port;
 };
 } // namespace lemlib
