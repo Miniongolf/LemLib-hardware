@@ -11,21 +11,53 @@ namespace lemlib {
 class ADIEncoder : public Encoder {
     public:
         /**
-         * @brief Construct a new ADIEncoder object
-         *
-         * Even though VEXOS knows whether the encoder is reversed, it has no API to get this information. As such, its
-         * necessary to pass this info to the constructor.
+         * @brief Construct a new Optical Shaft Encoder
          *
          * @param encoder the pros::ADIEncoder object to use
-         * @param reversed whether the encoder is reversed or not
          *
          * @b Example:
          * @code {.cpp}
          * void initialize() {
          *     lemlib::ADIEncoder encoder = pros::adi::Encoder('A', 'B');
          * }
+         * @endcode
          */
         ADIEncoder(pros::adi::Encoder encoder);
+        /**
+         * @brief Construct a new Optical Shaft Encoder
+         *
+         * @param topPort the top port of the optical shaft encoder (1-8, 'a'-'h', or 'A'-'H')
+         * @param bottomPort the bottom port of the optical shaft encoder (1-8, 'a'-'h', or 'A'-'H')
+         * @param reversed whether the encoder is reversed or not
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // optical shaft encoder on ports 'a' and 'b', which is reversed
+         *     lemlib::ADIEncoder encoder('a', 'b', true);
+         * }
+         * @endcode
+         */
+        ADIEncoder(std::uint8_t topPort, std::uint8_t bottomPort, bool reversed);
+        /**
+         * @brief Construct a new Optical Shaft Encoder
+         *
+         * @param expanderPort the port of the ADI Expander
+         * @param topPort the top port of the optical shaft encoder (1-8, 'a'-'h', or 'A'-'H')
+         * @param bottomPort the bottom port of the optical shaft encoder (1-8, 'a'-'h', or 'A'-'H')
+         * @param reversed whether the encoder is reversed or not
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // optical shaft encoder on an ADI Expander
+         *     // ADIExpander port: 2, top port: 'c', bottom port: 'd'
+         *     // encoder is not reversed
+         *     lemlib::ADIEncoder(2, 'c', 'd'. false);
+         * }
+         * @endcode
+         */
+        ADIEncoder(std::uint8_t expanderPort, std::uint8_t topPort, std::uint8_t bottomPort, bool reversed);
         /**
          * @brief whether the encoder is connected
          *
@@ -95,6 +127,7 @@ class ADIEncoder : public Encoder {
          *         std::cout << "Error setting relative angle!" << std::endl;
          *     }
          * }
+         * @endcode
          */
         int setAngle(Angle angle) override;
     private:

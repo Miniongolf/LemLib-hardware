@@ -6,6 +6,12 @@ namespace lemlib {
 ADIEncoder::ADIEncoder(pros::adi::Encoder encoder)
     : m_encoder(encoder) {}
 
+ADIEncoder::ADIEncoder(std::uint8_t topPort, std::uint8_t bottomPort, bool reversed)
+    : m_encoder(pros::adi::Encoder(topPort, bottomPort, reversed)) {}
+
+ADIEncoder::ADIEncoder(std::uint8_t expanderPort, std::uint8_t topPort, std::uint8_t bottomPort, bool reversed)
+    : m_encoder({expanderPort, topPort, bottomPort}, reversed) {}
+
 int ADIEncoder::isConnected() {
     // it's not possible to check if the ADIEncoder is connected, so we just return 1 to indicate that it is
     // we do run a simple test however to check if the ports are valid
