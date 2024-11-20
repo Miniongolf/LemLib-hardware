@@ -18,7 +18,7 @@ class V5RotationSensor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Rotation encoder = pros::Rotation(1);
+         *     lemlib::V5RotationSensor encoder = pros::Rotation(1);
          * }
          * @endcode
          */
@@ -32,7 +32,7 @@ class V5RotationSensor : public Encoder {
          * @code {.cpp}
          * void initialize() {
          *     // rotation sensor on port 1, which is reversed
-         *     lemlib::Rotation encoder(-1);
+         *     lemlib::V5RotationSensor encoder(-1);
          * }
          * @endcode
          */
@@ -47,7 +47,7 @@ class V5RotationSensor : public Encoder {
          * @code {.cpp}
          * void initialize() {
          *     // rotation sensor on port 1, which is not reversed
-         *     lemlib::Rotation encoder(1, false);
+         *     lemlib::V5RotationSensor encoder(1, false);
          * }
          * @endcode
          */
@@ -61,7 +61,7 @@ class V5RotationSensor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Rotation encoder = pros::Rotation(1);
+         *     lemlib::V5RotationSensor encoder = pros::Rotation(1);
          *     const int result = encoder.isConnected();
          *     if (result == 1) {
          *         std::cout << "Encoder is connected!" << std::endl;
@@ -91,7 +91,7 @@ class V5RotationSensor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Rotation encoder = pros::Rotation(1);
+         *     lemlib::V5RotationSensor encoder = pros::Rotation(1);
          *     const Angle angle = encoder.getAngle();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting relative angle!" << std::endl;
@@ -120,7 +120,7 @@ class V5RotationSensor : public Encoder {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::Rotation encoder = pros::Rotation(1);
+         *     lemlib::V5RotationSensor encoder = pros::Rotation(1);
          *     if (encoder.setAngle(0_stDeg) == 0) {
          *         std::cout << "Relative angle set!" << std::endl;
          *         std::cout < "Relative angle: " << encoder.getAngle().convert(deg) << std::endl; // outputs 0
@@ -131,6 +131,47 @@ class V5RotationSensor : public Encoder {
          * @endcode
          */
         int setAngle(Angle angle) override;
+        /**
+         * @brief returns whether the V5 Rotation Sensor is reversed or not
+         *
+         * @return 0 if it is not reversed
+         * @return 1 if it is reversed
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::V5RotationSensor encoder = pros::Rotation(1);
+         *     const int result = encoder.isReversed();
+         *     if (result == 0) {
+         *         std::cout << "Rotation sensor is not reversed" << std::endl;
+         *     } else {
+         *         std::cout << "Rotation sensor is reversed" << std::endl;
+         *     }
+         * }
+         * @endcode
+         */
+        int isReversed() const;
+        /**
+         * @brief Set whether the V5 Rotation Sensor is reversed or not
+         *
+         * This function uses the following values of errno when an error state is reached:
+         *
+         * ENXIO: the port is not within the range of valid ports (1-21)
+         * ENODEV: the port cannot be configured as an V5 Rotation sensor
+         *
+         * @return 0 on success
+         * @return INT_MAX on failure, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::V5RotationSensor encoder = pros::Rotation(1);
+         *     // reverse the encoder
+         *     encoder.setReversed(true);
+         * }
+         * @endcode
+         */
+        int setReversed(bool reversed);
     private:
         Angle m_offset = 0_stRot;
         bool m_reversed;

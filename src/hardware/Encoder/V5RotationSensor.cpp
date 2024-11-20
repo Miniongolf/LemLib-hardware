@@ -45,4 +45,11 @@ int V5RotationSensor::setAngle(Angle angle) {
     m_offset = angle - position;
     return 0;
 }
+
+int V5RotationSensor::isReversed() const { return m_reversed; }
+
+int V5RotationSensor::setReversed(bool reversed) {
+    m_reversed = reversed;
+    return pros::c::rotation_set_reversed(m_port, m_reversed);
+}
 } // namespace lemlib
