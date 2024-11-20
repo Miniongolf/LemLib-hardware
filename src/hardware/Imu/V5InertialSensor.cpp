@@ -5,7 +5,7 @@ namespace lemlib {
 V5InertialSensor::V5InertialSensor(pros::Imu imu)
     : m_imu(imu) {}
 
-V5InertialSensor::V5InertialSensor(Port port)
+V5InertialSensor::V5InertialSensor(SmartPort port)
     : m_imu(port) {}
 
 int V5InertialSensor::calibrate() { return m_imu.reset(); }

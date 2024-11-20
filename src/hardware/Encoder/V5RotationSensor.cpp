@@ -10,13 +10,13 @@ V5RotationSensor::V5RotationSensor(pros::Rotation encoder)
     pros::c::rotation_set_reversed(m_port, m_reversed);
 }
 
-V5RotationSensor::V5RotationSensor(ReversiblePort port)
+V5RotationSensor::V5RotationSensor(ReversibleSmartPort port)
     : m_port(abs(port)),
       m_reversed(port < 0) {
     pros::c::rotation_set_reversed(m_port, m_reversed);
 }
 
-V5RotationSensor::V5RotationSensor(Port port, bool reversed)
+V5RotationSensor::V5RotationSensor(SmartPort port, bool reversed)
     : m_port(port),
       m_reversed(reversed) {
     pros::c::rotation_set_reversed(m_port, m_reversed);

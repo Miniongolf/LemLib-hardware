@@ -39,7 +39,7 @@ class ADIEncoder : public Encoder {
          * }
          * @endcode
          */
-        ADIEncoder(std::uint8_t topPort, std::uint8_t bottomPort, bool reversed);
+        ADIEncoder(ADIPort topPort, ADIPort bottomPort, bool reversed);
         /**
          * @brief Construct a new Optical Shaft Encoder
          *
@@ -58,7 +58,7 @@ class ADIEncoder : public Encoder {
          * }
          * @endcode
          */
-        ADIEncoder(Port expanderPort, std::uint8_t topPort, std::uint8_t bottomPort, bool reversed);
+        ADIEncoder(SmartPort expanderPort, ADIPort topPort, ADIPort bottomPort, bool reversed);
         /**
          * @brief whether the encoder is connected
          *

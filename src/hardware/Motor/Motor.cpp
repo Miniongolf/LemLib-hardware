@@ -12,11 +12,11 @@ using namespace pros;
 using namespace pros::c;
 
 namespace lemlib {
-Motor::Motor(ReversiblePort port, AngularVelocity outputVelocity)
+Motor::Motor(ReversibleSmartPort port, AngularVelocity outputVelocity)
     : m_port(port),
       m_outputVelocity(outputVelocity) {}
 
-Motor::Motor(Port port, bool reversed, AngularVelocity outputVelocity)
+Motor::Motor(SmartPort port, bool reversed, AngularVelocity outputVelocity)
     : m_port(reversed ? -port : port),
       m_outputVelocity(outputVelocity) {}
 

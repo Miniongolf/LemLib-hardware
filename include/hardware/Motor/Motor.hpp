@@ -26,7 +26,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        Motor(ReversiblePort port, AngularVelocity outputVelocity);
+        Motor(ReversibleSmartPort port, AngularVelocity outputVelocity);
         /**
          * @brief Construct a new Motor object
          *
@@ -43,7 +43,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        Motor(Port port, bool reversed, AngularVelocity outputVelocity);
+        Motor(SmartPort port, bool reversed, AngularVelocity outputVelocity);
         /**
          * @brief Construct a new Motor object
          * 

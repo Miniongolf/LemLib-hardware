@@ -37,7 +37,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        V5RotationSensor(ReversiblePort port);
+        V5RotationSensor(ReversibleSmartPort port);
         /**
          * @brief Construct a new V5 Rotation Sensor
          *
@@ -52,7 +52,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        V5RotationSensor(Port port, bool reversed);
+        V5RotationSensor(SmartPort port, bool reversed);
         /**
          * @brief whether the V5 Rotation Sensor is connected
          *
