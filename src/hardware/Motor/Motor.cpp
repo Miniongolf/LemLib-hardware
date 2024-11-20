@@ -19,6 +19,10 @@ Motor::Motor(uint8_t port, bool reversed, AngularVelocity outputVelocity)
     : m_port(reversed ? -port : port),
       m_outputVelocity(outputVelocity) {}
 
+Motor::Motor(pros::Motor motor, AngularVelocity outputVelocity)
+    : m_port(motor.get_port()),
+    m_outputVelocity(outputVelocity) {}
+
 motor_brake_mode_e_t brakeModeToMotorBrake(BrakeMode mode) {
     // MotorBrake is identical to lemlib::BrakeMode, except for its name and lemlib uses an enum class for type
     // safety

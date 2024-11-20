@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pros/motors.hpp"
 #include "hardware/encoder/Encoder.hpp"
 #include "units/Temperature.hpp"
 
@@ -8,8 +9,6 @@ namespace lemlib {
 enum class BrakeMode { COAST, BRAKE, HOLD, INVALID };
 
 enum class MotorType { V5, EXP, INVALID };
-
-// TODO: if the user tries to set the
 
 class Motor : public Encoder {
     public:
@@ -32,6 +31,7 @@ class Motor : public Encoder {
          *
          * @param port the port of the motor
          * @param reversed whether the motor is reversed or not
+         * @param outputVelocity the maximum theoretical velocity of the motor
          *
          * @b Example:
          * @code {.cpp}
@@ -43,6 +43,23 @@ class Motor : public Encoder {
          * @endcode
          */
         Motor(uint8_t port, bool reversed, AngularVelocity outputVelocity);
+        /**
+         * @brief Construct a new Motor object
+         * 
+         * @param motor the pros motor object to get the port from
+         * @param outputVelocity the maximum theoretical velocity of the motor
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // create a pros motor on port 1, which is reversed
+         *     pros::Motor prosMotor(-1);
+         *     // create a motor which is reversed, on port 1, and spins at 200 rpm
+         *     lemlib::Motor motor(prosMotor, 200_rpm);
+         * }
+         * @endcode
+         */
+        Motor(pros::Motor motor, AngularVelocity outputVelocity);
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
