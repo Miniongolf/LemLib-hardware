@@ -1,5 +1,6 @@
 #include "hardware/Motor/MotorGroup.hpp"
 #include "Motor.hpp"
+#include "units/Angle.hpp"
 #include "units/Temperature.hpp"
 #include <climits>
 #include <cmath>
@@ -10,6 +11,14 @@ MotorGroup::MotorGroup(std::initializer_list<int> ports, AngularVelocity outputV
     : m_outputVelocity(outputVelocity) {
     for (const int port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
 }
+
+MotorGroup::MotorGroup(pros::MotorGroup group, AngularVelocity outputVelocity)
+    : m_outputVelocity(outputVelocity) {
+        const std::vector<std::int8_t> ports = group.get_port_all();
+        for (const int port : ports) {
+            m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg});
+        }
+    }
 
 int MotorGroup::move(double percent) {
     const std::vector<Motor> motors = getMotors();

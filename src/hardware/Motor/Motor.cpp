@@ -19,7 +19,7 @@ Motor::Motor(uint8_t port, bool reversed, AngularVelocity outputVelocity)
     : m_port(reversed ? -port : port),
       m_outputVelocity(outputVelocity) {}
 
-Motor::Motor(pros::Motor motor, AngularVelocity outputVelocity)
+Motor::Motor(const pros::Motor motor, AngularVelocity outputVelocity)
     : m_port(motor.get_port()),
     m_outputVelocity(outputVelocity) {}
 

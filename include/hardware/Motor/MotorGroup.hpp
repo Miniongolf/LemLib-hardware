@@ -1,3 +1,4 @@
+#include "pros/motor_group.hpp"
 #include "hardware/Motor/Motor.hpp"
 #include <vector>
 
@@ -33,6 +34,24 @@ class MotorGroup : Encoder {
          * @endcode
          */
         MotorGroup(std::initializer_list<int> ports, AngularVelocity outputVelocity);
+        /**
+         * @brief Construct a new Motor Group
+         *
+         * @param group the pros motor group to get the ports from
+         * @param outputVelocity the theoretical maximum output velocity of the motor group, after gearing
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     // pros motor group with motors on ports 1, -2, and 3
+         *     pros::MotorGroup prosMotorGroup({1, -2, 3});
+         *     // motor group that uses the same motors as the pros motor group
+         *     // and spins at 600 rpm
+         *     lemlib::MotorGroup motorGroup(prosMotorGroup, 600_rpm);
+         * }
+         * @endcode
+         */
+        MotorGroup(const pros::MotorGroup group, AngularVelocity outputVelocity);
         /**
          * @brief move the motors at a percent power from -1.0 to +1.0
          *

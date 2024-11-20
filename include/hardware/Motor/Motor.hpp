@@ -59,7 +59,7 @@ class Motor : public Encoder {
          * }
          * @endcode
          */
-        Motor(pros::Motor motor, AngularVelocity outputVelocity);
+        Motor(const pros::Motor motor, AngularVelocity outputVelocity);
         /**
          * @brief move the motor at a percent power from -1.0 to +1.0
          *
