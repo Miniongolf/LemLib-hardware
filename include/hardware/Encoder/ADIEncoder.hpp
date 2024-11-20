@@ -1,6 +1,7 @@
 #pragma once
 
 #include "hardware/Encoder/Encoder.hpp"
+#include "hardware/Port.hpp"
 #include "pros/adi.hpp"
 
 namespace lemlib {
@@ -57,7 +58,7 @@ class ADIEncoder : public Encoder {
          * }
          * @endcode
          */
-        ADIEncoder(std::uint8_t expanderPort, std::uint8_t topPort, std::uint8_t bottomPort, bool reversed);
+        ADIEncoder(Port expanderPort, std::uint8_t topPort, std::uint8_t bottomPort, bool reversed);
         /**
          * @brief whether the encoder is connected
          *

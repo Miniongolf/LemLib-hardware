@@ -1,4 +1,5 @@
 #include "hardware/Motor/Motor.hpp"
+#include "hardware/Port.hpp"
 #include "hardware/util.hpp"
 #include "units/Angle.hpp"
 #include "pros/device.h"
@@ -11,11 +12,11 @@ using namespace pros;
 using namespace pros::c;
 
 namespace lemlib {
-Motor::Motor(int port, AngularVelocity outputVelocity)
+Motor::Motor(ReversiblePort port, AngularVelocity outputVelocity)
     : m_port(port),
       m_outputVelocity(outputVelocity) {}
 
-Motor::Motor(uint8_t port, bool reversed, AngularVelocity outputVelocity)
+Motor::Motor(Port port, bool reversed, AngularVelocity outputVelocity)
     : m_port(reversed ? -port : port),
       m_outputVelocity(outputVelocity) {}
 

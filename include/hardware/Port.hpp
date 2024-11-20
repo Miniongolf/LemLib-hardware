@@ -17,6 +17,9 @@ class Port {
         uint8_t get_port() const {
             return m_port;
         }
+        operator uint8_t() const {
+            return m_port;
+        }
     private:
         uint8_t m_port;
 };
@@ -38,6 +41,9 @@ class ReversiblePort {
         }
         bool get_reversed() const {
             return m_reversed;
+        }
+        operator int() const {
+            return m_port;
         }
     private:
         uint8_t m_port;

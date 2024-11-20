@@ -1,4 +1,5 @@
 #include "hardware/Encoder/ADIEncoder.hpp"
+#include "hardware/Port.hpp"
 #include <cmath>
 #include <limits.h>
 
@@ -9,7 +10,7 @@ ADIEncoder::ADIEncoder(pros::adi::Encoder encoder)
 ADIEncoder::ADIEncoder(std::uint8_t topPort, std::uint8_t bottomPort, bool reversed)
     : m_encoder(pros::adi::Encoder(topPort, bottomPort, reversed)) {}
 
-ADIEncoder::ADIEncoder(std::uint8_t expanderPort, std::uint8_t topPort, std::uint8_t bottomPort, bool reversed)
+ADIEncoder::ADIEncoder(Port expanderPort, std::uint8_t topPort, std::uint8_t bottomPort, bool reversed)
     : m_encoder({expanderPort, topPort, bottomPort}, reversed) {}
 
 int ADIEncoder::isConnected() {
