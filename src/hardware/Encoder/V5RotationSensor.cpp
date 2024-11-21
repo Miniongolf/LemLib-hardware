@@ -1,5 +1,6 @@
 #include "hardware/Encoder/V5RotationSensor.hpp"
 #include "pros/rotation.h"
+#include "hardware/util.hpp"
 #include <limits.h>
 
 namespace lemlib {
@@ -50,6 +51,6 @@ int V5RotationSensor::isReversed() const { return m_reversed; }
 
 int V5RotationSensor::setReversed(bool reversed) {
     m_reversed = reversed;
-    return pros::c::rotation_set_reversed(m_port, m_reversed);
+    return convertStatus(pros::c::rotation_set_reversed(m_port, m_reversed));
 }
 } // namespace lemlib
