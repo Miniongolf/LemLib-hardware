@@ -24,7 +24,7 @@ V5RotationSensor::V5RotationSensor(std::uint8_t port, bool reversed)
 
 int V5RotationSensor::isConnected() {
     if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return 0;
-    if (pros::c::rotation_get_angle(m_port) == INT32_MAX) return 0;
+    if (pros::c::rotation_get_angle(m_port) == INT_MAX) return 0;
     else return 1;
 }
 
@@ -32,6 +32,7 @@ Angle V5RotationSensor::getAngle() {
     if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return from_stRot(INFINITY);
     const int32_t raw = pros::c::rotation_get_position(m_port);
     if (raw == INT_MAX) return from_stRot(INFINITY);
+    // the rotation sensor returns centidegrees, so we have to convert to degrees
     const Angle angle = from_stDeg(double(raw) / 100);
     return angle + m_offset;
 }
@@ -42,6 +43,7 @@ int V5RotationSensor::setAngle(Angle angle) {
     // offset = requestedAngle - raw
     const int32_t raw = pros::c::rotation_get_position(m_port);
     if (raw == INT_MAX) return INT_MAX;
+    // the rotation sensor returns centidegrees, so we have to convert to degrees
     const Angle position = from_stDeg(double(raw) / 100);
     m_offset = angle - position;
     return 0;
