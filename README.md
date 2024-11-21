@@ -28,30 +28,30 @@ This PROS template aims to simplify interactions with devices, and implement a c
  - [ ] **Abstract Distance Sensor**
    - [ ] Generic interface for any distance sensor
    - [ ] Support for all VEX distance sensors
-    - [ ] V5 Distance Sensor
-    - [ ] V5 Optical Sensor
-    - [ ] ADI Ultrasonic Sensor
+     - [ ] V5 Distance Sensor
+     - [ ] V5 Optical Sensor
+     - [ ] ADI Ultrasonic Sensor
 
  - [ ] **Abstract Color Sensor**
    - [ ] Generic interface for any color sensor
    - [ ] Support for all VEX color sensors
-    - [ ] V5 Optical Sensor
+     - [ ] V5 Optical Sensor
 
  - [X] **Abstract Encoders**
    - [X] Generic interface for any encoder
-    - [X] Support for all VEX encoders
-      - [X] Motors / Motor Groups
-      - [X] V5 Rotation Sensor
-      - [X] Optical Shaft encoder
-      - [ ] ADI Potentiometer V1
-      - [ ] ADI Potentiometer V2
+     - [X] Support for all VEX encoders
+       - [X] Motors / Motor Groups
+       - [X] V5 Rotation Sensor
+       - [X] Optical Shaft encoder
+       - [ ] ADI Potentiometer V1
+       - [ ] ADI Potentiometer V2
 
  - [X] **Abstract Gyro**
    - [X] Generic interface for any gyro
    - [ ] Support for all VEX gyros
-    - [X] V5 Inertial Sensor
-    - [ ] V5 GPS Sensor
-    - [ ] ADI analog gyro
+     - [X] V5 Inertial Sensor
+     - [ ] V5 GPS Sensor
+     - [ ] ADI analog gyro
 
  - [ ] **Abstract Accelerometer**
    - [ ] Generic interface for any accelerometer

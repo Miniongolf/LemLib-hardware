@@ -95,7 +95,6 @@ Angle Motor::getAngle() {
     const Angle raw = from_stRot(ticks / 3600.0);
     // calculate position after using the gear ratio
     const Angle position = raw * (m_outputVelocity / 3600_rpm);
-    // raw output * 200/3600
     // return position + offset
     return position + m_offset;
 }
