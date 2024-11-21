@@ -80,6 +80,7 @@ int Motor::moveVelocity(AngularVelocity velocity) {
 int Motor::brake() { return convertStatus(pros::c::motor_brake(m_port)); }
 
 int Motor::setBrakeMode(BrakeMode mode) {
+    if (mode == BrakeMode::INVALID) return INT_MAX;
     return convertStatus(pros::c::motor_set_brake_mode(m_port, brakeModeToMotorBrake(mode)));
 }
 
