@@ -45,7 +45,7 @@ class Motor : public Encoder {
         Motor(uint8_t port, bool reversed, AngularVelocity outputVelocity);
         /**
          * @brief Construct a new Motor object
-         * 
+         *
          * @param motor the pros motor object to get the port from
          * @param outputVelocity the maximum theoretical velocity of the motor
          *
@@ -140,6 +140,7 @@ class Motor : public Encoder {
          * This function uses the following values of errno when an error state is reached:
          *
          * ENODEV: the port cannot be configured as a motor
+         * EINVAL: can't set brake mode to an invalid state
          *
          * @param mode the brake mode to set the motor to
          * @return 0 on success
