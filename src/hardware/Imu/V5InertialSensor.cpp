@@ -1,4 +1,5 @@
 #include "hardware/Imu/V5InertialSensor.hpp"
+#include "hardware/util.hpp"
 
 namespace lemlib {
 V5InertialSensor::V5InertialSensor(pros::Imu imu)
@@ -22,5 +23,5 @@ Angle V5InertialSensor::getRotation() {
     return from_cDeg(result);
 }
 
-int V5InertialSensor::setRotation(Angle rotation) { return m_imu.set_rotation(to_cDeg(rotation)); }
+int V5InertialSensor::setRotation(Angle rotation) { return convertStatus(m_imu.set_rotation(to_cDeg(rotation))); }
 } // namespace lemlib
