@@ -14,11 +14,9 @@ MotorGroup::MotorGroup(std::initializer_list<int> ports, AngularVelocity outputV
 
 MotorGroup::MotorGroup(pros::MotorGroup group, AngularVelocity outputVelocity)
     : m_outputVelocity(outputVelocity) {
-        const std::vector<std::int8_t> ports = group.get_port_all();
-        for (const int port : ports) {
-            m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg});
-        }
-    }
+    const std::vector<std::int8_t> ports = group.get_port_all();
+    for (const int port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
+}
 
 int MotorGroup::move(double percent) {
     const std::vector<Motor> motors = getMotors();
@@ -101,6 +99,11 @@ int MotorGroup::setAngle(Angle angle) {
     for (Motor motor : motors) {
         const int result = motor.setAngle(angle);
         if (result == 0) success = true;
+        const Angle offset = motor.getOffset();
+        // set the offset of that motor
+        for (MotorInfo& info : m_motors) {
+            if (info.port == motor.getPort()) info.offset = offset;
+        }
     }
     // as long as one motor sets the angle successfully, return 0 (success)
     return success ? 0 : INT_MAX;
