@@ -107,8 +107,8 @@ int Motor::setAngle(Angle angle) {
     // get the raw position
     const int ticks = pros::c::motor_get_raw_position(m_port, NULL);
     if (ticks == INT_MAX) return INT_MAX;
-    // get the number of times the motor rotated
-    const Angle raw = from_stRot(ticks / 3600.0);
+    // get the number of times the internal motor rotated
+    const Angle raw = from_stRot(ticks / 50.0);
     // calculate position after using the gear ratio
     const Angle position = raw * (m_outputVelocity / 3600_rpm);
     // calculate offset
