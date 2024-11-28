@@ -175,4 +175,10 @@ Temperature Motor::getTemperature() const {
     if (result.internal() == INFINITY) return result; // error checking
     return result;
 }
+
+// Always returns 0 because the velocity setter is not dependent on hardware and should never fail
+int Motor::setOutputVelocity(AngularVelocity outputVelocity) {
+    m_outputVelocity = outputVelocity;
+    return 0;
+}
 } // namespace lemlib
