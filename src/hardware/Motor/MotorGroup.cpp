@@ -4,6 +4,7 @@
 #include "units/Temperature.hpp"
 #include <climits>
 #include <cmath>
+#include <cstdint>
 #include <errno.h>
 
 namespace lemlib {
@@ -142,6 +143,12 @@ std::vector<Temperature> MotorGroup::getTemperatures() {
     std::vector<Temperature> temperatures;
     for (const Motor motor : motors) { temperatures.push_back(motor.getTemperature()); }
     return temperatures;
+}
+
+// Always returns 0 because the velocity setter is not dependent on hardware and should never fail
+int MotorGroup::setOutputVelocity(AngularVelocity outputVelocity) {
+    m_outputVelocity = outputVelocity;
+    return 0;
 }
 
 int MotorGroup::getSize() {
