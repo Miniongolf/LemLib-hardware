@@ -61,7 +61,7 @@ class Imu {
         virtual int setRotation(Angle rotation) = 0;
         /**
          * @brief Set the gyro scalar for the IMU
-         * 
+         *
          * This function sets the scaling factor for the IMU.
          * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
          *
@@ -72,7 +72,7 @@ class Imu {
         virtual int setGyroScalar(double scalar) = 0;
         /**
          * @brief Get the gyro scalar for the IMU
-         * 
+         *
          * This function gets the scaling factor for the IMU.
          * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
          *
