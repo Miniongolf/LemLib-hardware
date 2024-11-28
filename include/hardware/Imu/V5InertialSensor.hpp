@@ -195,6 +195,27 @@ class V5InertialSensor : public Imu {
          * @endcode
          */
         int setRotation(Angle rotation) override;
+        /**
+         * @brief Set the gyro scalar for the IMU
+         * 
+         * This function sets the scaling factor for the IMU.
+         * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
+         *
+         * @param scalar
+         * @return int 0 success
+         * @return INT_MAX error occurred, setting errno
+         */
+        int setGyroScalar(double scalar) override;
+        /**
+         * @brief Get the gyro scalar for the IMU
+         * 
+         * This function gets the scaling factor for the IMU.
+         * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
+         *
+         * @return double gyro scalar
+         * @return INT_MAX error occurred, setting errno
+         */
+        double getGyroScalar() override;
     private:
         pros::Imu m_imu;
 };

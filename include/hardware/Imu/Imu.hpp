@@ -75,6 +75,7 @@ class Imu {
          * 
          * This function gets the scaling factor for the IMU.
          * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
+         *
          * @return double gyro scalar
          * @return INFINITY error occurred, setting errno
          */
