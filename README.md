@@ -48,6 +48,7 @@ This PROS template aims to simplify interactions with devices, and implement a c
 
  - [X] **Abstract Gyro**
    - [X] Generic interface for any gyro
+   - [X] Gyro Scaling
    - [ ] Support for all VEX gyros
      - [X] V5 Inertial Sensor
      - [ ] V5 GPS Sensor
