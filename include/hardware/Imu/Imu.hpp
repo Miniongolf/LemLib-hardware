@@ -70,10 +70,7 @@ class Imu {
          * @return int 0 success
          * @return INT_MAX error occurred, setting errno
          */
-        virtual int setGyroScalar(double scalar) {
-            m_gyroScalar = scalar;
-            return 0;
-        };
+        virtual int setGyroScalar(double scalar);
 
         /**
          * @brief Get the gyro scalar for the IMU
@@ -84,7 +81,7 @@ class Imu {
          * @return double gyro scalar
          * @return INFINITY error occurred, setting errno
          */
-        virtual double getGyroScalar() { return m_gyroScalar; };
+        virtual double getGyroScalar();
 
         virtual ~Imu() = default;
     protected:

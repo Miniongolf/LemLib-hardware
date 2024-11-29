@@ -25,13 +25,10 @@ Angle V5InertialSensor::getRotation() {
 
 int V5InertialSensor::setRotation(Angle rotation) { return convertStatus(m_imu.set_rotation(to_cDeg(rotation))); }
 
-// Always returns 0 because the scalar setter is not dependent on hardware and should never fail
 int V5InertialSensor::setGyroScalar(double scalar) {
     m_gyroScalar = scalar;
     return 0;
 }
 
-// Never returns an error because the scalar getter is not dependent on hardware
 double V5InertialSensor::getGyroScalar() { return m_gyroScalar; }
-
 } // namespace lemlib
