@@ -33,4 +33,5 @@ int V5InertialSensor::setGyroScalar(double scalar) {
 
 // Never returns an error because the scalar getter is not dependent on hardware
 double V5InertialSensor::getGyroScalar() { return m_gyroScalar; }
+
 } // namespace lemlib

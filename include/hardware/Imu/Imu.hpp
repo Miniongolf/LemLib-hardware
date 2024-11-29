@@ -59,6 +59,7 @@ class Imu {
          * @return INT_MAX error occurred, setting errno
          */
         virtual int setRotation(Angle rotation) = 0;
+
         /**
          * @brief Set the gyro scalar for the IMU
          *
@@ -69,7 +70,11 @@ class Imu {
          * @return int 0 success
          * @return INT_MAX error occurred, setting errno
          */
-        virtual int setGyroScalar(double scalar) = 0;
+        virtual int setGyroScalar(double scalar) {
+            m_gyroScalar = scalar;
+            return 0;
+        };
+
         /**
          * @brief Get the gyro scalar for the IMU
          *
@@ -79,7 +84,8 @@ class Imu {
          * @return double gyro scalar
          * @return INFINITY error occurred, setting errno
          */
-        virtual double getGyroScalar() = 0;
+        virtual double getGyroScalar() { return m_gyroScalar; };
+
         virtual ~Imu() = default;
     protected:
         double m_gyroScalar = 1.0;
