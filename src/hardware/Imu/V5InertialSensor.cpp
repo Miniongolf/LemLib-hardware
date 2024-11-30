@@ -20,8 +20,15 @@ Angle V5InertialSensor::getRotation() {
     const double result = m_imu.get_rotation();
     // check for errors
     if (result == INFINITY) return from_stDeg(INFINITY);
-    return from_cDeg(result);
+    return from_cDeg(result * m_gyroScalar);
 }
 
 int V5InertialSensor::setRotation(Angle rotation) { return convertStatus(m_imu.set_rotation(to_cDeg(rotation))); }
+
+int V5InertialSensor::setGyroScalar(double scalar) {
+    m_gyroScalar = scalar;
+    return 0;
+}
+
+double V5InertialSensor::getGyroScalar() { return m_gyroScalar; }
 } // namespace lemlib
