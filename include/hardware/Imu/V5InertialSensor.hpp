@@ -249,6 +249,7 @@ class V5InertialSensor : public Imu {
          */
         double getGyroScalar() override;
     private:
+        Angle m_offset = 0_stRot;
         pros::Imu m_imu;
 };
 } // namespace lemlib
