@@ -12,19 +12,19 @@ class SmartPort {
     public:
         consteval SmartPort(std::int64_t port)
             : m_port(port) {
-            // XXX: this doesnt actaully throw an exception since the ctor
+            // XXX: this doesn't actually throw an exception since the ctor
             // is consteval, it halts compilation instead
             if (port < 1 || port > 21) throw "Port out of range!";
         }
 
-        SmartPort(std::int64_t port, DynamicPort)
+        constexpr SmartPort(std::int64_t port, DynamicPort)
             : m_port(port) {
             if (port < 1 || port > 21) m_port = 0;
         }
 
-        std::uint8_t get_port() const { return m_port; }
-
-        operator std::uint8_t() const { return m_port; }
+        constexpr operator std::uint8_t() const {
+            return m_port;
+        }
     private:
         std::uint8_t m_port;
 };
@@ -32,29 +32,37 @@ class SmartPort {
 class ReversibleSmartPort {
     public:
         consteval ReversibleSmartPort(std::int64_t port)
-            : m_port(port < 0 ? -port : port),
-              m_reversed(port < 0) {
+            : m_port(port) {
             if (port < 0) port = -port;
-            // XXX: this doesnt actaully throw an exception since the ctor
+            // XXX: this doesn't actually throw an exception since the ctor
             // is consteval, it halts compilation instead
             if (port < 1 || port > 21) throw "Port out of range!";
         }
 
-        ReversibleSmartPort(std::int64_t port, DynamicPort)
-            : m_port(port < 0 ? -port : port),
-              m_reversed(port < 0) {
+        constexpr ReversibleSmartPort(SmartPort port): m_port(port) {}
+
+        constexpr ReversibleSmartPort(std::int64_t port, DynamicPort)
+            : m_port(port) {
             if (port < 0) port = -port;
             if (port < 1 || port > 21) m_port = 0;
         }
 
-        std::uint8_t get_port() const { return m_port; }
+        constexpr ReversibleSmartPort operator-() const  {
+            return ReversibleSmartPort{-m_port, runtime_check_port};
+        }
 
-        bool get_reversed() const { return m_reversed; }
+        constexpr bool is_reversed() const { return m_port < 0; }
 
-        operator int() const { return m_port; }
+        [[nodiscard("This function does not mutate the original value")]] constexpr ReversibleSmartPort set_reversed(bool reversed) const {
+            std::uint8_t port = m_port < 0 ? -m_port : m_port;
+            return ReversibleSmartPort{reversed ? -port : port, runtime_check_port};
+        }
+
+        constexpr operator std::int8_t() const {
+            return m_port;
+        }
     private:
-        std::uint8_t m_port;
-        bool m_reversed;
+        std::int8_t m_port;
 };
 
 class ADIPort {
@@ -63,11 +71,13 @@ class ADIPort {
             : m_port(0) {
             if (port >= 'a' && port <= 'h') port -= ('a' - 1);
             else if (port >= 'A' && port <= 'H') port -= ('A' - 1);
+            // XXX: this doesn't actually throw an exception since the ctor
+            // is consteval, it halts compilation instead
             if (port < 1 || port > 8) throw "Port out of range!";
             m_port = port;
         }
 
-        ADIPort(std::int64_t port, DynamicPort)
+        constexpr ADIPort(std::int64_t port, DynamicPort)
             : m_port(0) {
             if (port < 1 || port > 21) m_port = 0;
             if (port >= 'a' && port <= 'h') port -= ('a' - 1);
@@ -76,9 +86,9 @@ class ADIPort {
             m_port = port;
         }
 
-        std::uint8_t get_port() const { return m_port; }
-
-        operator std::uint8_t() const { return m_port; }
+        constexpr operator std::uint8_t() const {
+            return m_port;
+        }
     private:
         std::uint8_t m_port;
 };

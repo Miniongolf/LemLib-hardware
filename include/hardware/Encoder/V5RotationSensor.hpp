@@ -14,19 +14,6 @@ class V5RotationSensor : public Encoder {
         /**
          * @brief Construct a new V5 Rotation Sensor
          *
-         * @param encoder the pros::Rotation object to use
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     lemlib::V5RotationSensor encoder = pros::Rotation(1);
-         * }
-         * @endcode
-         */
-        V5RotationSensor(pros::Rotation encoder);
-        /**
-         * @brief Construct a new V5 Rotation Sensor
-         *
          * @param port the signed port of the rotation sensor. Positive if the sensor is reversed, Negative otherwise
          *
          * @b Example:
@@ -38,6 +25,19 @@ class V5RotationSensor : public Encoder {
          * @endcode
          */
         V5RotationSensor(ReversibleSmartPort port);
+        /**
+         * @brief Create a new V5 Rotation Sensor
+         *
+         * @param encoder the pros::Rotation object to use
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::V5RotationSensor encoder = lemlib::V5RotationSensor::from_pros_rot(pros::Rotation(1));
+         * }
+         * @endcode
+         */
+        static V5RotationSensor from_pros_rot(pros::Rotation encoder);
         /**
          * @brief Construct a new V5 Rotation Sensor
          *

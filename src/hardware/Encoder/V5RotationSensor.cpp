@@ -1,15 +1,10 @@
 #include "hardware/Encoder/V5RotationSensor.hpp"
 #include "hardware/Port.hpp"
 #include "pros/rotation.h"
+#include "pros/rotation.hpp"
 #include <limits.h>
 
 namespace lemlib {
-V5RotationSensor::V5RotationSensor(pros::Rotation encoder)
-    : m_port(encoder.get_port()),
-      m_reversed(encoder.get_port()) {
-    pros::c::rotation_set_reversed(m_port, m_reversed);
-}
-
 V5RotationSensor::V5RotationSensor(ReversibleSmartPort port)
     : m_port(abs(port)),
       m_reversed(port < 0) {
@@ -20,6 +15,10 @@ V5RotationSensor::V5RotationSensor(SmartPort port, bool reversed)
     : m_port(port),
       m_reversed(reversed) {
     pros::c::rotation_set_reversed(m_port, m_reversed);
+}
+
+V5RotationSensor V5RotationSensor::from_pros_rot(pros::Rotation encoder) {
+    return V5RotationSensor{{encoder.get_port(), runtime_check_port}, static_cast<bool>(encoder.get_reversed())};
 }
 
 int V5RotationSensor::isConnected() {

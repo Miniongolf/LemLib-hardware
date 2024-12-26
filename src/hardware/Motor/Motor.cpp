@@ -17,12 +17,12 @@ Motor::Motor(ReversibleSmartPort port, AngularVelocity outputVelocity)
       m_outputVelocity(outputVelocity) {}
 
 Motor::Motor(SmartPort port, bool reversed, AngularVelocity outputVelocity)
-    : m_port(reversed ? -port : port),
+    : m_port(reversed ? -ReversibleSmartPort {port} : port),
       m_outputVelocity(outputVelocity) {}
 
-Motor::Motor(const pros::Motor motor, AngularVelocity outputVelocity)
-    : m_port(motor.get_port()),
-    m_outputVelocity(outputVelocity) {}
+Motor Motor::from_pros_motor(const pros::Motor motor, AngularVelocity outputVelocity) {
+    return Motor {{motor.get_port(), runtime_check_port}, outputVelocity};
+}
 
 motor_brake_mode_e_t brakeModeToMotorBrake(BrakeMode mode) {
     // MotorBrake is identical to lemlib::BrakeMode, except for its name and lemlib uses an enum class for type
@@ -134,15 +134,11 @@ int Motor::isReversed() const {
 int Motor::setReversed(bool reversed) {
     // technically this returns an int, but as long as you only pass 0 to the index its impossible for it to return an
     // error. This is because we keep track of whether the motor is reversed or not through the sign of its port
-    if (reversed) {
-        m_port = -abs(m_port);
-    } else {
-        m_port = abs(m_port);
-    }
+    m_port = m_port.set_reversed(reversed);
     return 0;
 }
 
-int Motor::getPort() const { return m_port; }
+ReversibleSmartPort Motor::getPort() const { return m_port; }
 
 Current Motor::getCurrentLimit() const {
     const Current result = from_amp(motor_get_current_limit(m_port));

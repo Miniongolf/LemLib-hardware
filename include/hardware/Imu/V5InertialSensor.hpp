@@ -10,20 +10,6 @@ class V5InertialSensor : public Imu {
         /**
          * @brief Construct a new V5 Inertial Sensor
          *
-         * @param imu the inertial sensor
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *    // Create a new V5 Inertial Sensor on port 1
-         *    lemlib::V5InertialSensor imu = pros::Imu(1);
-         * }
-         * @endcode
-         */
-        V5InertialSensor(pros::Imu imu);
-        /**
-         * @brief Construct a new V5 Inertial Sensor
-         *
          * @param port the port of the V5 inertial sensor
          *
          * @b Example:
@@ -35,6 +21,20 @@ class V5InertialSensor : public Imu {
          * @endcode
          */
         V5InertialSensor(SmartPort port);
+        /**
+         * @brief Create a new V5 Inertial Sensor
+         *
+         * @param imu the inertial sensor
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *    // Create a new V5 Inertial Sensor on port 1
+         *    lemlib::V5InertialSensor imu = lemlib::V5InertialSensor::from_pros_imu(pros::Imu(1));
+         * }
+         * @endcode
+         */
+        static V5InertialSensor from_pros_imu(pros::Imu imu);
         /**
          * @brief calibrate the V5 Inertial Sensor
          *
