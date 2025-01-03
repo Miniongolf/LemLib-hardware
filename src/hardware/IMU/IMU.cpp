@@ -1,13 +1,13 @@
-#include "hardware/Imu/Imu.hpp"
+#include "hardware/IMU/IMU.hpp"
 
 namespace lemlib {
-int Imu::setGyroScalar(double scalar) {
+int IMU::setGyroScalar(double scalar) {
     m_gyroScalar = scalar;
     // Always returns 0 because the scalar setter is not dependent on hardware
     return 0;
 }
 
-double Imu::getGyroScalar() {
+double IMU::getGyroScalar() {
     // Never returns an error because the scalar getter is not dependent on hardware
     return m_gyroScalar;
 }
