@@ -1,5 +1,6 @@
 #include "hardware/Motor/MotorGroup.hpp"
-#include "Motor.hpp"
+#include "hardware/Port.hpp"
+#include "hardware/Motor/Motor.hpp"
 #include "units/Angle.hpp"
 #include "units/Temperature.hpp"
 #include <climits>
@@ -8,15 +9,19 @@
 #include <errno.h>
 
 namespace lemlib {
-MotorGroup::MotorGroup(std::initializer_list<int> ports, AngularVelocity outputVelocity)
+MotorGroup::MotorGroup(std::initializer_list<ReversibleSmartPort> ports, AngularVelocity outputVelocity)
     : m_outputVelocity(outputVelocity) {
-    for (const int port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
+    for (const auto port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
 }
 
-MotorGroup::MotorGroup(pros::MotorGroup group, AngularVelocity outputVelocity)
-    : m_outputVelocity(outputVelocity) {
+MotorGroup MotorGroup::from_pros_group(pros::MotorGroup group, AngularVelocity outputVelocity) {
+    MotorGroup motor_group {{}, outputVelocity};
     const std::vector<std::int8_t> ports = group.get_port_all();
-    for (const int port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
+    for (const int port : ports) {
+        motor_group.m_motors.push_back(
+            {.port = ReversibleSmartPort {port, runtime_check_port}, .connectedLastCycle = true, .offset = 0_stDeg});
+    }
+    return motor_group;
 }
 
 int MotorGroup::move(double percent) {
@@ -161,7 +166,7 @@ int MotorGroup::getSize() {
     return size;
 }
 
-int MotorGroup::addMotor(int port) {
+int MotorGroup::addMotor(ReversibleSmartPort port) {
     // check that the motor isn't already part of the group
     for (const MotorInfo& info : m_motors) {
         // return an error if the motor is already added to the group
@@ -187,7 +192,7 @@ int MotorGroup::addMotor(Motor motor, bool reversed) {
     return addMotor(motor);
 }
 
-void MotorGroup::removeMotor(int port) {
+void MotorGroup::removeMotor(ReversibleSmartPort port) {
     // remove the motor with the specified port
     auto it = m_motors.begin();
     while (it < m_motors.end()) {
@@ -231,9 +236,9 @@ const std::vector<Motor> MotorGroup::getMotors() {
     return motors;
 }
 
-void MotorGroup::removeMotor(Motor motor) { removeMotor(motor.getPort()); }
+void MotorGroup::removeMotor(Motor motor) { removeMotor(motor); }
 
-Angle MotorGroup::configureMotor(int port) {
+Angle MotorGroup::configureMotor(ReversibleSmartPort port) {
     // since this function is called in other MotorGroup member functions, this function can't call any other member
     // function, otherwise it would cause a recursion loop. This means that this function is ugly and complex, but at
     // least it means that the other functions can stay simple
