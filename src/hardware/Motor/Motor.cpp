@@ -13,10 +13,6 @@ Motor::Motor(ReversibleSmartPort port, AngularVelocity outputVelocity)
     : m_port(port),
       m_outputVelocity(outputVelocity) {}
 
-Motor::Motor(SmartPort port, bool reversed, AngularVelocity outputVelocity)
-    : m_port(reversed ? -ReversibleSmartPort {port} : port),
-      m_outputVelocity(outputVelocity) {}
-
 Motor Motor::from_pros_motor(const pros::Motor motor, AngularVelocity outputVelocity) {
     return Motor {{motor.get_port(), runtime_check_port}, outputVelocity};
 }

@@ -28,23 +28,6 @@ class Motor : public Encoder {
          */
         Motor(ReversibleSmartPort port, AngularVelocity outputVelocity);
         /**
-         * @brief Construct a new Motor object
-         *
-         * @param port the port of the motor
-         * @param reversed whether the motor is reversed or not
-         * @param outputVelocity the maximum theoretical velocity of the motor
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     // construct a new Motor object on port 1, which is not reversed,
-         *     // and powers a mechanism spinning at 600 rpm
-         *     lemlib::Motor motor(1, false, 600_rpm);
-         * }
-         * @endcode
-         */
-        Motor(SmartPort port, bool reversed, AngularVelocity outputVelocity);
-        /**
          * @brief Create a new Motor object
          *
          * @param motor the pros motor object to get the port from
