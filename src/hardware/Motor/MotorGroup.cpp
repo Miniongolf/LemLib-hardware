@@ -5,6 +5,7 @@
 #include "units/Temperature.hpp"
 #include <climits>
 #include <cmath>
+#include <cstdint>
 #include <errno.h>
 
 namespace lemlib {
@@ -13,15 +14,15 @@ MotorGroup::MotorGroup(std::initializer_list<ReversibleSmartPort> ports, Angular
     for (const auto port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
 }
 
-MotorGroup MotorGroup::from_pros_group(pros::MotorGroup group, AngularVelocity outputVelocity)
-{
-        MotorGroup motor_group{{}, outputVelocity};
-        const std::vector<std::int8_t> ports = group.get_port_all();
-        for (const int port : ports) {
-            motor_group.m_motors.push_back({.port = ReversibleSmartPort{port, runtime_check_port}, .connectedLastCycle = true, .offset = 0_stDeg});
-        }
-        return motor_group;
+MotorGroup MotorGroup::from_pros_group(pros::MotorGroup group, AngularVelocity outputVelocity) {
+    MotorGroup motor_group {{}, outputVelocity};
+    const std::vector<std::int8_t> ports = group.get_port_all();
+    for (const int port : ports) {
+        motor_group.m_motors.push_back(
+            {.port = ReversibleSmartPort {port, runtime_check_port}, .connectedLastCycle = true, .offset = 0_stDeg});
     }
+    return motor_group;
+}
 
 int MotorGroup::move(double percent) {
     const std::vector<Motor> motors = getMotors();
@@ -104,6 +105,11 @@ int MotorGroup::setAngle(Angle angle) {
     for (Motor motor : motors) {
         const int result = motor.setAngle(angle);
         if (result == 0) success = true;
+        const Angle offset = motor.getOffset();
+        // set the offset of that motor
+        for (MotorInfo& info : m_motors) {
+            if (info.port == motor.getPort()) info.offset = offset;
+        }
     }
     // as long as one motor sets the angle successfully, return 0 (success)
     return success ? 0 : INT_MAX;
@@ -142,6 +148,14 @@ std::vector<Temperature> MotorGroup::getTemperatures() {
     std::vector<Temperature> temperatures;
     for (const Motor motor : motors) { temperatures.push_back(motor.getTemperature()); }
     return temperatures;
+}
+
+// Always returns 0 because the velocity setter is not dependent on hardware and should never fail
+int MotorGroup::setOutputVelocity(AngularVelocity outputVelocity) {
+    Angle angle = getAngle();
+    m_outputVelocity = outputVelocity;
+    setAngle(angle);
+    return 0;
 }
 
 int MotorGroup::getSize() {

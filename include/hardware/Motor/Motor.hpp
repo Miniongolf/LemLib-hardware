@@ -1,7 +1,7 @@
 #pragma once
 
 #include "pros/motors.hpp"
-#include "hardware/encoder/Encoder.hpp"
+#include "hardware/Encoder/Encoder.hpp"
 #include "hardware/Port.hpp"
 #include "units/Temperature.hpp"
 
@@ -46,7 +46,7 @@ class Motor : public Encoder {
         Motor(SmartPort port, bool reversed, AngularVelocity outputVelocity);
         /**
          * @brief Create a new Motor object
-         * 
+         *
          * @param motor the pros motor object to get the port from
          * @param outputVelocity the maximum theoretical velocity of the motor
          *
@@ -141,6 +141,7 @@ class Motor : public Encoder {
          * This function uses the following values of errno when an error state is reached:
          *
          * ENODEV: the port cannot be configured as a motor
+         * EINVAL: can't set brake mode to an invalid state
          *
          * @param mode the brake mode to set the motor to
          * @return 0 on success
@@ -478,6 +479,23 @@ class Motor : public Encoder {
          * @endcode
          */
         Temperature getTemperature() const;
+        /**
+         * @brief set the output velocity of the motor
+         *
+         * @param outputVelocity the theoretical maximum output velocity of the motor, after gearing, to set
+         * @return int 0 success
+         * @return INT_MAX error occurred, setting errno
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor(1, 360_rpm);
+         *     // set the output velocity to 450 rpm
+         *     motor.setOutputVelocity(450_rpm);
+         * }
+         * @endcode
+         */
+        int setOutputVelocity(AngularVelocity outputVelocity);
     private:
         AngularVelocity m_outputVelocity;
         Angle m_offset = 0_stDeg;

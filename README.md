@@ -6,38 +6,66 @@ This PROS template aims to simplify interactions with devices, and implement a c
 
 ## Features
 
- - [X] **[Unitized](https://github.com/LemLib/units)**
- - [X] **Uncompromising error handling**
+ - [X] [Unitized](https://github.com/LemLib/units)
+ - [X] Advanced Error Handling
  - [ ] Device disconnect/reconnect callbacks
+ - [ ] Compile-time Port Checks
 
- - [X] **Motor Class**
-    - [X] Changing encoder units don't affect reported angle
-    - [X] Current limit
-    - [X] Differentiate 11W and 5.5W motors
-    - [X] -1.0 to +1.0 power levels, adjusts automatically to motor type
-    - [X] Type Safe enums
-    - [ ] Micro-disconnect detection
+ - [X] **Motor**
+   - [X] Changing encoder units don't affect reported angle
+   - [X] Current limit
+   - [X] Differentiate 11W and 5.5W motors
+   - [X] -1.0 to +1.0 power levels, adjusts automatically to motor type
+   - [X] Type Safe enums
+   - [ ] Micro-disconnect detection
 
  - [ ] **Motor Groups**
-    - [X] Motor disconnects/reconnects don't affect measured angle
-    - [X] Removing motors doesn't affect the measured angle
-    - [X] Automatic per-motor gear ratio calculations
-    - [ ] Micro-disconnect detection
+   - [X] Motor disconnects/reconnects don't affect measured angle
+   - [X] Removing motors doesn't affect the measured angle
+   - [X] Automatic per-motor gear ratio calculations
+   - [ ] Micro-disconnect detection
+
+ - [ ] **Abstract Distance Sensor**
+   - [ ] Generic interface for any distance sensor
+   - [ ] Support for all VEX distance sensors
+     - [ ] V5 Distance Sensor
+     - [ ] V5 Optical Sensor
+     - [ ] ADI Ultrasonic Sensor
+
+ - [ ] **Abstract Color Sensor**
+   - [ ] Generic interface for any color sensor
+   - [ ] Support for all VEX color sensors
+     - [ ] V5 Optical Sensor
 
  - [X] **Abstract Encoders**
-    - [X] Generic interface for any encoder
-    - [X] Support for all VEX encoders
-        - [X] All custom encoders
-        - [X] Motors / Motor Groups
-        - [X] V5 Rotation Sensor
-        - [X] Optical Shaft encoder
+   - [X] Generic interface for any encoder
+     - [X] Support for all VEX encoders
+       - [X] Motors / Motor Groups
+       - [X] V5 Rotation Sensor
+       - [X] Optical Shaft encoder
+       - [ ] ADI Potentiometer V1
+       - [ ] ADI Potentiometer V2
 
  - [X] **Abstract Gyro**
-    - [X] Generic interface for any gyro
-    - [X] Support for VEX gyros, as well as any custom gyros for use in VEX AI or VEX U
-        - [X] All custom gyros
-        - [X] V5 Inertial Sensor
+   - [X] Generic interface for any gyro
+   - [X] Gyro Scaling
+   - [ ] Support for all VEX gyros
+     - [X] V5 Inertial Sensor
+     - [ ] V5 GPS Sensor
+     - [ ] ADI analog gyro
 
+ - [ ] **Abstract Accelerometer**
+   - [ ] Generic interface for any accelerometer
+   - [ ] Support for all VEX accelerometers
+     - [ ] V5 Inertial Sensor
+     - [ ] V5 GPS Sensor
+     - [ ] ADI Accelerometer
+
+ - [ ] **Abstract IMU**
+   - [ ] Generic interface for any IMU
+   - [ ] Support for all VEX IMUs
+     - [ ] V5 Inertial Sensor
+     - [ ] V5 GPS Sensor
 
 ## Who Should Use This?
 
