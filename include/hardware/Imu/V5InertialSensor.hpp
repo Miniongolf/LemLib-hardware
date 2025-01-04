@@ -1,6 +1,6 @@
 #pragma once
 
-#include "hardware/Imu/Imu.hpp"
+#include "hardware/IMU/IMU.hpp"
 #include "pros/imu.hpp"
 
 namespace lemlib {

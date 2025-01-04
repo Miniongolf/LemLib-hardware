@@ -1,4 +1,4 @@
-#include "hardware/Imu/V5InertialSensor.hpp"
+#include "hardware/IMU/V5InertialSensor.hpp"
 
 namespace lemlib {
 V5InertialSensor::V5InertialSensor(pros::Imu imu)
