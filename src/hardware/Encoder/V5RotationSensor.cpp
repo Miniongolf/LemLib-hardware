@@ -11,14 +11,9 @@ V5RotationSensor::V5RotationSensor(ReversibleSmartPort port)
     pros::c::rotation_set_reversed(m_port, m_reversed);
 }
 
-V5RotationSensor::V5RotationSensor(SmartPort port, bool reversed)
-    : m_port(port),
-      m_reversed(reversed) {
-    pros::c::rotation_set_reversed(m_port, m_reversed);
-}
-
 V5RotationSensor V5RotationSensor::from_pros_rot(pros::Rotation encoder) {
-    return V5RotationSensor {{encoder.get_port(), runtime_check_port}, static_cast<bool>(encoder.get_reversed())};
+    if (encoder.get_reversed()) return V5RotationSensor {{-encoder.get_port(), runtime_check_port}};
+    else return V5RotationSensor {{encoder.get_port(), runtime_check_port}};
 }
 
 int V5RotationSensor::isConnected() {
