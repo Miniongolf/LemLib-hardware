@@ -9,7 +9,7 @@ This PROS template aims to simplify interactions with devices, and implement a c
  - [X] [Unitized](https://github.com/LemLib/units)
  - [X] Advanced Error Handling
  - [ ] Device disconnect/reconnect callbacks
- - [ ] Compile-time Port Checks
+ - [X] Compile-time Port Checks
 
  - [X] **Motor**
    - [X] Changing encoder units don't affect reported angle
