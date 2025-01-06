@@ -24,7 +24,7 @@ MotorGroup MotorGroup::from_pros_group(pros::MotorGroup group, AngularVelocity o
     return motor_group;
 }
 
-int MotorGroup::move(double percent) {
+int MotorGroup::move(Number percent) {
     const std::vector<Motor> motors = getMotors();
     bool success = false;
     for (Motor motor : motors) {
@@ -194,14 +194,8 @@ int MotorGroup::addMotor(Motor motor, bool reversed) {
 
 void MotorGroup::removeMotor(ReversibleSmartPort port) {
     // remove the motor with the specified port
-    auto it = m_motors.begin();
-    while (it < m_motors.end()) {
-        if (std::abs(it->port) == std::abs(port)) {
-            m_motors.erase(it);
-        } else {
-            it++;
-        }
-    }
+    const auto iterator = std::remove_if(m_motors.begin(), m_motors.end(), [&](MotorInfo m) { return m.port == port; });
+    m_motors.erase(iterator);
 }
 
 const std::vector<Motor> MotorGroup::getMotors() {

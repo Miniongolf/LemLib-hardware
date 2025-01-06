@@ -37,10 +37,10 @@ int V5InertialSensor::setRotation(Angle rotation) {
     }
 }
 
-int V5InertialSensor::setGyroScalar(double scalar) {
+int V5InertialSensor::setGyroScalar(Number scalar) {
     m_gyroScalar = scalar;
     return 0;
 }
 
-double V5InertialSensor::getGyroScalar() { return m_gyroScalar; }
+Number V5InertialSensor::getGyroScalar() { return m_gyroScalar; }
 } // namespace lemlib

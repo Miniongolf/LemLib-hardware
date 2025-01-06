@@ -39,13 +39,13 @@ BrakeMode motorBrakeToBrakeMode(pros::motor_brake_mode_e_t mode) {
     }
 }
 
-int Motor::move(double percent) {
+int Motor::move(Number percent) {
     // the V5 and EXP motors have different voltage caps, so we need to scale based on the motor type
     // V5 motors have their voltage capped at 12v, while EXP motors have their voltage capped at 7.2v
     // but they have the same max velocity, so we can scale the percent power based on the motor type
     switch (getType()) {
-        case (MotorType::V5): return convertStatus(pros::c::motor_move_voltage(m_port, percent * 12000));
-        case (MotorType::EXP): return convertStatus(pros::c::motor_move_voltage(m_port, percent * 7200));
+        case (MotorType::V5): return convertStatus(pros::c::motor_move_voltage(m_port, percent.internal() * 12000));
+        case (MotorType::EXP): return convertStatus(pros::c::motor_move_voltage(m_port, percent.internal() * 7200));
         default: return INT_MAX;
     }
 }
