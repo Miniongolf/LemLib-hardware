@@ -2,6 +2,7 @@
 #include "hardware/Port.hpp"
 #include <cmath>
 #include <limits.h>
+#include <mutex>
 
 namespace lemlib {
 ADIEncoder::ADIEncoder(pros::adi::Encoder encoder)
@@ -25,6 +26,7 @@ int ADIEncoder::isConnected() {
 }
 
 Angle ADIEncoder::getAngle() {
+    std::unique_lock lock(m_mutex);
     const int raw = m_encoder.get_value();
     // check for errors
     if (raw == INT_MAX) {
@@ -36,6 +38,7 @@ Angle ADIEncoder::getAngle() {
 }
 
 int ADIEncoder::setAngle(Angle angle) {
+    std::unique_lock lock(m_mutex);
     // the Vex SDK does not support setting the relative angle of an ADI encoder to a specific value
     // but we can overcome this limitation by resetting the relative angle to zero and saving an offset
     m_offset = angle;

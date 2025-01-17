@@ -3,6 +3,7 @@
 #include "hardware/Encoder/Encoder.hpp"
 #include "hardware/Port.hpp"
 #include "pros/adi.hpp"
+#include "pros/rtos.hpp"
 
 namespace lemlib {
 /**
@@ -57,6 +58,11 @@ class ADIEncoder : public Encoder {
          * @endcode
          */
         ADIEncoder(SmartPort expanderPort, ADIPair ports, bool reversed);
+
+        ADIEncoder(ADIEncoder& other)
+            : m_encoder(other.m_encoder),
+              m_offset(other.m_offset) {}
+
         /**
          * @brief whether the encoder is connected
          *
@@ -130,6 +136,7 @@ class ADIEncoder : public Encoder {
          */
         int setAngle(Angle angle) override;
     private:
+        pros::Mutex m_mutex;
         pros::adi::Encoder m_encoder;
         Angle m_offset = 0_stDeg;
 };
