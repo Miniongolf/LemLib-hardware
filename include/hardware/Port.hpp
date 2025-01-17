@@ -15,17 +15,16 @@ template <unsigned N> struct fixed_string {
         char buf[N + 1] {};
 };
 
-template<unsigned N> fixed_string(char const (&)[N]) -> fixed_string<N - 1>;
+template <unsigned N> fixed_string(char const (&)[N]) -> fixed_string<N - 1>;
 
 /**
  * @brief This function is intended to be used as an assertion in consteval functions.
- * 
+ *
  * @warning It is UNDEFINED BEHAVIOR to call this function in a non-consteval context.
  *
  * @tparam Str The error message
  */
-template <fixed_string Str>
-inline void ceval_assert() { __builtin_unreachable(); }
+template <fixed_string Str> inline void ceval_assert() { __builtin_unreachable(); }
 
 } // namespace detail
 
@@ -113,7 +112,7 @@ class ADIPair {
               m_port_2(port_2) {
             auto lower_port = std::min(std::uint8_t {m_port_1}, std::uint8_t {m_port_2});
             auto higher_port = std::max(std::uint8_t {m_port_1}, std::uint8_t {m_port_2});
-            if (higher_port - lower_port != 1 || lower_port % 2 != 1) 
+            if (higher_port - lower_port != 1 || lower_port % 2 != 1)
                 detail::ceval_assert<"Invalid pair: valid pairs are A&B, C&D, E&F, G&H">();
         }
 
@@ -131,7 +130,6 @@ class ADIPair {
         constexpr ADIPort first() const { return m_port_1; }
 
         constexpr ADIPort second() const { return m_port_2; }
-
     private:
         ADIPort m_port_1;
         ADIPort m_port_2;
