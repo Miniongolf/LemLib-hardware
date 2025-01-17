@@ -59,6 +59,14 @@ class ADIEncoder : public Encoder {
          */
         ADIEncoder(SmartPort expanderPort, ADIPair ports, bool reversed);
 
+        /**
+         * @brief ADIEncoder copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor for the ADIEncoder is necessary
+         *
+         * @param other the ADIEncoder to copy
+         */
         ADIEncoder(ADIEncoder& other)
             : m_encoder(other.m_encoder),
               m_offset(other.m_offset) {}
