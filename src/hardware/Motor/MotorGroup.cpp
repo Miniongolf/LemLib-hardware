@@ -30,7 +30,7 @@ MotorGroup MotorGroup::from_pros_group(pros::MotorGroup group, AngularVelocity o
     return motor_group;
 }
 
-int MotorGroup::move(Number percent) {
+int32_t MotorGroup::move(Number percent) {
     std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     bool success = false;
@@ -42,7 +42,7 @@ int MotorGroup::move(Number percent) {
     return success ? 0 : INT_MAX;
 }
 
-int MotorGroup::moveVelocity(AngularVelocity velocity) {
+int32_t MotorGroup::moveVelocity(AngularVelocity velocity) {
     std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     bool success = false;
@@ -54,7 +54,7 @@ int MotorGroup::moveVelocity(AngularVelocity velocity) {
     return success ? 0 : INT_MAX;
 }
 
-int MotorGroup::brake() {
+int32_t MotorGroup::brake() {
     std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     bool success = false;
@@ -66,7 +66,7 @@ int MotorGroup::brake() {
     return success ? 0 : INT_MAX;
 }
 
-int MotorGroup::setBrakeMode(BrakeMode mode) {
+int32_t MotorGroup::setBrakeMode(BrakeMode mode) {
     std::lock_guard lock(m_mutex);
     m_brakeMode = mode;
     getMotors(); // even though we don't use this, we call it anyway for brake mode setting and disconnect handling
@@ -79,7 +79,7 @@ BrakeMode MotorGroup::getBrakeMode() const {
     return m_brakeMode;
 }
 
-int MotorGroup::isConnected() {
+int32_t MotorGroup::isConnected() const {
     std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     for (Motor motor : motors) {
@@ -90,7 +90,7 @@ int MotorGroup::isConnected() {
     return 0;
 }
 
-Angle MotorGroup::getAngle() {
+Angle MotorGroup::getAngle() const {
     std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     // get the average angle of all motors in the group
@@ -112,7 +112,7 @@ Angle MotorGroup::getAngle() {
     return angle / (getSize() - errors);
 }
 
-int MotorGroup::setAngle(Angle angle) {
+int32_t MotorGroup::setAngle(Angle angle) {
     std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     bool success = false;
@@ -147,7 +147,7 @@ Current MotorGroup::getCurrentLimit() const {
     return total;
 }
 
-int MotorGroup::setCurrentLimit(Current limit) {
+int32_t MotorGroup::setCurrentLimit(Current limit) {
     std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     if (motors.size() == 0) return INT_MAX; // error handling
@@ -168,7 +168,7 @@ std::vector<Temperature> MotorGroup::getTemperatures() const {
 }
 
 // Always returns 0 because the velocity setter is not dependent on hardware and should never fail
-int MotorGroup::setOutputVelocity(AngularVelocity outputVelocity) {
+int32_t MotorGroup::setOutputVelocity(AngularVelocity outputVelocity) {
     std::lock_guard lock(m_mutex);
     Angle angle = getAngle();
     m_outputVelocity = outputVelocity;
@@ -181,7 +181,7 @@ AngularVelocity MotorGroup::getOutputVelocity() const {
     return m_outputVelocity;
 }
 
-int MotorGroup::getSize() const {
+int32_t MotorGroup::getSize() const {
     std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     int size = 0;
@@ -190,7 +190,7 @@ int MotorGroup::getSize() const {
     return size;
 }
 
-int MotorGroup::addMotor(ReversibleSmartPort port) {
+int32_t MotorGroup::addMotor(ReversibleSmartPort port) {
     std::lock_guard lock(m_mutex);
     // check that the motor isn't already part of the group
     for (const MotorInfo& info : m_motors) {
@@ -209,12 +209,12 @@ int MotorGroup::addMotor(ReversibleSmartPort port) {
     return 0;
 }
 
-int MotorGroup::addMotor(Motor motor) {
+int32_t MotorGroup::addMotor(Motor motor) {
     std::lock_guard lock(m_mutex);
     return addMotor(motor.getPort());
 }
 
-int MotorGroup::addMotor(Motor motor, bool reversed) {
+int32_t MotorGroup::addMotor(Motor motor, bool reversed) {
     std::lock_guard lock(m_mutex);
     // set the motor reversal
     motor.setReversed(reversed);

@@ -45,7 +45,7 @@ BrakeMode motorBrakeToBrakeMode(pros::motor_brake_mode_e_t mode) {
     }
 }
 
-int Motor::move(Number percent) {
+int32_t Motor::move(Number percent) {
     // the V5 and EXP motors have different voltage caps, so we need to scale based on the motor type
     // V5 motors have their voltage capped at 12v, while EXP motors have their voltage capped at 7.2v
     // but they have the same max velocity, so we can scale the percent power based on the motor type
@@ -56,7 +56,7 @@ int Motor::move(Number percent) {
     }
 }
 
-int Motor::moveVelocity(AngularVelocity velocity) {
+int32_t Motor::moveVelocity(AngularVelocity velocity) {
     std::lock_guard lock(m_mutex);
     // vexos will behave differently depending on the cartridge of the motor
     // pros uses an integer value to represent the rpm of the motor
@@ -81,12 +81,12 @@ int Motor::moveVelocity(AngularVelocity velocity) {
     return convertStatus(pros::c::motor_move_velocity(m_port, out));
 }
 
-int Motor::brake() {
+int32_t Motor::brake() {
     std::lock_guard lock(m_mutex);
     return convertStatus(pros::c::motor_brake(m_port));
 }
 
-int Motor::setBrakeMode(BrakeMode mode) {
+int32_t Motor::setBrakeMode(BrakeMode mode) {
     std::lock_guard lock(m_mutex);
     if (mode == BrakeMode::INVALID) {
         errno = EINVAL;
@@ -100,9 +100,11 @@ BrakeMode Motor::getBrakeMode() const {
     return motorBrakeToBrakeMode(pros::c::motor_get_brake_mode(m_port));
 }
 
-int Motor::isConnected() { return pros::c::get_plugged_type(m_port) == pros::c::v5_device_e_t::E_DEVICE_MOTOR; }
+int32_t Motor::isConnected() const {
+    return pros::c::get_plugged_type(m_port) == pros::c::v5_device_e_t::E_DEVICE_MOTOR;
+}
 
-Angle Motor::getAngle() {
+Angle Motor::getAngle() const {
     std::lock_guard lock(m_mutex);
     // get the number of encoder ticks
     const int ticks = pros::c::motor_get_raw_position(m_port, NULL);
@@ -115,7 +117,7 @@ Angle Motor::getAngle() {
     return position + m_offset;
 }
 
-int Motor::setAngle(Angle angle) {
+int32_t Motor::setAngle(Angle angle) {
     std::lock_guard lock(m_mutex);
     // get the raw position
     const int ticks = pros::c::motor_get_raw_position(m_port, NULL);
@@ -134,13 +136,13 @@ Angle Motor::getOffset() const {
     return m_offset;
 }
 
-int Motor::setOffset(Angle offset) {
+int32_t Motor::setOffset(Angle offset) {
     std::lock_guard lock(m_mutex);
     m_offset = offset;
     return 0;
 }
 
-MotorType Motor::getType() {
+MotorType Motor::getType() const {
     std::lock_guard lock(m_mutex);
     // there is no exposed api to get the motor type
     // while the memory address of the function has been found through reverse engineering,
@@ -161,14 +163,14 @@ MotorType Motor::getType() {
     } else return MotorType::EXP;
 }
 
-int Motor::isReversed() const {
+int32_t Motor::isReversed() const {
     std::lock_guard lock(m_mutex);
     // technically this returns an int, but as long as you only pass 0 to the index its impossible for it to return an
     // error. This is because we keep track of whether the motor is reversed or not through the sign of its port
     return m_port < 0;
 }
 
-int Motor::setReversed(bool reversed) {
+int32_t Motor::setReversed(bool reversed) {
     std::lock_guard lock(m_mutex);
     // technically this returns an int, but as long as you only pass 0 to the index its impossible for it to return an
     // error. This is because we keep track of whether the motor is reversed or not through the sign of its port
@@ -188,7 +190,7 @@ Current Motor::getCurrentLimit() const {
     return result;
 }
 
-int Motor::setCurrentLimit(Current limit) {
+int32_t Motor::setCurrentLimit(Current limit) {
     std::lock_guard lock(m_mutex);
     return pros::c::motor_set_current_limit(m_port, to_amp(limit) * 1000);
 }
@@ -200,7 +202,7 @@ Temperature Motor::getTemperature() const {
 }
 
 // Always returns 0 because the velocity setter is not dependent on hardware and should never fail
-int Motor::setOutputVelocity(AngularVelocity outputVelocity) {
+int32_t Motor::setOutputVelocity(AngularVelocity outputVelocity) {
     std::lock_guard lock(m_mutex);
     Angle angle = getAngle();
     m_outputVelocity = outputVelocity;
@@ -208,7 +210,7 @@ int Motor::setOutputVelocity(AngularVelocity outputVelocity) {
     return 0;
 }
 
-AngularVelocity Motor::getOutputVelocity() {
+AngularVelocity Motor::getOutputVelocity() const {
     std::lock_guard lock(m_mutex);
     return m_outputVelocity;
 }

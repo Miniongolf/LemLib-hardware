@@ -68,7 +68,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        int isConnected() override;
+        int32_t isConnected() const override;
         /**
          * @brief Get the relative angle measured by the V5 Rotation Sensor
          *
@@ -96,7 +96,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        Angle getAngle() override;
+        Angle getAngle() const override;
         /**
          * @brief Set the relative angle of the V5 Rotation Sensor
          *
@@ -125,7 +125,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        int setAngle(Angle angle) override;
+        int32_t setAngle(Angle angle) override;
         /**
          * @brief returns whether the V5 Rotation Sensor is reversed or not
          *
@@ -145,7 +145,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        int isReversed() const;
+        int32_t isReversed() const;
         /**
          * @brief Set whether the V5 Rotation Sensor is reversed or not
          *
@@ -166,7 +166,7 @@ class V5RotationSensor : public Encoder {
          * }
          * @endcode
          */
-        int setReversed(bool reversed);
+        int32_t setReversed(bool reversed);
     private:
         mutable pros::Mutex m_mutex;
         Angle m_offset = 0_stRot;
