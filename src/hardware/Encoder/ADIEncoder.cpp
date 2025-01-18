@@ -14,6 +14,10 @@ ADIEncoder::ADIEncoder(ADIPair ports, bool reversed)
 ADIEncoder::ADIEncoder(SmartPort expanderPort, ADIPair ports, bool reversed)
     : m_encoder({expanderPort, ports.first(), ports.second()}, reversed) {}
 
+ADIEncoder::ADIEncoder(ADIEncoder& other)
+    : m_encoder(other.m_encoder),
+      m_offset(other.m_offset) {}
+
 int ADIEncoder::isConnected() {
     // it's not possible to check if the ADIEncoder is connected, so we just return 1 to indicate that it is
     // we do run a simple test however to check if the ports are valid

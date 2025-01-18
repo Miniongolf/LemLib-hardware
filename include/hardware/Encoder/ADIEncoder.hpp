@@ -58,7 +58,6 @@ class ADIEncoder : public Encoder {
          * @endcode
          */
         ADIEncoder(SmartPort expanderPort, ADIPair ports, bool reversed);
-
         /**
          * @brief ADIEncoder copy constructor
          *
@@ -67,10 +66,7 @@ class ADIEncoder : public Encoder {
          *
          * @param other the ADIEncoder to copy
          */
-        ADIEncoder(ADIEncoder& other)
-            : m_encoder(other.m_encoder),
-              m_offset(other.m_offset) {}
-
+        ADIEncoder(ADIEncoder& other);
         /**
          * @brief whether the encoder is connected
          *
