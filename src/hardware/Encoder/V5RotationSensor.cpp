@@ -3,6 +3,7 @@
 #include "hardware/util.hpp"
 #include "pros/rotation.hpp"
 #include <limits.h>
+#include <mutex>
 
 namespace lemlib {
 V5RotationSensor::V5RotationSensor(ReversibleSmartPort port)
@@ -10,6 +11,11 @@ V5RotationSensor::V5RotationSensor(ReversibleSmartPort port)
       m_reversed(port < 0) {
     pros::c::rotation_set_reversed(m_port, m_reversed);
 }
+
+V5RotationSensor::V5RotationSensor(V5RotationSensor& other)
+    : m_port(other.m_port),
+      m_reversed(other.m_reversed),
+      m_offset(other.m_offset) {}
 
 V5RotationSensor V5RotationSensor::from_pros_rot(pros::Rotation encoder) {
     if (encoder.get_reversed()) return V5RotationSensor {{-encoder.get_port(), runtime_check_port}};
@@ -23,6 +29,7 @@ int V5RotationSensor::isConnected() {
 }
 
 Angle V5RotationSensor::getAngle() {
+    std::lock_guard lock(m_mutex);
     if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return from_stRot(INFINITY);
     const int32_t raw = pros::c::rotation_get_position(m_port);
     if (raw == INT_MAX) return from_stRot(INFINITY);
@@ -32,6 +39,7 @@ Angle V5RotationSensor::getAngle() {
 }
 
 int V5RotationSensor::setAngle(Angle angle) {
+    std::lock_guard lock(m_mutex);
     if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return INT_MAX;
     // requestedAngle = pos + offset
     // offset = requestedAngle - raw
@@ -43,9 +51,13 @@ int V5RotationSensor::setAngle(Angle angle) {
     return 0;
 }
 
-int V5RotationSensor::isReversed() const { return m_reversed; }
+int V5RotationSensor::isReversed() const {
+    std::lock_guard lock(m_mutex);
+    return m_reversed;
+}
 
 int V5RotationSensor::setReversed(bool reversed) {
+    std::lock_guard lock(m_mutex);
     m_reversed = reversed;
     return convertStatus(pros::c::rotation_set_reversed(m_port, m_reversed));
 }
