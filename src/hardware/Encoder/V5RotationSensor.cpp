@@ -22,13 +22,13 @@ V5RotationSensor V5RotationSensor::from_pros_rot(pros::Rotation encoder) {
     else return V5RotationSensor {{encoder.get_port(), runtime_check_port}};
 }
 
-int V5RotationSensor::isConnected() {
+int32_t V5RotationSensor::isConnected() const {
     if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return 0;
     if (pros::c::rotation_get_angle(m_port) == INT_MAX) return 0;
     else return 1;
 }
 
-Angle V5RotationSensor::getAngle() {
+Angle V5RotationSensor::getAngle() const {
     std::lock_guard lock(m_mutex);
     if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return from_stRot(INFINITY);
     const int32_t raw = pros::c::rotation_get_position(m_port);
@@ -38,7 +38,7 @@ Angle V5RotationSensor::getAngle() {
     return angle + m_offset;
 }
 
-int V5RotationSensor::setAngle(Angle angle) {
+int32_t V5RotationSensor::setAngle(Angle angle) {
     std::lock_guard lock(m_mutex);
     if (pros::c::rotation_set_reversed(m_port, m_reversed) == INT_MAX) return INT_MAX;
     // requestedAngle = pos + offset
@@ -51,12 +51,12 @@ int V5RotationSensor::setAngle(Angle angle) {
     return 0;
 }
 
-int V5RotationSensor::isReversed() const {
+int32_t V5RotationSensor::isReversed() const {
     std::lock_guard lock(m_mutex);
     return m_reversed;
 }
 
-int V5RotationSensor::setReversed(bool reversed) {
+int32_t V5RotationSensor::setReversed(bool reversed) {
     std::lock_guard lock(m_mutex);
     m_reversed = reversed;
     return convertStatus(pros::c::rotation_set_reversed(m_port, m_reversed));

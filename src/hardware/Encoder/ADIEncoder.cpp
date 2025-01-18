@@ -18,7 +18,7 @@ ADIEncoder::ADIEncoder(const ADIEncoder& other)
     : m_encoder(other.m_encoder),
       m_offset(other.m_offset) {}
 
-int ADIEncoder::isConnected() {
+int32_t ADIEncoder::isConnected() const {
     // it's not possible to check if the ADIEncoder is connected, so we just return 1 to indicate that it is
     // we do run a simple test however to check if the ports are valid
     if (m_encoder.get_value() == INT_MAX) {
@@ -29,7 +29,7 @@ int ADIEncoder::isConnected() {
     return 1;
 }
 
-Angle ADIEncoder::getAngle() {
+Angle ADIEncoder::getAngle() const {
     std::unique_lock lock(m_mutex);
     const int raw = m_encoder.get_value();
     // check for errors
@@ -41,7 +41,7 @@ Angle ADIEncoder::getAngle() {
     return from_stDeg(raw) + m_offset;
 }
 
-int ADIEncoder::setAngle(Angle angle) {
+int32_t ADIEncoder::setAngle(Angle angle) {
     std::unique_lock lock(m_mutex);
     // the Vex SDK does not support setting the relative angle of an ADI encoder to a specific value
     // but we can overcome this limitation by resetting the relative angle to zero and saving an offset

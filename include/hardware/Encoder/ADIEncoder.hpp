@@ -82,7 +82,7 @@ class ADIEncoder : public Encoder {
          * @return INT_MAX if there is an error, setting errno
          */
         [[deprecated("This function is not implemented due to hardware limitations")]]
-        int isConnected() override;
+        int32_t isConnected() const override;
         /**
          * @brief Get the relative angle measured by the encoder
          *
@@ -109,7 +109,7 @@ class ADIEncoder : public Encoder {
          * }
          * @endcode
          */
-        Angle getAngle() override;
+        Angle getAngle() const override;
         /**
          * @brief Set the relative angle of the encoder
          *
@@ -138,7 +138,7 @@ class ADIEncoder : public Encoder {
          * }
          * @endcode
          */
-        int setAngle(Angle angle) override;
+        int32_t setAngle(Angle angle) override;
     private:
         mutable pros::Mutex m_mutex;
         pros::adi::Encoder m_encoder;

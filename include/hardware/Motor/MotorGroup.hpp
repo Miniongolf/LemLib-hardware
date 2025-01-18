@@ -91,7 +91,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int move(Number percent);
+        int32_t move(Number percent);
         /**
          * @brief move the motors at a given angular velocity
          *
@@ -117,7 +117,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int moveVelocity(AngularVelocity velocity);
+        int32_t moveVelocity(AngularVelocity velocity);
         /**
          * @brief brake the motors
          *
@@ -142,7 +142,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int brake();
+        int32_t brake();
         /**
          * @brief set the brake mode of the motors
          *
@@ -163,7 +163,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int setBrakeMode(BrakeMode mode);
+        int32_t setBrakeMode(BrakeMode mode);
         /**
          * @brief get the brake mode of the motor group
          *
@@ -210,7 +210,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int isConnected() override;
+        int32_t isConnected() const override;
         /**
          * @brief Get the average relative angle measured by the motors
          *
@@ -238,7 +238,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        Angle getAngle() override;
+        Angle getAngle() const override;
         /**
          * @brief Set the relative angle of all the motors
          *
@@ -267,7 +267,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int setAngle(Angle angle) override;
+        int32_t setAngle(Angle angle) override;
         /**
          * @brief Get the combined current limit of all motors in the group
          *
@@ -318,7 +318,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int setCurrentLimit(Current limit);
+        int32_t setCurrentLimit(Current limit);
         /**
          * @brief Get the temperatures of the motors in the motor group
          *
@@ -363,7 +363,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int setOutputVelocity(AngularVelocity outputVelocity);
+        int32_t setOutputVelocity(AngularVelocity outputVelocity);
         /**
          * @brief Get the output velocity of the motor group
          *
@@ -392,7 +392,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int getSize() const;
+        int32_t getSize() const;
         /**
          * @brief Add a motor to the motor group
          *
@@ -421,7 +421,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int addMotor(ReversibleSmartPort port);
+        int32_t addMotor(ReversibleSmartPort port);
         /**
          * @brief Add a motor to the motor group
          *
@@ -446,7 +446,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int addMotor(Motor motor);
+        int32_t addMotor(Motor motor);
         /**
          * @brief Add a motor to the motor group
          *
@@ -472,7 +472,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int addMotor(Motor motor, bool reversed);
+        int32_t addMotor(Motor motor, bool reversed);
         /**
          * @brief Remove a motor from the motor group
          *

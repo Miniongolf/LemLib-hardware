@@ -33,7 +33,7 @@ class Encoder {
          * }
          * @endcode
          */
-        virtual int isConnected() = 0;
+        virtual int32_t isConnected() const = 0;
         /**
          * @brief Get the relative angle measured by the encoder
          *
@@ -56,7 +56,7 @@ class Encoder {
          * }
          * @endcode
          */
-        virtual Angle getAngle() = 0;
+        virtual Angle getAngle() const = 0;
         /**
          * @brief Set the relative angle of the encoder
          *
@@ -80,7 +80,7 @@ class Encoder {
          * }
          * @endcode
          */
-        virtual int setAngle(Angle angle) = 0;
+        virtual int32_t setAngle(Angle angle) = 0;
         virtual ~Encoder() = default;
 };
 } // namespace lemlib
