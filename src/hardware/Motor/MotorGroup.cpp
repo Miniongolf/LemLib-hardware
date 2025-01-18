@@ -7,12 +7,18 @@
 #include <cmath>
 #include <cstdint>
 #include <errno.h>
+#include <mutex>
 
 namespace lemlib {
 MotorGroup::MotorGroup(std::initializer_list<ReversibleSmartPort> ports, AngularVelocity outputVelocity)
     : m_outputVelocity(outputVelocity) {
     for (const auto port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
 }
+
+MotorGroup::MotorGroup(const MotorGroup& other)
+    : m_brakeMode(other.getBrakeMode()),
+      m_outputVelocity(other.getOutputVelocity()),
+      m_motors(other.getMotorInfo()) {}
 
 MotorGroup MotorGroup::from_pros_group(pros::MotorGroup group, AngularVelocity outputVelocity) {
     MotorGroup motor_group {{}, outputVelocity};
@@ -25,6 +31,7 @@ MotorGroup MotorGroup::from_pros_group(pros::MotorGroup group, AngularVelocity o
 }
 
 int MotorGroup::move(Number percent) {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     bool success = false;
     for (Motor motor : motors) {
@@ -36,6 +43,7 @@ int MotorGroup::move(Number percent) {
 }
 
 int MotorGroup::moveVelocity(AngularVelocity velocity) {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     bool success = false;
     for (Motor motor : motors) {
@@ -47,6 +55,7 @@ int MotorGroup::moveVelocity(AngularVelocity velocity) {
 }
 
 int MotorGroup::brake() {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     bool success = false;
     for (Motor motor : motors) {
@@ -58,17 +67,20 @@ int MotorGroup::brake() {
 }
 
 int MotorGroup::setBrakeMode(BrakeMode mode) {
+    std::lock_guard lock(m_mutex);
     m_brakeMode = mode;
     getMotors(); // even though we don't use this, we call it anyway for brake mode setting and disconnect handling
     return 0;
 }
 
-BrakeMode MotorGroup::getBrakeMode() {
+BrakeMode MotorGroup::getBrakeMode() const {
+    std::lock_guard lock(m_mutex);
     getMotors(); // even though we don't use this, we call it anyway for brake mode setting and disconnect handling
     return m_brakeMode;
 }
 
 int MotorGroup::isConnected() {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     for (Motor motor : motors) {
         const int result = motor.isConnected();
@@ -79,6 +91,7 @@ int MotorGroup::isConnected() {
 }
 
 Angle MotorGroup::getAngle() {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     // get the average angle of all motors in the group
     Angle angle = 0_stDeg;
@@ -100,6 +113,7 @@ Angle MotorGroup::getAngle() {
 }
 
 int MotorGroup::setAngle(Angle angle) {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     bool success = false;
     for (Motor motor : motors) {
@@ -115,7 +129,8 @@ int MotorGroup::setAngle(Angle angle) {
     return success ? 0 : INT_MAX;
 }
 
-Current MotorGroup::getCurrentLimit() {
+Current MotorGroup::getCurrentLimit() const {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     Current total = 0_amp;
     int errors = 0;
@@ -133,6 +148,7 @@ Current MotorGroup::getCurrentLimit() {
 }
 
 int MotorGroup::setCurrentLimit(Current limit) {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     if (motors.size() == 0) return INT_MAX; // error handling
     // set current limits
@@ -143,7 +159,8 @@ int MotorGroup::setCurrentLimit(Current limit) {
     return 0;
 }
 
-std::vector<Temperature> MotorGroup::getTemperatures() {
+std::vector<Temperature> MotorGroup::getTemperatures() const {
+    std::lock_guard lock(m_mutex);
     std::vector<Motor> motors = getMotors();
     std::vector<Temperature> temperatures;
     for (const Motor motor : motors) { temperatures.push_back(motor.getTemperature()); }
@@ -152,13 +169,20 @@ std::vector<Temperature> MotorGroup::getTemperatures() {
 
 // Always returns 0 because the velocity setter is not dependent on hardware and should never fail
 int MotorGroup::setOutputVelocity(AngularVelocity outputVelocity) {
+    std::lock_guard lock(m_mutex);
     Angle angle = getAngle();
     m_outputVelocity = outputVelocity;
     setAngle(angle);
     return 0;
 }
 
-int MotorGroup::getSize() {
+AngularVelocity MotorGroup::getOutputVelocity() const {
+    std::lock_guard lock(m_mutex);
+    return m_outputVelocity;
+}
+
+int MotorGroup::getSize() const {
+    std::lock_guard lock(m_mutex);
     const std::vector<Motor> motors = getMotors();
     int size = 0;
     for (Motor motor : motors)
@@ -167,6 +191,7 @@ int MotorGroup::getSize() {
 }
 
 int MotorGroup::addMotor(ReversibleSmartPort port) {
+    std::lock_guard lock(m_mutex);
     // check that the motor isn't already part of the group
     for (const MotorInfo& info : m_motors) {
         // return an error if the motor is already added to the group
@@ -184,21 +209,28 @@ int MotorGroup::addMotor(ReversibleSmartPort port) {
     return 0;
 }
 
-int MotorGroup::addMotor(Motor motor) { return addMotor(motor.getPort()); }
+int MotorGroup::addMotor(Motor motor) {
+    std::lock_guard lock(m_mutex);
+    return addMotor(motor.getPort());
+}
 
 int MotorGroup::addMotor(Motor motor, bool reversed) {
+    std::lock_guard lock(m_mutex);
     // set the motor reversal
     motor.setReversed(reversed);
     return addMotor(motor);
 }
 
 void MotorGroup::removeMotor(ReversibleSmartPort port) {
+    std::lock_guard lock(m_mutex);
     // remove the motor with the specified port
     const auto iterator = std::remove_if(m_motors.begin(), m_motors.end(), [&](MotorInfo m) { return m.port == port; });
     m_motors.erase(iterator);
 }
 
-const std::vector<Motor> MotorGroup::getMotors() {
+void MotorGroup::removeMotor(Motor motor) { removeMotor(motor.getPort()); }
+
+const std::vector<Motor> MotorGroup::getMotors() const {
     std::vector<Motor> motors;
     for (int i = 0; i < m_motors.size(); i++) {
         // create a temporary motor
@@ -230,9 +262,12 @@ const std::vector<Motor> MotorGroup::getMotors() {
     return motors;
 }
 
-void MotorGroup::removeMotor(Motor motor) { removeMotor(motor); }
+const std::vector<MotorGroup::MotorInfo> MotorGroup::getMotorInfo() const {
+    std::lock_guard lock(m_mutex);
+    return m_motors;
+}
 
-Angle MotorGroup::configureMotor(ReversibleSmartPort port) {
+Angle MotorGroup::configureMotor(ReversibleSmartPort port) const {
     // since this function is called in other MotorGroup member functions, this function can't call any other member
     // function, otherwise it would cause a recursion loop. This means that this function is ugly and complex, but at
     // least it means that the other functions can stay simple
