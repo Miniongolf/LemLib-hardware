@@ -30,7 +30,7 @@ class V5InertialSensor : public IMU {
          *
          * @param other the V5InertialSensor to copy
          */
-        V5InertialSensor(V5InertialSensor& other);
+        V5InertialSensor(const V5InertialSensor& other);
         /**
          * @brief Create a new V5 Inertial Sensor
          *

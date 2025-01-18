@@ -36,7 +36,7 @@ class Motor : public Encoder {
          *
          * @param other the Motor to copy
          */
-        Motor(Motor& other);
+        Motor(const Motor& other);
         /**
          * @brief Create a new Motor object
          *

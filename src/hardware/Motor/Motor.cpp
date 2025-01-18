@@ -14,7 +14,7 @@ Motor::Motor(ReversibleSmartPort port, AngularVelocity outputVelocity)
     : m_port(port),
       m_outputVelocity(outputVelocity) {}
 
-Motor::Motor(Motor& other)
+Motor::Motor(const Motor& other)
     : m_port(other.m_port),
       m_outputVelocity(other.m_outputVelocity),
       m_offset(other.m_offset) {}

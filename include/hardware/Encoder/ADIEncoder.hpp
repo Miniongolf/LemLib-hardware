@@ -66,7 +66,7 @@ class ADIEncoder : public Encoder {
          *
          * @param other the ADIEncoder to copy
          */
-        ADIEncoder(ADIEncoder& other);
+        ADIEncoder(const ADIEncoder& other);
         /**
          * @brief whether the encoder is connected
          *

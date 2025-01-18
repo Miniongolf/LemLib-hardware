@@ -12,7 +12,7 @@ V5RotationSensor::V5RotationSensor(ReversibleSmartPort port)
     pros::c::rotation_set_reversed(m_port, m_reversed);
 }
 
-V5RotationSensor::V5RotationSensor(V5RotationSensor& other)
+V5RotationSensor::V5RotationSensor(const V5RotationSensor& other)
     : m_port(other.m_port),
       m_reversed(other.m_reversed),
       m_offset(other.m_offset) {}

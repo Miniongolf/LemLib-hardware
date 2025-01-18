@@ -14,7 +14,7 @@ ADIEncoder::ADIEncoder(ADIPair ports, bool reversed)
 ADIEncoder::ADIEncoder(SmartPort expanderPort, ADIPair ports, bool reversed)
     : m_encoder({expanderPort, ports.first(), ports.second()}, reversed) {}
 
-ADIEncoder::ADIEncoder(ADIEncoder& other)
+ADIEncoder::ADIEncoder(const ADIEncoder& other)
     : m_encoder(other.m_encoder),
       m_offset(other.m_offset) {}
 

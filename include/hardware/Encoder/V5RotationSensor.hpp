@@ -33,7 +33,7 @@ class V5RotationSensor : public Encoder {
          *
          * @param other the V5RotationSensor to copy
          */
-        V5RotationSensor(V5RotationSensor& other);
+        V5RotationSensor(const V5RotationSensor& other);
         /**
          * @brief Create a new V5 Rotation Sensor
          *

@@ -7,7 +7,7 @@ namespace lemlib {
 V5InertialSensor::V5InertialSensor(SmartPort port)
     : m_imu(port) {}
 
-V5InertialSensor::V5InertialSensor(V5InertialSensor& other)
+V5InertialSensor::V5InertialSensor(const V5InertialSensor& other)
     : m_imu(other.m_imu),
       m_offset(other.m_offset) {}
 
