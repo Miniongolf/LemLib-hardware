@@ -1,10 +1,25 @@
 #pragma once
 
 #include "units/Angle.hpp"
+#include "pros/rtos.hpp"
 
 namespace lemlib {
 class IMU {
     public:
+        /**
+         * @brief Construct a new IMU object
+         *
+         * @param scalar the scalar to apply to the gyro readings. Defaults to 1.
+         */
+        IMU(Number scalar = 1.0);
+        /**
+         * @brief IMU copy constructor
+         *
+         * since pros::Mutex does not have a copy constructor, we need an explicit copy constructor
+         *
+         * @param other the imu to copy
+         */
+        IMU(const IMU& other);
         /**
          * @brief calibrate the IMU
          *
@@ -14,7 +29,7 @@ class IMU {
          * @return 0 success
          * @return INT_MAX error occurred, setting errno
          */
-        virtual int calibrate() = 0;
+        virtual int32_t calibrate() = 0;
         /**
          * @brief check if the IMU is calibrated
          *
@@ -22,7 +37,7 @@ class IMU {
          * @return false the IMU is not calibrated
          * @return INT_MAX error occurred, setting errno
          */
-        virtual int isCalibrated() = 0;
+        virtual int32_t isCalibrated() const = 0;
         /**
          * @brief check if the IMU is calibrating
          *
@@ -30,7 +45,7 @@ class IMU {
          * @return false the IMU is not calibrating
          * @return INT_MAX error occurred, setting errno
          */
-        virtual int isCalibrating() = 0;
+        virtual int32_t isCalibrating() const = 0;
         /**
          * @brief whether the IMU is connected
          *
@@ -38,7 +53,7 @@ class IMU {
          * @return false the IMU is not connected
          * @return INT_MAX error occurred, setting errno
          */
-        virtual int isConnected() = 0;
+        virtual int32_t isConnected() const = 0;
         /**
          * @brief Get the rotation of the IMU
          *
@@ -47,7 +62,7 @@ class IMU {
          * @return Angle the rotation of the IMU
          * @return INFINITY error occurred, setting errno
          */
-        virtual Angle getRotation() = 0;
+        virtual Angle getRotation() const = 0;
         /**
          * @brief Set the rotation of the IMU
          *
@@ -57,7 +72,7 @@ class IMU {
          * @return int 0 success
          * @return INT_MAX error occurred, setting errno
          */
-        virtual int setRotation(Angle rotation) = 0;
+        virtual int32_t setRotation(Angle rotation) = 0;
         /**
          * @brief Set the gyro scalar for the IMU
          *
@@ -68,7 +83,7 @@ class IMU {
          * @return int 0 success
          * @return INT_MAX error occurred, setting errno
          */
-        virtual int setGyroScalar(Number scalar);
+        virtual int32_t setGyroScalar(Number scalar);
         /**
          * @brief Get the gyro scalar for the IMU
          *
@@ -78,9 +93,10 @@ class IMU {
          * @return Number gyro scalar
          * @return INFINITY error occurred, setting errno
          */
-        virtual Number getGyroScalar();
+        virtual Number getGyroScalar() const;
         virtual ~IMU() = default;
     protected:
-        Number m_gyroScalar = 1.0;
+        mutable pros::Mutex m_mutex;
+        Number m_gyroScalar;
 };
 } // namespace lemlib

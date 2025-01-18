@@ -3,7 +3,6 @@
 #include "hardware/Port.hpp"
 #include "hardware/IMU/IMU.hpp"
 #include "pros/imu.hpp"
-#include "pros/rtos.hpp"
 
 namespace lemlib {
 class V5InertialSensor : public IMU {
@@ -12,6 +11,7 @@ class V5InertialSensor : public IMU {
          * @brief Construct a new V5 Inertial Sensor
          *
          * @param port the port of the V5 inertial sensor
+         * @param scalar the scalar to apply to the gyro readings. Defaults to 1
          *
          * @b Example:
          * @code {.cpp}
@@ -21,7 +21,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        V5InertialSensor(SmartPort port);
+        V5InertialSensor(SmartPort port, Number scalar = 1.0);
         /**
          * @brief V5InertialSensor copy constructor
          *
@@ -35,6 +35,7 @@ class V5InertialSensor : public IMU {
          * @brief Create a new V5 Inertial Sensor
          *
          * @param imu the inertial sensor
+         * @param scalar the scalar to apply to the gyro readings. Defaults to 1
          *
          * @b Example:
          * @code {.cpp}
@@ -44,7 +45,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        static V5InertialSensor from_pros_imu(pros::Imu imu);
+        static V5InertialSensor from_pros_imu(pros::Imu imu, Number scalar = 1.0);
         /**
          * @brief calibrate the V5 Inertial Sensor
          *
@@ -73,7 +74,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        int calibrate() override;
+        int32_t calibrate() override;
         /**
          * @brief check if the V5 Inertial Sensor is calibrated
          *
@@ -96,7 +97,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        int isCalibrated() override;
+        int32_t isCalibrated() const override;
         /**
          * @brief check if the V5 Inertial Sensor is calibrating
          *
@@ -119,7 +120,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        int isCalibrating() override;
+        int32_t isCalibrating() const override;
         /**
          * @brief whether the V5 Inertial Sensor is connected
          *
@@ -142,7 +143,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        int isConnected() override;
+        int32_t isConnected() const override;
         /**
          * @brief Get the rotation of the V5 Inertial Sensor
          *
@@ -173,7 +174,7 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        Angle getRotation() override;
+        Angle getRotation() const override;
         /**
          * @brief Set the rotation of the V5 Inertial Sensor
          *
@@ -205,63 +206,9 @@ class V5InertialSensor : public IMU {
          * }
          * @endcode
          */
-        int setRotation(Angle rotation) override;
-        /**
-         * @brief Set the gyro scalar for the IMU
-         *
-         * This function sets the scaling factor for the IMU.
-         * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
-         *
-         * @param scalar
-         * @return int 0 success
-         * @return INT_MAX error occurred, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     lemlib::V5InertialSensor imu = pros::Imu(1);
-         *
-         *     // wait for the IMU to calibrate
-         *     imu.calibrate();
-         *     while (imu.isCalibrating()) {
-         *         pros::delay(10);
-         *     }
-         *
-         *     // set the gyro scalar of the IMU
-         *     imu.setGyroScalar(1.01);
-         * }
-         * @endcode
-         */
-        int setGyroScalar(Number scalar) override;
-        /**
-         * @brief Get the gyro scalar for the IMU
-         *
-         * This function gets the scaling factor for the IMU.
-         * This is useful for when the IMU heading reading is incorrect by a constant multiplier.
-         *
-         * @return double gyro scalar
-         * @return INT_MAX error occurred, setting errno
-         *
-         * @b Example:
-         * @code {.cpp}
-         * void initialize() {
-         *     lemlib::V5InertialSensor imu = pros::Imu(1);
-         *
-         *     // wait for the IMU to calibrate
-         *     imu.calibrate();
-         *     while (imu.isCalibrating()) {
-         *         pros::delay(10);
-         *     }
-         *
-         *     // get the rotation of the IMU
-         *     std::cout << "IMU gyro scalar: " << imu.getGyroScalar() << std::endl;
-         * }
-         * @endcode
-         */
-        Number getGyroScalar() override;
+        int32_t setRotation(Angle rotation) override;
     private:
-        mutable pros::Mutex m_mutex;
         Angle m_offset = 0_stRot;
-        pros::Imu m_imu;
+        mutable pros::Imu m_imu;
 };
 } // namespace lemlib
