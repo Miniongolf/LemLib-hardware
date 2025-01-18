@@ -140,7 +140,7 @@ class ADIEncoder : public Encoder {
          */
         int setAngle(Angle angle) override;
     private:
-        pros::Mutex m_mutex;
+        mutable pros::Mutex m_mutex;
         pros::adi::Encoder m_encoder;
         Angle m_offset = 0_stDeg;
 };

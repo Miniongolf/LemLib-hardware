@@ -505,7 +505,7 @@ class Motor : public Encoder {
          */
         AngularVelocity getOutputVelocity();
     private:
-        pros::Mutex m_mutex;
+        mutable pros::Mutex m_mutex;
         AngularVelocity m_outputVelocity;
         Angle m_offset = 0_stDeg;
         ReversibleSmartPort m_port;

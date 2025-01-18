@@ -168,7 +168,7 @@ class V5RotationSensor : public Encoder {
          */
         int setReversed(bool reversed);
     private:
-        pros::Mutex m_mutex;
+        mutable pros::Mutex m_mutex;
         Angle m_offset = 0_stRot;
         bool m_reversed;
         int m_port;

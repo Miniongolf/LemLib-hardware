@@ -260,7 +260,7 @@ class V5InertialSensor : public IMU {
          */
         Number getGyroScalar() override;
     private:
-        pros::Mutex m_mutex;
+        mutable pros::Mutex m_mutex;
         Angle m_offset = 0_stRot;
         pros::Imu m_imu;
 };

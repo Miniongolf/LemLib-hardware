@@ -548,7 +548,7 @@ class MotorGroup : public Encoder {
          */
         const std::vector<MotorInfo> getMotorInfo() const;
 
-        pros::Mutex m_mutex;
+        mutable pros::Mutex m_mutex;
         BrakeMode m_brakeMode = BrakeMode::COAST;
         AngularVelocity m_outputVelocity;
         /**
