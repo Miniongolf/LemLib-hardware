@@ -1,10 +1,10 @@
 #pragma once
 
-#include "pros/motors.hpp"
 #include "hardware/Encoder/Encoder.hpp"
 #include "hardware/Port.hpp"
 #include "units/Temperature.hpp"
 #include "pros/rtos.hpp"
+#include "pros/motors.hpp"
 
 namespace lemlib {
 

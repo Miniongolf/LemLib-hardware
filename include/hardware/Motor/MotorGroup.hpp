@@ -1,10 +1,10 @@
 #pragma once
 
-#include "pros/motor_group.hpp"
-#include "pros/rtos.hpp"
 #include "hardware/Motor/Motor.hpp"
 #include "hardware/Port.hpp"
 #include "units/Angle.hpp"
+#include "pros/motor_group.hpp"
+#include "pros/rtos.hpp"
 #include <vector>
 
 namespace lemlib {

@@ -37,7 +37,7 @@ Angle V5InertialSensor::getRotation() const {
     return from_cDeg(result * m_gyroScalar) + m_offset;
 }
 
-int V5InertialSensor::setRotation(Angle rotation) {
+int32_t V5InertialSensor::setRotation(Angle rotation) {
     std::lock_guard lock(m_mutex);
     Angle raw = this->getRotation();
     if (to_stRot(raw) == INFINITY) return INT32_MAX;

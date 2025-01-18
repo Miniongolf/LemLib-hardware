@@ -1,10 +1,11 @@
 #pragma once
 
+#include "hardware/Device.hpp"
 #include "units/Angle.hpp"
 #include "pros/rtos.hpp"
 
 namespace lemlib {
-class IMU {
+class IMU : public Device {
     public:
         /**
          * @brief Construct a new IMU object
@@ -46,14 +47,6 @@ class IMU {
          * @return INT_MAX error occurred, setting errno
          */
         virtual int32_t isCalibrating() const = 0;
-        /**
-         * @brief whether the IMU is connected
-         *
-         * @return true the IMU is connected
-         * @return false the IMU is not connected
-         * @return INT_MAX error occurred, setting errno
-         */
-        virtual int32_t isConnected() const = 0;
         /**
          * @brief Get the rotation of the IMU
          *
