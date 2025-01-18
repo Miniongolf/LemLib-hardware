@@ -7,11 +7,12 @@ This PROS template aims to simplify interactions with devices, and implement a c
 ## Features
 
  - [X] [Unitized](https://github.com/LemLib/units)
+ - [X] thread-safe
  - [X] Advanced Error Handling
  - [ ] Device disconnect/reconnect callbacks
  - [X] Compile-time Port Checks
 
- - [X] **Motor**
+ - [ ] **Motor**
    - [X] Changing encoder units don't affect reported angle
    - [X] Current limit
    - [X] Differentiate 11W and 5.5W motors
@@ -37,20 +38,20 @@ This PROS template aims to simplify interactions with devices, and implement a c
    - [ ] Support for all VEX color sensors
      - [ ] V5 Optical Sensor
 
- - [X] **Abstract Encoders**
+ - [ ] **Abstract Encoders**
    - [X] Generic interface for any encoder
-     - [X] Support for all VEX encoders
-       - [X] Motors / Motor Groups
-       - [X] V5 Rotation Sensor
-       - [X] Optical Shaft encoder
-       - [ ] ADI Potentiometer V1
-       - [ ] ADI Potentiometer V2
+   - [X] Support for all VEX encoders
+     - [X] Motors / Motor Groups
+     - [X] V5 Rotation Sensor
+     - [X] Optical Shaft encoder
+     - [ ] ADI Potentiometer V1
+     - [ ] ADI Potentiometer V2
 
- - [X] **Abstract Gyro**
-   - [X] Generic interface for any gyro
-   - [X] Gyro Scaling
+ - [ ] **Abstract Gyro**
+   - [ ] Generic interface for any gyro
+   - [ ] Gyro Scaling
    - [ ] Support for all VEX gyros
-     - [X] V5 Inertial Sensor
+     - [ ] V5 Inertial Sensor
      - [ ] V5 GPS Sensor
      - [ ] ADI analog gyro
 
@@ -62,9 +63,10 @@ This PROS template aims to simplify interactions with devices, and implement a c
      - [ ] ADI Accelerometer
 
  - [ ] **Abstract IMU**
-   - [ ] Generic interface for any IMU
+   - [X] Generic interface for any IMU
+   - [X] Gyro Scaling
    - [ ] Support for all VEX IMUs
-     - [ ] V5 Inertial Sensor
+     - [X] V5 Inertial Sensor
      - [ ] V5 GPS Sensor
 
 ## Who Should Use This?

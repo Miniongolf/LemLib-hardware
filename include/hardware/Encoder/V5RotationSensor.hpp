@@ -26,6 +26,15 @@ class V5RotationSensor : public Encoder {
          */
         V5RotationSensor(ReversibleSmartPort port);
         /**
+         * @brief V5RotationSensor copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor for the V5RotationSensor is necessary
+         *
+         * @param other the V5RotationSensor to copy
+         */
+        V5RotationSensor(const V5RotationSensor& other);
+        /**
          * @brief Create a new V5 Rotation Sensor
          *
          * @param encoder the pros::Rotation object to use
@@ -159,6 +168,7 @@ class V5RotationSensor : public Encoder {
          */
         int setReversed(bool reversed);
     private:
+        mutable pros::Mutex m_mutex;
         Angle m_offset = 0_stRot;
         bool m_reversed;
         int m_port;

@@ -7,11 +7,17 @@
 #include "units/Temperature.hpp"
 #include "units/units.hpp"
 #include <cstdint>
+#include <mutex>
 
 namespace lemlib {
 Motor::Motor(ReversibleSmartPort port, AngularVelocity outputVelocity)
     : m_port(port),
       m_outputVelocity(outputVelocity) {}
+
+Motor::Motor(const Motor& other)
+    : m_port(other.m_port),
+      m_outputVelocity(other.m_outputVelocity),
+      m_offset(other.m_offset) {}
 
 Motor Motor::from_pros_motor(const pros::Motor motor, AngularVelocity outputVelocity) {
     return Motor {{motor.get_port(), runtime_check_port}, outputVelocity};
@@ -51,6 +57,7 @@ int Motor::move(Number percent) {
 }
 
 int Motor::moveVelocity(AngularVelocity velocity) {
+    std::lock_guard lock(m_mutex);
     // vexos will behave differently depending on the cartridge of the motor
     // pros uses an integer value to represent the rpm of the motor
     const pros::motor_gearset_e_t mode = pros::c::motor_get_gearing(m_port);
@@ -74,9 +81,13 @@ int Motor::moveVelocity(AngularVelocity velocity) {
     return convertStatus(pros::c::motor_move_velocity(m_port, out));
 }
 
-int Motor::brake() { return convertStatus(pros::c::motor_brake(m_port)); }
+int Motor::brake() {
+    std::lock_guard lock(m_mutex);
+    return convertStatus(pros::c::motor_brake(m_port));
+}
 
 int Motor::setBrakeMode(BrakeMode mode) {
+    std::lock_guard lock(m_mutex);
     if (mode == BrakeMode::INVALID) {
         errno = EINVAL;
         return INT_MAX;
@@ -84,11 +95,15 @@ int Motor::setBrakeMode(BrakeMode mode) {
     return convertStatus(pros::c::motor_set_brake_mode(m_port, brakeModeToMotorBrake(mode)));
 }
 
-BrakeMode Motor::getBrakeMode() const { return motorBrakeToBrakeMode(pros::c::motor_get_brake_mode(m_port)); }
+BrakeMode Motor::getBrakeMode() const {
+    std::lock_guard lock(m_mutex);
+    return motorBrakeToBrakeMode(pros::c::motor_get_brake_mode(m_port));
+}
 
 int Motor::isConnected() { return pros::c::get_plugged_type(m_port) == pros::c::v5_device_e_t::E_DEVICE_MOTOR; }
 
 Angle Motor::getAngle() {
+    std::lock_guard lock(m_mutex);
     // get the number of encoder ticks
     const int ticks = pros::c::motor_get_raw_position(m_port, NULL);
     if (ticks == INT_MAX) return from_stRot(INFINITY);
@@ -101,6 +116,7 @@ Angle Motor::getAngle() {
 }
 
 int Motor::setAngle(Angle angle) {
+    std::lock_guard lock(m_mutex);
     // get the raw position
     const int ticks = pros::c::motor_get_raw_position(m_port, NULL);
     if (ticks == INT_MAX) return INT_MAX;
@@ -113,14 +129,19 @@ int Motor::setAngle(Angle angle) {
     return 0;
 }
 
-Angle Motor::getOffset() const { return m_offset; }
+Angle Motor::getOffset() const {
+    std::lock_guard lock(m_mutex);
+    return m_offset;
+}
 
 int Motor::setOffset(Angle offset) {
+    std::lock_guard lock(m_mutex);
     m_offset = offset;
     return 0;
 }
 
 MotorType Motor::getType() {
+    std::lock_guard lock(m_mutex);
     // there is no exposed api to get the motor type
     // while the memory address of the function has been found through reverse engineering,
     // it may break between VEXos updates. Instead, we see if we can change the cartridge to something other
@@ -141,27 +162,36 @@ MotorType Motor::getType() {
 }
 
 int Motor::isReversed() const {
+    std::lock_guard lock(m_mutex);
     // technically this returns an int, but as long as you only pass 0 to the index its impossible for it to return an
     // error. This is because we keep track of whether the motor is reversed or not through the sign of its port
     return m_port < 0;
 }
 
 int Motor::setReversed(bool reversed) {
+    std::lock_guard lock(m_mutex);
     // technically this returns an int, but as long as you only pass 0 to the index its impossible for it to return an
     // error. This is because we keep track of whether the motor is reversed or not through the sign of its port
     m_port = m_port.set_reversed(reversed);
     return 0;
 }
 
-ReversibleSmartPort Motor::getPort() const { return m_port; }
+ReversibleSmartPort Motor::getPort() const {
+    std::lock_guard lock(m_mutex);
+    return m_port;
+}
 
 Current Motor::getCurrentLimit() const {
+    std::lock_guard lock(m_mutex);
     const Current result = from_amp(pros::c::motor_get_current_limit(m_port));
     if (result.internal() == INT32_MAX) return from_amp(INFINITY); // error checking
     return result;
 }
 
-int Motor::setCurrentLimit(Current limit) { return pros::c::motor_set_current_limit(m_port, to_amp(limit) * 1000); }
+int Motor::setCurrentLimit(Current limit) {
+    std::lock_guard lock(m_mutex);
+    return pros::c::motor_set_current_limit(m_port, to_amp(limit) * 1000);
+}
 
 Temperature Motor::getTemperature() const {
     const Temperature result = units::from_celsius(pros::c::motor_get_temperature(m_port));
@@ -171,9 +201,15 @@ Temperature Motor::getTemperature() const {
 
 // Always returns 0 because the velocity setter is not dependent on hardware and should never fail
 int Motor::setOutputVelocity(AngularVelocity outputVelocity) {
+    std::lock_guard lock(m_mutex);
     Angle angle = getAngle();
     m_outputVelocity = outputVelocity;
     setAngle(angle);
     return 0;
+}
+
+AngularVelocity Motor::getOutputVelocity() {
+    std::lock_guard lock(m_mutex);
+    return m_outputVelocity;
 }
 } // namespace lemlib

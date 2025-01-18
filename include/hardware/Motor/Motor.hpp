@@ -4,6 +4,7 @@
 #include "hardware/Encoder/Encoder.hpp"
 #include "hardware/Port.hpp"
 #include "units/Temperature.hpp"
+#include "pros/rtos.hpp"
 
 namespace lemlib {
 
@@ -27,6 +28,15 @@ class Motor : public Encoder {
          * @endcode
          */
         Motor(ReversibleSmartPort port, AngularVelocity outputVelocity);
+        /**
+         * @brief Motor copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor is necessary
+         *
+         * @param other the Motor to copy
+         */
+        Motor(const Motor& other);
         /**
          * @brief Create a new Motor object
          *
@@ -479,7 +489,23 @@ class Motor : public Encoder {
          * @endcode
          */
         int setOutputVelocity(AngularVelocity outputVelocity);
+        /**
+         * @brief Get the output velocity of the motor
+         *
+         * @return AngularVelocity
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::Motor motor(1, 360_rpm);
+         *     // get the motor output
+         *     std::cout << motor.getOutputVelocity() << std::endl; // output: 360_rpm
+         * }
+         * @endcode
+         */
+        AngularVelocity getOutputVelocity();
     private:
+        mutable pros::Mutex m_mutex;
         AngularVelocity m_outputVelocity;
         Angle m_offset = 0_stDeg;
         ReversibleSmartPort m_port;

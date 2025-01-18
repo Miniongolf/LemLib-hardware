@@ -3,6 +3,7 @@
 #include "hardware/Port.hpp"
 #include "hardware/IMU/IMU.hpp"
 #include "pros/imu.hpp"
+#include "pros/rtos.hpp"
 
 namespace lemlib {
 class V5InertialSensor : public IMU {
@@ -21,6 +22,15 @@ class V5InertialSensor : public IMU {
          * @endcode
          */
         V5InertialSensor(SmartPort port);
+        /**
+         * @brief V5InertialSensor copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor is necessary
+         *
+         * @param other the V5InertialSensor to copy
+         */
+        V5InertialSensor(const V5InertialSensor& other);
         /**
          * @brief Create a new V5 Inertial Sensor
          *
@@ -250,6 +260,7 @@ class V5InertialSensor : public IMU {
          */
         Number getGyroScalar() override;
     private:
+        mutable pros::Mutex m_mutex;
         Angle m_offset = 0_stRot;
         pros::Imu m_imu;
 };

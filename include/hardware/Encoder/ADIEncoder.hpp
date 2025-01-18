@@ -3,6 +3,7 @@
 #include "hardware/Encoder/Encoder.hpp"
 #include "hardware/Port.hpp"
 #include "pros/adi.hpp"
+#include "pros/rtos.hpp"
 
 namespace lemlib {
 /**
@@ -57,6 +58,15 @@ class ADIEncoder : public Encoder {
          * @endcode
          */
         ADIEncoder(SmartPort expanderPort, ADIPair ports, bool reversed);
+        /**
+         * @brief ADIEncoder copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor for the ADIEncoder is necessary
+         *
+         * @param other the ADIEncoder to copy
+         */
+        ADIEncoder(const ADIEncoder& other);
         /**
          * @brief whether the encoder is connected
          *
@@ -130,6 +140,7 @@ class ADIEncoder : public Encoder {
          */
         int setAngle(Angle angle) override;
     private:
+        mutable pros::Mutex m_mutex;
         pros::adi::Encoder m_encoder;
         Angle m_offset = 0_stDeg;
 };

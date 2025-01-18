@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pros/motor_group.hpp"
+#include "pros/rtos.hpp"
 #include "hardware/Motor/Motor.hpp"
 #include "hardware/Port.hpp"
 #include "units/Angle.hpp"
@@ -38,6 +39,15 @@ class MotorGroup : public Encoder {
          * @endcode
          */
         MotorGroup(std::initializer_list<ReversibleSmartPort> ports, AngularVelocity outputVelocity);
+        /**
+         * @brief MotorGroup copy constructor
+         *
+         * Because pros::Mutex does not have a copy constructor, an explicit
+         * copy constructor is necessary
+         *
+         * @param other the MotorGroup to copy
+         */
+        MotorGroup(const MotorGroup& other);
         /**
          * @brief Create a new Motor Group
          *
@@ -177,7 +187,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        BrakeMode getBrakeMode();
+        BrakeMode getBrakeMode() const;
         /**
          * @brief whether any of the motors in the motor group are connected
          *
@@ -285,7 +295,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        Current getCurrentLimit();
+        Current getCurrentLimit() const;
         /**
          * @brief set the combined current limit of all motors in the group
          *
@@ -336,7 +346,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        std::vector<Temperature> getTemperatures();
+        std::vector<Temperature> getTemperatures() const;
         /**
          * @brief set the output velocity of the motors
          *
@@ -355,6 +365,20 @@ class MotorGroup : public Encoder {
          */
         int setOutputVelocity(AngularVelocity outputVelocity);
         /**
+         * @brief Get the output velocity of the motor group
+         *
+         * @return AngularVelocity the output velocity of the motor group
+         *
+         * @b Example:
+         * @code {.cpp}
+         * void initialize() {
+         *     lemlib::MotorGroup motorGroup({1, -2, 3}, 360_rpm);
+         *     std::cout << "output velocity: " << motorGroup.getOutputVelocity() << std::endl; // outputs 360 rpm
+         * }
+         * @endcode
+         */
+        AngularVelocity getOutputVelocity() const;
+        /**
          * @brief Get the number of connected motors in the group
          *
          * @return int the number of connected motors in the group
@@ -368,7 +392,7 @@ class MotorGroup : public Encoder {
          * }
          * @endcode
          */
-        int getSize();
+        int getSize() const;
         /**
          * @brief Add a motor to the motor group
          *
@@ -506,8 +530,7 @@ class MotorGroup : public Encoder {
          * @return 0 on success
          * @return INT_MAX on failure, setting errno
          */
-        Angle configureMotor(ReversibleSmartPort port);
-        BrakeMode m_brakeMode = BrakeMode::COAST;
+        Angle configureMotor(ReversibleSmartPort port) const;
         /**
          * @brief Get motors in the motor group as a vector of lemlib::Motor objects
          *
@@ -515,7 +538,18 @@ class MotorGroup : public Encoder {
          *
          * @return const std::vector<Motor> vector of lemlib::Motor objects
          */
-        const std::vector<Motor> getMotors();
+        const std::vector<Motor> getMotors() const;
+        /**
+         * @brief Get the Motor Infos
+         *
+         * This function exists to make the copy constructor thread-safe
+         *
+         * @return const std::vector<MotorInfo>
+         */
+        const std::vector<MotorInfo> getMotorInfo() const;
+
+        mutable pros::Mutex m_mutex;
+        BrakeMode m_brakeMode = BrakeMode::COAST;
         AngularVelocity m_outputVelocity;
         /**
          * This member variable is a vector of motor information
@@ -531,6 +565,6 @@ class MotorGroup : public Encoder {
          * It also contains the offset of each motor. This needs to be saved by the motor group, because it can't be
          * saved in a motor object, as motor objects are not saved as member variables
          */
-        std::vector<MotorInfo> m_motors;
+        mutable std::vector<MotorInfo> m_motors;
 };
 }; // namespace lemlib
