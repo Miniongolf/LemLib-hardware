@@ -109,7 +109,7 @@ Angle MotorGroup::getAngle() const {
     // if no motors are connected, return INFINITY
     if (errors == motors.size()) return from_stDeg(INFINITY);
     // otherwise, return the average angle
-    return angle / (getSize() - errors);
+    return angle / (motors.size() - errors);
 }
 
 int32_t MotorGroup::setAngle(Angle angle) {
