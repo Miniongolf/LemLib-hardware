@@ -101,7 +101,7 @@ BrakeMode Motor::getBrakeMode() const {
 }
 
 int32_t Motor::isConnected() const {
-    return pros::c::get_plugged_type(m_port) == pros::c::v5_device_e_t::E_DEVICE_MOTOR;
+    return pros::c::get_plugged_type(abs(m_port)) == pros::c::v5_device_e_t::E_DEVICE_MOTOR;
 }
 
 Angle Motor::getAngle() const {
