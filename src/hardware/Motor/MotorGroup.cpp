@@ -10,7 +10,7 @@
 #include <mutex>
 
 namespace lemlib {
-MotorGroup::MotorGroup(std::initializer_list<ReversibleSmartPort> ports, AngularVelocity outputVelocity)
+MotorGroup::MotorGroup(const std::initializer_list<ReversibleSmartPort>& ports, AngularVelocity outputVelocity)
     : m_outputVelocity(outputVelocity) {
     for (const auto port : ports) { m_motors.push_back({.port = port, .connectedLastCycle = true, .offset = 0_stDeg}); }
 }
