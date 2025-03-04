@@ -42,7 +42,7 @@ class V5DistanceSensor : public DistanceSensor {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::V5DistanceSensor distance = lemlib::V5RDistanceSensor::from_pros_dist(pros::Distance(1));
+         *     lemlib::V5DistanceSensor distance = lemlib::V5DistanceSensor::from_pros_dist(pros::Distance(1));
          * }
          * @endcode
          */
@@ -56,7 +56,7 @@ class V5DistanceSensor : public DistanceSensor {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::V5DistanceSensor distance = pros::Distance(1);
+         *     lemlib::V5DistanceSensor distance = lemlib::V5DistanceSensor(1);
          *     const int result = distance.isConnected();
          *     if (result == 1) {
          *         std::cout << "Distance sensor is connected!" << std::endl;
@@ -83,7 +83,7 @@ class V5DistanceSensor : public DistanceSensor {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     lemlib::V5DistanceSensor distanceSensor = pros::Distance(1);
+         *     lemlib::V5DistanceSensor distanceSensor = lemlib::V5DistanceSensor(1);
          *     const Length distance = distanceSensor.getDistance();
          *     if (angle == INFINITY) {
          *         std::cout << "Error getting distance!" << std::endl;
@@ -107,11 +107,11 @@ class V5DistanceSensor : public DistanceSensor {
          * @b Example:
          * @code {.cpp}
          * void initialize() {
-         *     DistanceSensor* distanceSensor;
+         *     lemlib::V5DistanceSensor distanceSensor(1);
          *     if (distanceSensor->setOffset(1_in) == 0) {
          *         std::cout << "Offset set!" << std::endl;
          *         // With an object touching the surface of the distance sensor
-         *         std::cout < "Offset distance: " << distanceSensor->getDistance().convert(in) << std::endl; // outputs 1 inch
+         *         std::cout << "Offset distance: " << distanceSensor->getDistance().convert(in) << std::endl; // outputs 1 inch
          *     } else {
          *         std::cout << "Error setting offset!" << std::endl;
          *     }

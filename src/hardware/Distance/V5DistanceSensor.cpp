@@ -2,6 +2,7 @@
 #include "hardware/util.hpp"
 #include <limits.h>
 #include <mutex>
+#include <cmath>
 
 namespace lemlib {
 V5DistanceSensor::V5DistanceSensor(SmartPort port)
@@ -24,7 +25,7 @@ Length V5DistanceSensor::getDistance() const {
     std::lock_guard lock(m_mutex);
     const int32_t raw = pros::c::distance_get(m_port);
     if (raw == INT_MAX) return from_in(INFINITY);
-    // the rotation sensor returns mm
+    // the distance sensor returns mm
     const Length distance = from_mm(raw);
     return distance + m_offset;
 }

@@ -15,7 +15,7 @@ class DistanceSensor : public Device {
         /**
          * @brief Get the distance measured by the distance sensor
          *
-         * The distance measured by the encoder is the distance from the sensor to the nearest object.
+         * The distance measured by the distance sensor is the distance from the sensor to the nearest object.
          *
          * @return Length the distance measured by the encoder
          * @return INFINITY if there is an error, setting errno
@@ -51,7 +51,7 @@ class DistanceSensor : public Device {
          *     if (distanceSensor->setOffset(1_in) == 0) {
          *         std::cout << "Offset set!" << std::endl;
          *         // With an object touching the surface of the distance sensor
-         *         std::cout < "Offset distance: " << distanceSensor->getDistance().convert(in) << std::endl; // outputs 1 inch
+         *         std::cout << "Offset distance: " << distanceSensor->getDistance().convert(in) << std::endl; // outputs 1 inch
          *     } else {
          *         std::cout << "Error setting offset!" << std::endl;
          *     }
