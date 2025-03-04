@@ -111,9 +111,8 @@ class V5DistanceSensor : public DistanceSensor {
          *     if (distanceSensor->setOffset(1_in) == 0) {
          *         std::cout << "Offset set!" << std::endl;
          *         // With an object touching the surface of the distance sensor
-         *         std::cout << "Offset distance: " << distanceSensor->getDistance().convert(in) << std::endl; // outputs 1 inch
-         *     } else {
-         *         std::cout << "Error setting offset!" << std::endl;
+         *         std::cout << "Offset distance: " << distanceSensor->getDistance().convert(in) << std::endl; //
+         * outputs 1 inch } else { std::cout << "Error setting offset!" << std::endl;
          *     }
          * }
          * @endcode
